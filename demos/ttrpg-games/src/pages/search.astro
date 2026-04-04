@@ -1,0 +1,158 @@
+---
+import { getEmDashEntry, search } from "emdash";
+import Base from "../layouts/Base.astro";
+import type { CategoryPageEntry, GameEntry } from "../lib/types";
+
+const query = Astro.url.searchParams.get("q")?.trim() ?? "";
+const hasQuery = query.length > 0;
+const results = hasQuery
+	? await search(query, {
+			collections: ["games", "category_pages"],
+			limit: 30,
+		})
+	: { items: [] };
+
+function cleanSnippet(snippet?: string): string {
+	if (!snippet) return "";
+
+	return snippet
+		.replaceAll("<mark>", "")
+		.replaceAll("</mark>", "")
+		.replaceAll("&lt;", "<")
+		.replaceAll("&gt;", ">")
+		.replaceAll(/<[^>]+>/g, " ")
+		.replaceAll(/\s+/g, " ")
+		.trim();
+}
+
+type SearchCard = {
+	href: string;
+	label: string;
+	title: string;
+	description: string;
+	imageUrl?: string | null;
+	kind: "game" | "category";
+};
+
+const cards: SearchCard[] = hasQuery
+	? (
+			await Promise.all(
+				results.items.map(async (result) => {
+					const path = result.slug ?? result.id;
+					const fallback = cleanSnippet(result.snippet);
+
+					if (result.collection === "games") {
+						const { entry } = await getEmDashEntry("games", path);
+						const game = entry as unknown as GameEntry | null;
+
+						return {
+							href: `/item/${path}`,
+							label: "Game",
+							title: game?.data.title || result.title || path,
+							description:
+								game?.data.blurb || game?.data.review_summary || fallback || "No description available.",
+							imageUrl: game?.data.image_url,
+							kind: "game",
+						} satisfies SearchCard;
+					}
+
+					if (result.collection === "category_pages") {
+						const { entry } = await getEmDashEntry("category_pages", path);
+						const category = entry as unknown as CategoryPageEntry | null;
+
+						return {
+							href: `/category/${path}`,
+							label: category?.data.type || "Category",
+							title: category?.data.title || result.title || path,
+							description:
+								category?.data.description || fallback || "Browse matching category listings.",
+							kind: "category",
+						} satisfies SearchCard;
+					}
+
+					return {
+						href: resultHref(result),
+						label: resultLabel(result.collection),
+						title: result.title || result.slug || result.id,
+						description: fallback || "No description available.",
+						kind: "category",
+					} satisfies SearchCard;
+				}),
+			)
+		).filter(Boolean)
+	: [];
+
+function resultHref(result: {
+	collection: string;
+	id: string;
+	slug: string | null;
+}): string {
+	const path = result.slug ?? result.id;
+
+	if (result.collection === "games") {
+		return `/item/${path}`;
+	}
+
+	if (result.collection === "category_pages") {
+		return `/category/${path}`;
+	}
+
+	return `/${result.collection}/${path}`;
+}
+
+function resultLabel(collection: string): string {
+	if (collection === "games") return "Game";
+	if (collection === "category_pages") return "Category";
+	return collection;
+}
+---
+
+<Base
+	title={hasQuery ? `Search: ${query}` : "Search"}
+	description={
+		hasQuery
+			? `Search results for ${query} across the TTRPG Games directory.`
+			: "Search the TTRPG Games directory."
+	}
+>
+	<div class="stack">
+		<section class="hero-card">
+			<span class="eyebrow">Search</span>
+			<h1>{hasQuery ? `Results for "${query}"` : "Search the directory"}</h1>
+			<p>
+				{hasQuery
+					? `${results.items.length} matching result${results.items.length === 1 ? "" : "s"} across games and categories.`
+					: "Use the search box in the header to find games, genres, styles, and category landing pages."}
+			</p>
+		</section>
+
+		<section class="panel">
+			{
+				!hasQuery ? (
+					<div class="empty-state">Enter a search term above to browse matching games and category pages.</div>
+				) : cards.length === 0 ? (
+					<div class="empty-state">No results matched "{query}". Try a broader term.</div>
+				) : (
+					<div class="grid games">
+						{cards.map((card) => (
+							<article class:list={[card.kind === "game" ? "game-card" : "category-card"]}>
+								<a href={card.href}>
+									{
+										card.imageUrl && (
+											<img src={card.imageUrl} alt={card.title} loading="lazy" />
+										)
+									}
+									<div class="card-body">
+										<div class="kicker">{card.label}</div>
+										<h2>{card.title}</h2>
+										<p>{card.description}</p>
+									</div>
+								</a>
+							</article>
+						))}
+					</div>
+				)
+			}
+		</section>
+	</div>
+</Base>

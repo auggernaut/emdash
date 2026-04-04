@@ -1,0 +1,276 @@
+---
+import { getEmDashCollection } from "emdash";
+import Base from "../layouts/Base.astro";
+import type { Badge, CategoryPageEntry, GameEntry } from "../lib/types";
+
+const { entries: rawGames, cacheHint } = await getEmDashCollection("games");
+const { entries: rawCategoryPages } = await getEmDashCollection("category_pages");
+Astro.cache.set(cacheHint);
+
+const games = rawGames as unknown as GameEntry[];
+const categoryPages = rawCategoryPages as unknown as CategoryPageEntry[];
+
+const rankedGames = [...games].sort((left, right) => {
+	const leftRank = left.data.rank ?? Number.MAX_SAFE_INTEGER;
+	const rightRank = right.data.rank ?? Number.MAX_SAFE_INTEGER;
+	if (leftRank !== rightRank) return leftRank - rightRank;
+	return left.data.title.localeCompare(right.data.title);
+});
+
+const topRatedGames = rankedGames.filter((game) => game.data.is_top_rated).slice(0, 8);
+
+const categoryCards = [...categoryPages].sort((left, right) => {
+	if (left.data.type !== right.data.type) {
+		return left.data.type.localeCompare(right.data.type);
+	}
+	return left.data.title.localeCompare(right.data.title);
+});
+
+const preferredCategoryIds = [
+	"fantasy",
+	"highfantasy",
+	"darkfantasy",
+	"sciencefiction",
+	"cyberpunk",
+	"postapocalyptic",
+	"horror",
+	"cosmichorror",
+];
+
+function normalizeCategoryId(value: string): string {
+	return value.toLowerCase().replace(/[^a-z0-9]/g, "");
+}
+
+const popularCategories = [
+	...categoryCards.filter((category) =>
+		preferredCategoryIds.includes(normalizeCategoryId(category.id))
+	),
+	...categoryCards.filter(
+		(category) => !preferredCategoryIds.includes(normalizeCategoryId(category.id))
+	),
+].slice(0, 8);
+
+const recentlyAddedGames = [...games].slice(-12).reverse();
+
+const faqs = [
+	{
+		question: "What are tabletop RPGs?",
+		answer:
+			"Tabletop RPGs are games where players take on characters in a fictional world and make choices together through conversation, rules, and dice. Some lean tactical, others narrative, but all revolve around collaborative play.",
+	},
+	{
+		question: "How do I choose the right TTRPG for my group?",
+		answer:
+			"Start with the tone and play style you want. If your group likes story-first play, look for narrative-focused games. If they prefer crunchy combat or character builds, browse categories centered on tactics, skills, or progression.",
+	},
+	{
+		question: "Are these games only fantasy?",
+		answer:
+			"No. The directory covers fantasy, sci-fi, horror, mystery, post-apocalyptic settings, and more, along with categories for mechanics and campaign style.",
+	},
+	{
+		question: "Where should I begin if I’m new to TTRPGs?",
+		answer:
+			"Use the top-rated games section for strong starting points, then browse categories to narrow by genre, complexity, or mood. Each game page gives you a quick overview and links to learn more.",
+	},
+];
+
+function badgesFor(game: GameEntry): Badge[] {
+	return [
+		game.data.is_top_rated ? { label: "Top rated", tone: "strong" } : null,
+		game.data.is_free ? { label: "Free", tone: undefined } : null,
+		game.data.paid ? { label: "Paid", tone: undefined } : null,
+	].filter((badge): badge is Badge => badge !== null);
+}
+
+function cardCopy(game: GameEntry): string {
+	return game.data.blurb || game.data.review_summary || "";
+}
+---
+
+<Base
+	title="TTRPG Games Directory"
+	description="Discover tabletop RPGs by genre, style, and tone. Compare top-rated picks, explore categories, and find your next game."
+>
+	<div class="stack">
+		<section class="hero-card">
+			<span class="eyebrow">Find your next game</span>
+			<h1>Discover tabletop RPGs by genre, style, and tone.</h1>
+			<p>
+				Explore standout systems, compare what makes each one unique, and find
+				games that fit your group’s preferred mechanics, mood, and campaign style.
+			</p>
+			<div class="badges" style="margin-top: 18px;">
+				<span class="badge">{games.length} games to explore</span>
+				<span class="badge">{categoryPages.length} category guides</span>
+				<span class="badge">Curated top-rated picks</span>
+			</div>
+			<div class="badges" style="margin-top: 20px;">
+				<a href="/categories" class="button-link primary">Browse categories</a>
+				<a href="#top-rated-games" class="button-link">See top-rated games</a>
+			</div>
+		</section>
+
+		<section id="top-rated-games">
+			<div class="section-header">
+				<div>
+					<div class="kicker">Top picks</div>
+					<h2>Top Rated Games</h2>
+				</div>
+				<p>
+					Start with games that consistently stand out for strong player response
+					and broad appeal.
+				</p>
+			</div>
+			<div class="grid games">
+				{topRatedGames.map((game) => (
+					<article class="game-card">
+						<a href={`/item/${game.id}`}>
+							{
+								game.data.image_url && (
+									<img
+										src={game.data.image_url}
+										alt={game.data.title}
+										loading="lazy"
+									/>
+								)
+							}
+							<div class="card-body">
+								<div class="kicker">
+									{game.data.rank ? `Rank #${game.data.rank}` : "Directory pick"}
+								</div>
+								<h3>{game.data.title}</h3>
+								<p>{cardCopy(game)}</p>
+								<div class="badges" style="margin-top: 14px;">
+									{badgesFor(game).map((badge) => (
+										<span class="badge" data-tone={badge.tone}>
+											{badge.label}
+										</span>
+									))}
+								</div>
+							</div>
+						</a>
+					</article>
+				))}
+			</div>
+		</section>
+
+		<section>
+			<div class="section-header">
+				<div>
+					<div class="kicker">Explore by category</div>
+					<h2>Popular categories</h2>
+				</div>
+				<p>
+					Jump into the genres and play styles players reach for most often when
+					they’re narrowing down the field.
+				</p>
+			</div>
+			<div class="grid categories">
+				{popularCategories.map((category) => (
+					<article class="category-card">
+						<a href={`/category/${category.id}`}>
+							<div class="card-body">
+								<div class="kicker">{category.data.type}</div>
+								<h3>{category.data.title}</h3>
+								<p>{category.data.description}</p>
+							</div>
+						</a>
+					</article>
+				))}
+			</div>
+			<div class="section-actions">
+				<a href="/categories" class="button-link">Browse all categories</a>
+			</div>
+		</section>
+
+		<section id="recently-added-games">
+			<div class="section-header">
+				<div>
+					<div class="kicker">Fresh discoveries</div>
+					<h2>Recently Added Games</h2>
+				</div>
+				<p>
+					Check the newest entries in the current source order and see what’s been
+					added to the directory lately.
+				</p>
+			</div>
+			<div class="grid games">
+				{recentlyAddedGames.map((game) => (
+					<article class="game-card">
+						<a href={`/item/${game.id}`}>
+							{
+								game.data.image_url && (
+									<img
+										src={game.data.image_url}
+										alt={game.data.title}
+										loading="lazy"
+									/>
+								)
+							}
+							<div class="card-body">
+								<div class="kicker">Recently added</div>
+								<h3>{game.data.title}</h3>
+								<p>{cardCopy(game)}</p>
+							</div>
+						</a>
+					</article>
+				))}
+			</div>
+		</section>
+
+		<section class="panel">
+			<div class="section-header">
+				<div>
+					<div class="kicker">Helpful answers</div>
+					<h2>FAQs</h2>
+				</div>
+				<p>
+					A quick guide for visitors who are new to tabletop RPGs or deciding what
+					to try next.
+				</p>
+			</div>
+			<div class="faq-grid">
+				{faqs.map((faq) => (
+					<details class="faq-item">
+						<summary>{faq.question}</summary>
+						<p>{faq.answer}</p>
+					</details>
+				))}
+			</div>
+		</section>
+
+		<section id="submit-your-game" class="panel submit-panel">
+			<div class="section-header">
+				<div>
+					<div class="kicker">Share a recommendation</div>
+					<h2>Submit Your Game</h2>
+				</div>
+				<p>
+					Know a game that belongs in the directory? Send it our way so more
+					players can discover it.
+				</p>
+			</div>
+			<div class="submit-layout">
+				<div class="prose" style="font-size: 1rem;">
+					<p>
+						The best submissions include the game title, official website, cover
+						image, and a clear summary of what makes it worth exploring.
+					</p>
+					<p>
+						If you’re suggesting a correction, include the item name and the detail
+						that needs to be updated so it can be reviewed quickly.
+					</p>
+				</div>
+				<div class="stack" style="gap: 12px;">
+					<a href="https://www.ttrpg-games.com" class="button-link primary">
+						Submit on the main site
+					</a>
+					<a href="https://x.com/augustinbralley" class="button-link">
+						Contact on X
+					</a>
+				</div>
+			</div>
+		</section>
+	</div>
+</Base>

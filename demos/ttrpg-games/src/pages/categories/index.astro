@@ -1,0 +1,53 @@
+---
+import { getEmDashCollection } from "emdash";
+import Base from "../../layouts/Base.astro";
+import type { CategoryPageEntry } from "../../lib/types";
+
+const { entries: rawCategoryPages, cacheHint } =
+	await getEmDashCollection("category_pages");
+Astro.cache.set(cacheHint);
+
+const categoryPages = rawCategoryPages as unknown as CategoryPageEntry[];
+
+const sortedCategories = [...categoryPages].sort((left, right) => {
+	if (left.data.type !== right.data.type) {
+		return left.data.type.localeCompare(right.data.type);
+	}
+	return left.data.title.localeCompare(right.data.title);
+});
+---
+
+<Base
+	title="Browse TTRPG Categories"
+	description="Category landing pages imported from the source sheet."
+>
+	<div class="stack">
+		<section class="hero-card">
+			<span class="eyebrow">Imported categories</span>
+			<h1>Browse the directory by genre, theme, and mechanics.</h1>
+			<p>
+				Each category page came from your categories tab and is connected to an
+				archive route for the matching game entries.
+			</p>
+			<div class="badges" style="margin-top: 18px;">
+				<span class="badge">{sortedCategories.length} imported category pages</span>
+			</div>
+		</section>
+
+		<section>
+			<div class="grid categories">
+				{sortedCategories.map((category) => (
+					<article class="category-card">
+						<a href={`/category/${category.id}`}>
+							<div class="card-body">
+								<div class="kicker">{category.data.type}</div>
+								<h2>{category.data.title}</h2>
+								<p>{category.data.description}</p>
+							</div>
+						</a>
+					</article>
+				))}
+			</div>
+		</section>
+	</div>
+</Base>

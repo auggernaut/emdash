@@ -1,0 +1,101 @@
+---
+import { getTerm, getEmDashCollection, getEmDashEntry } from "emdash";
+import Base from "../../layouts/Base.astro";
+import type { CategoryPageEntry, GameEntry } from "../../lib/types";
+
+const { slug } = Astro.params;
+const term = slug ? await getTerm("category", slug) : null;
+
+if (!term) {
+	return Astro.redirect("/404");
+}
+
+const { entries: rawGames, cacheHint } = await getEmDashCollection("games", {
+	where: { category: term.slug },
+});
+Astro.cache.set(cacheHint);
+
+const { entry: rawCategoryPage } = await getEmDashEntry("category_pages", term.slug);
+
+const games = rawGames as unknown as GameEntry[];
+const categoryPage = rawCategoryPage as unknown as CategoryPageEntry | null;
+
+const rankedGames = [...games].sort((left, right) => {
+	const leftRank = left.data.rank ?? Number.MAX_SAFE_INTEGER;
+	const rightRank = right.data.rank ?? Number.MAX_SAFE_INTEGER;
+	if (leftRank !== rightRank) return leftRank - rightRank;
+	return left.data.title.localeCompare(right.data.title);
+});
+
+function cardCopy(game: GameEntry): string {
+	return game.data.blurb || game.data.review_summary || "";
+}
+---
+
+<Base
+	title={`${term.label} RPGs`}
+	description={categoryPage?.data.description || `Browse tabletop RPGs tagged ${term.label}.`}
+	content={categoryPage ? { collection: "category_pages", id: categoryPage.data.id, slug } : undefined}
+>
+	<div class="stack">
+		<section class="hero-card">
+			<span class="eyebrow">{categoryPage?.data.type || "Category archive"}</span>
+			<h1>{term.label}</h1>
+			<p>
+				{categoryPage?.data.description ||
+					`Browse imported TTRPG listings tagged with ${term.label}.`}
+			</p>
+			<div class="badges" style="margin-top: 18px;">
+				<span class="badge">{rankedGames.length} games</span>
+				<a href="/categories" class="button-link">All categories</a>
+			</div>
+		</section>
+
+		{
+			categoryPage?.data.body_html && (
+				<section class="panel prose" set:html={categoryPage.data.body_html} />
+			)
+		}
+
+		<section>
+			<div class="section-header">
+				<div>
+					<div class="kicker">Matching games</div>
+					<h2>Listings in this category</h2>
+				</div>
+			</div>
+			{
+				rankedGames.length === 0 ? (
+					<div class="empty-state">No games are currently assigned to this category.</div>
+				) : (
+					<div class="grid games">
+						{rankedGames.map((game) => (
+							<article class="game-card">
+								<a href={`/item/${game.id}`}>
+									{
+										game.data.image_url && (
+											<img
+												src={game.data.image_url}
+												alt={game.data.title}
+												loading="lazy"
+											/>
+										)
+									}
+									<div class="card-body">
+										<div class="kicker">
+											{game.data.rank
+												? `Rank #${game.data.rank}`
+												: "Directory entry"}
+										</div>
+										<h3>{game.data.title}</h3>
+										<p>{cardCopy(game)}</p>
+									</div>
+								</a>
+							</article>
+						))}
+					</div>
+				)
+			}
+		</section>
+	</div>
+</Base>

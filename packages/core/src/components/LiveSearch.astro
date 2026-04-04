@@ -34,6 +34,8 @@ export interface Props {
 	limit?: number;
 	/** CSS class for the container */
 	class?: string;
+	/** Inline style for the container */
+	style?: string;
 	/** CSS class for the input */
 	inputClass?: string;
 	/** CSS class for the results container */
@@ -48,6 +50,10 @@ export interface Props {
 	suggestMode?: boolean;
 	/** Expand input width on focus (provide collapsed and expanded widths) */
 	expandOnFocus?: { collapsed: string; expanded: string };
+	/** Search results page to navigate to when pressing Enter without a focused result */
+	searchPage?: string;
+	/** Per-collection URL templates, e.g. { posts: "/blog/:path" } */
+	routeMap?: Record<string, string>;
 }
 
 const {
@@ -57,6 +63,7 @@ const {
 	debounce = 300,
 	limit = 10,
 	class: className = "",
+	style: styleAttr = "",
 	inputClass = "",
 	resultsClass = "",
 	resultClass = "",
@@ -64,6 +71,8 @@ const {
 	autofocus = false,
 	suggestMode = false,
 	expandOnFocus,
+	searchPage = "",
+	routeMap = {},
 } = Astro.props;
 
 const config = {
@@ -74,11 +83,14 @@ const config = {
 	showSnippets,
 	suggestMode,
 	expandOnFocus: expandOnFocus ?? null,
+	searchPage,
+	routeMap,
 };
 ---
 
 <emdash-live-search
 	class:list={["emdash-live-search", className]}
+	style={styleAttr}
 	data-config={JSON.stringify(config)}
 >
 	<input
@@ -139,6 +151,8 @@ const config = {
 		showSnippets: boolean;
 		suggestMode: boolean;
 		expandOnFocus: { collapsed: string; expanded: string } | null;
+		searchPage: string;
+		routeMap: Record<string, string>;
 	}
 
 	class EmDashLiveSearch extends HTMLElement {
@@ -156,6 +170,8 @@ const config = {
 			showSnippets: true,
 			suggestMode: false,
 			expandOnFocus: null,
+			searchPage: "",
+			routeMap: {},
 		};
 		private debounceTimer: ReturnType<typeof setTimeout> | null = null;
 		private abortController: AbortController | null = null;
@@ -276,8 +292,35 @@ const config = {
 				) as HTMLAnchorElement | null;
 				if (focused?.href) {
 					window.location.href = focused.href;
+					return;
+				}
+
+				const query = this.input?.value.trim();
+				if (query && this.config.searchPage) {
+					const url = new URL(this.config.searchPage, window.location.origin);
+					url.searchParams.set("q", query);
+					window.location.href = url.toString();
 				}
 			}
+		}
+
+		private buildResultUrl(result: {
+			collection: string;
+			id: string;
+			slug?: string | null;
+		}): string {
+			const path = result.slug ?? result.id;
+			const template = this.config.routeMap[result.collection];
+
+			if (!template) {
+				return `/${result.collection}/${path}`;
+			}
+
+			return template
+				.replaceAll(":collection", result.collection)
+				.replaceAll(":id", result.id)
+				.replaceAll(":slug", result.slug ?? result.id)
+				.replaceAll(":path", path);
 		}
 
 		private navigateResults(direction: number) {
@@ -376,9 +419,7 @@ const config = {
 				const link = clone.querySelector("a");
 
 				if (link) {
-					// Build URL - use slug if available, otherwise id
-					const path = result.slug ?? result.id;
-					link.href = `/${result.collection}/${path}`;
+					link.href = this.buildResultUrl(result);
 
 					// Fill in title
 					const titleEl = link.querySelector(
@@ -438,8 +479,8 @@ const config = {
 				const clone = this.template.content.cloneNode(true) as DocumentFragment;
 				const link = clone.querySelector("a");
 
-				if (link) {
-					link.href = `/${suggestion.collection}/${suggestion.id}`;
+					if (link) {
+						link.href = this.buildResultUrl(suggestion);
 
 					const titleEl = link.querySelector(
 						".emdash-live-search-result-title"

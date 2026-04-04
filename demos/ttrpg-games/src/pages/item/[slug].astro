@@ -1,0 +1,175 @@
+---
+import { getEmDashEntry, getEntryTerms, getSeoMeta } from "emdash";
+import Base from "../../layouts/Base.astro";
+import type { Badge, GameEntry, RelatedGame } from "../../lib/types";
+
+const { slug } = Astro.params;
+
+if (!slug) {
+	return Astro.redirect("/404");
+}
+
+const { entry: rawGame, cacheHint } = await getEmDashEntry("games", slug);
+
+if (!rawGame) {
+	return Astro.redirect("/404");
+}
+
+Astro.cache.set(cacheHint);
+
+const game = rawGame as unknown as GameEntry;
+const categories = await getEntryTerms("games", game.data.id, "category");
+
+const relatedGames: RelatedGame[] = Array.isArray(game.data.related)
+	? game.data.related
+	: [];
+
+const seo = getSeoMeta(game, {
+	siteTitle: "TTRPG Games Directory",
+	siteUrl: Astro.url.origin,
+	path: `/item/${slug}`,
+});
+
+const badges: Badge[] = [
+	game.data.rank ? { label: `Rank #${game.data.rank}`, tone: "strong" } : null,
+	game.data.is_top_rated ? { label: "Top rated", tone: "strong" } : null,
+	game.data.is_free ? { label: "Free", tone: undefined } : null,
+	game.data.paid ? { label: "Paid", tone: undefined } : null,
+].filter((badge): badge is Badge => badge !== null);
+---
+
+<Base
+	title={seo.title}
+	description={seo.description || game.data.review_summary}
+	canonical={seo.canonical}
+	image={game.data.image_url || seo.ogImage}
+	content={{ collection: "games", id: game.data.id, slug }}
+>
+	<div class="stack">
+		<section class="hero-card">
+			<div class="detail-layout">
+				<div class="stack" style="gap: 18px;">
+					<span class="eyebrow">Directory item</span>
+					<h1>{game.data.title}</h1>
+					<p>{game.data.blurb || game.data.review_summary}</p>
+					<div class="badges">
+						{badges.map((badge) => (
+							<span class="badge" data-tone={badge.tone}>
+								{badge.label}
+							</span>
+						))}
+					</div>
+					{
+						categories.length > 0 && (
+							<div class="term-list">
+								{categories.map((term) => (
+									<a class="term" href={`/category/${term.slug}`}>
+										{term.label}
+									</a>
+								))}
+							</div>
+						)
+					}
+					<div class="badges">
+						{
+							game.data.website_url && (
+								<a class="button-link primary" href={game.data.website_url}>
+									Visit game site
+								</a>
+							)
+						}
+						{
+							game.data.reviews_url && (
+								<a class="button-link" href={game.data.reviews_url}>
+									View reviews or buy
+								</a>
+							)
+						}
+					</div>
+				</div>
+				<div class="game-hero">
+					{
+						game.data.image_url ? (
+							<img src={game.data.image_url} alt={game.data.title} />
+						) : (
+							<div class="meta-card">
+								<h2>No artwork imported</h2>
+								<p>This entry did not include an image URL in the source tab.</p>
+							</div>
+						)
+					}
+				</div>
+			</div>
+		</section>
+
+		<div class="detail-layout">
+			<section class="panel prose">
+				{
+					game.data.body_html ? (
+						<div set:html={game.data.body_html} />
+					) : (
+						<p>{game.data.review_summary || game.data.blurb}</p>
+					)
+				}
+			</section>
+
+				<aside class="stack" style="gap: 20px;">
+					<section class="meta-card">
+						<div class="kicker">Review synthesis</div>
+						<h2>What players think</h2>
+						<p>{game.data.review_summary || "No review synthesis imported."}</p>
+						{
+							game.data.reviews_url && (
+								<p class="meta-note" style="margin-top: 12px;">
+									Generated from published player reviews.{" "}
+									<a href={game.data.reviews_url}>Read the source reviews</a>
+								</p>
+							)
+						}
+					</section>
+
+				{
+					game.data.notes && (
+						<section class="meta-card">
+							<div class="kicker">Notes</div>
+							<h2>Import notes</h2>
+							<p>{game.data.notes}</p>
+						</section>
+					)
+				}
+
+				{
+					relatedGames.length > 0 && (
+						<section class="meta-card">
+							<div class="kicker">Related items</div>
+							<h2>More to explore</h2>
+							<div class="stack" style="gap: 14px;">
+								{relatedGames.map((related) => (
+									<a class="related-item" href={`/item/${related.slug}`}>
+										{
+											related.image_url && (
+												<img src={related.image_url} alt={related.title} />
+											)
+										}
+										<div class="related-item-copy">
+											<strong>{related.title}</strong>
+											{
+												related.description && (
+													<div
+														class="muted"
+														style="margin-top: 6px;"
+														set:html={related.description}
+													/>
+												)
+											}
+										</div>
+									</a>
+								))}
+							</div>
+						</section>
+					)
+				}
+			</aside>
+		</div>
+	</div>
+</Base>
