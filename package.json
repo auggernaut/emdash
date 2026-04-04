@@ -24,7 +24,8 @@
 		"lint:fix": "oxlint --type-aware --fix",
 		"knip": "knip --no-exit-code --exclude unlisted,unresolved,exports,types,duplicates",
 		"new": "create-emdash",
-		"screenshots": "node scripts/screenshot-all-templates.mjs"
+		"screenshots": "node scripts/screenshot-all-templates.mjs",
+		"sync:upstream": "git fetch upstream && git checkout main && git rebase upstream/main && git push origin main"
 	},
 	"keywords": [],
 	"author": "Matt Kane",
