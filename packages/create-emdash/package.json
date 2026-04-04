@@ -1,6 +1,6 @@
 {
   "name": "create-emdash",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Create a new EmDash CMS project",
   "type": "module",
   "bin": "./dist/index.mjs",
@@ -14,10 +14,11 @@
   },
   "dependencies": {
     "@clack/prompts": "^0.10.0",
-    "picocolors": "^1.1.1",
-    "giget": "^1.2.3"
+    "giget": "^1.2.3",
+    "picocolors": "^1.1.1"
   },
   "devDependencies": {
+    "@types/node": "catalog:",
     "tsdown": "catalog:",
     "typescript": "catalog:"
   },
@@ -31,9 +32,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/cloudflare/emdash.git",
+    "url": "git+https://github.com/emdash-cms/emdash.git",
     "directory": "packages/create-emdash"
-  },
-  "peerDependencies": {},
-  "optionalDependencies": {}
+  }
 }

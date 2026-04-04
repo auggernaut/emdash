@@ -4,8 +4,8 @@
  * Tests the full device flow lifecycle against a real in-memory SQLite database.
  */
 
-import { Role } from "@emdashcms/auth";
-import type { RoleLevel } from "@emdashcms/auth";
+import { Role } from "@emdash-cms/auth";
+import type { RoleLevel } from "@emdash-cms/auth";
 import type { Kysely } from "kysely";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
@@ -172,11 +172,7 @@ describe("Device Flow: Full Lifecycle", () => {
 	});
 
 	it("should handle denied authorization", async () => {
-		const codeResult = await handleDeviceCodeRequest(
-			db,
-			{},
-			"https://example.com/_emdash/device",
-		);
+		const codeResult = await handleDeviceCodeRequest(db, {}, "https://example.com/_emdash/device");
 		expect(codeResult.success).toBe(true);
 		if (!codeResult.success) return;
 
@@ -199,11 +195,7 @@ describe("Device Flow: Full Lifecycle", () => {
 	});
 
 	it("should normalize user codes (strip hyphens, case-insensitive)", async () => {
-		const codeResult = await handleDeviceCodeRequest(
-			db,
-			{},
-			"https://example.com/_emdash/device",
-		);
+		const codeResult = await handleDeviceCodeRequest(db, {}, "https://example.com/_emdash/device");
 		expect(codeResult.success).toBe(true);
 		if (!codeResult.success) return;
 
@@ -263,11 +255,7 @@ describe("Device Token Exchange: Error Cases", () => {
 describe("Token Refresh", () => {
 	it("should exchange a refresh token for a new access token", async () => {
 		// Complete a device flow first to get tokens
-		const codeResult = await handleDeviceCodeRequest(
-			db,
-			{},
-			"https://example.com/_emdash/device",
-		);
+		const codeResult = await handleDeviceCodeRequest(db, {}, "https://example.com/_emdash/device");
 		expect(codeResult.success).toBe(true);
 		if (!codeResult.success) return;
 
@@ -330,11 +318,7 @@ describe("Token Refresh", () => {
 describe("Token Revoke", () => {
 	it("should revoke an access token", async () => {
 		// Get tokens via device flow
-		const codeResult = await handleDeviceCodeRequest(
-			db,
-			{},
-			"https://example.com/_emdash/device",
-		);
+		const codeResult = await handleDeviceCodeRequest(db, {}, "https://example.com/_emdash/device");
 		if (!codeResult.success) return;
 
 		await handleDeviceAuthorize(db, "user-1", Role.ADMIN, {
@@ -365,11 +349,7 @@ describe("Token Revoke", () => {
 
 	it("should revoke a refresh token and its access tokens", async () => {
 		// Get tokens via device flow
-		const codeResult = await handleDeviceCodeRequest(
-			db,
-			{},
-			"https://example.com/_emdash/device",
-		);
+		const codeResult = await handleDeviceCodeRequest(db, {}, "https://example.com/_emdash/device");
 		if (!codeResult.success) return;
 
 		await handleDeviceAuthorize(db, "user-1", Role.ADMIN, {

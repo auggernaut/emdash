@@ -1,6 +1,6 @@
 {
-	"name": "@emdashcms/plugin-color",
-	"version": "0.0.1",
+	"name": "@emdash-cms/plugin-color",
+	"version": "0.1.0",
 	"description": "Color picker field widget for EmDash CMS",
 	"type": "module",
 	"main": "src/index.ts",
@@ -8,8 +8,17 @@
 		".": "./src/index.ts",
 		"./admin": "./src/admin.tsx"
 	},
-	"files": ["src"],
-	"keywords": ["emdash", "cms", "plugin", "color", "picker", "field-widget"],
+	"files": [
+		"src"
+	],
+	"keywords": [
+		"emdash",
+		"cms",
+		"plugin",
+		"color",
+		"picker",
+		"field-widget"
+	],
 	"author": "Matt Kane",
 	"license": "MIT",
 	"peerDependencies": {
@@ -21,5 +30,10 @@
 	},
 	"scripts": {
 		"typecheck": "tsgo --noEmit"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/emdash-cms/emdash.git",
+		"directory": "packages/plugins/color"
 	}
 }

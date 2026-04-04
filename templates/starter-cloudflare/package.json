@@ -1,6 +1,6 @@
 {
-	"name": "@emdashcms/template-starter-cloudflare",
-	"version": "0.0.1",
+	"name": "@emdash-cms/template-starter-cloudflare",
+	"version": "0.0.3",
 	"private": true,
 	"type": "module",
 	"scripts": {
@@ -15,7 +15,7 @@
 	"dependencies": {
 		"@astrojs/cloudflare": "catalog:",
 		"@astrojs/react": "catalog:",
-		"@emdashcms/cloudflare": "workspace:*",
+		"@emdash-cms/cloudflare": "workspace:*",
 		"astro": "catalog:",
 		"emdash": "workspace:*",
 		"react": "catalog:",

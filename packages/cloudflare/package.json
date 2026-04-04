@@ -1,6 +1,6 @@
 {
-  "name": "@emdashcms/cloudflare",
-  "version": "0.0.0",
+  "name": "@emdash-cms/cloudflare",
+  "version": "0.1.0",
   "description": "Cloudflare adapters for EmDash - D1, R2, Access, and Worker Loader sandbox",
   "type": "module",
   "main": "dist/index.mjs",
@@ -91,10 +91,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/cloudflare/emdash.git",
+    "url": "git+https://github.com/emdash-cms/emdash.git",
     "directory": "packages/cloudflare"
   },
-  "homepage": "https://github.com/cloudflare/emdash",
+  "homepage": "https://github.com/emdash-cms/emdash",
   "keywords": [
     "emdash",
     "cloudflare",

@@ -235,9 +235,24 @@ function ContentListPage() {
 	// Default to defaultLocale when i18n is enabled and no locale specified
 	const activeLocale = i18n ? (localeParam ?? i18n.defaultLocale) : undefined;
 
-	const { data, isLoading, error } = useQuery({
+	const {
+		data,
+		fetchNextPage,
+		hasNextPage,
+		isFetchingNextPage,
+		isLoading,
+		error,
+	} = useInfiniteQuery({
 		queryKey: ["content", collection, { locale: activeLocale }],
-		queryFn: () => fetchContentList(collection, { locale: activeLocale }),
+		queryFn: ({ pageParam }) =>
+			fetchContentList(collection, {
+				locale: activeLocale,
+				cursor: pageParam as string | undefined,
+				limit: 100,
+			}),
+		initialPageParam: undefined as string | undefined,
+		getNextPageParam: (lastPage) => lastPage.nextCursor,
+		enabled: !!manifest,
 	});
 
 	// Fetch trashed items
@@ -327,14 +342,20 @@ function ContentListPage() {
 		});
 	};
 
+	const items = React.useMemo(() => {
+		return data?.pages.flatMap((page) => page.items) || [];
+	}, [data]);
+
 	return (
 		<ContentList
 			collection={collection}
 			collectionLabel={collectionConfig.label}
-			items={data?.items || []}
+			items={items}
 			trashedItems={trashedData?.items || []}
-			isLoading={isLoading}
+			isLoading={isLoading || isFetchingNextPage}
 			isTrashedLoading={isTrashedLoading}
+			hasMore={!!hasNextPage}
+			onLoadMore={() => void fetchNextPage()}
 			trashedCount={trashedData?.items?.length || 0}
 			onDelete={(id) => deleteMutation.mutate(id)}
 			onRestore={(id) => restoreMutation.mutate(id)}
@@ -469,7 +490,7 @@ const contentEditRoute = createRoute({
 	component: ContentEditPage,
 });
 
-// Editor role level from @emdashcms/auth
+// Editor role level from @emdash-cms/auth
 const ROLE_EDITOR = 40;
 
 function ContentEditPage() {
@@ -889,7 +910,7 @@ const commentsRoute = createRoute({
 	component: CommentsPage,
 });
 
-// Admin role level from @emdashcms/auth
+// Admin role level from @emdash-cms/auth
 const ROLE_ADMIN = 50;
 
 function CommentsPage() {

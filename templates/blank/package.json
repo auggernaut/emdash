@@ -1,6 +1,6 @@
 {
-  "name": "@emdashcms/template-blank",
-  "version": "0.0.1",
+  "name": "@emdash-cms/template-blank",
+  "version": "0.0.3",
   "private": true,
   "type": "module",
   "scripts": {

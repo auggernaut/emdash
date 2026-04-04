@@ -1,6 +1,7 @@
 {
-  "name": "@emdashcms/marketplace",
-  "version": "0.0.0",
+  "name": "@emdash-cms/marketplace",
+  "version": "0.0.1",
+  "private": true,
   "description": "Plugin marketplace Worker for EmDash CMS",
   "type": "module",
   "main": "src/index.ts",
@@ -26,10 +27,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/cloudflare/emdash.git",
+    "url": "git+https://github.com/emdash-cms/emdash.git",
     "directory": "packages/marketplace"
   },
-  "homepage": "https://github.com/cloudflare/emdash",
+  "homepage": "https://github.com/emdash-cms/emdash",
   "keywords": [
     "emdash",
     "cms",

@@ -1,19 +1,19 @@
 {
-	"name": "@emdashcms/playground",
-	"version": "0.0.1",
+	"name": "@emdash-cms/playground",
+	"version": "0.0.3",
 	"private": true,
 	"type": "module",
 	"scripts": {
 		"dev": "astro dev",
 		"build": "astro build",
 		"preview": "astro preview",
-		"deploy": "astro build && wrangler deploy",
+		"deploy": "wrangler deploy",
 		"typecheck": "astro check"
 	},
 	"dependencies": {
 		"@astrojs/cloudflare": "catalog:",
 		"@astrojs/react": "catalog:",
-		"@emdashcms/cloudflare": "workspace:*",
+		"@emdash-cms/cloudflare": "workspace:*",
 		"astro": "catalog:",
 		"emdash": "workspace:*",
 		"react": "catalog:",

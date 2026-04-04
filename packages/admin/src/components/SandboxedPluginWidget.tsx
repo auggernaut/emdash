@@ -5,9 +5,9 @@
  * interaction with page="widget:<widgetId>" to the plugin's admin route.
  */
 
+import { BlockRenderer } from "@emdash-cms/blocks";
+import type { Block, BlockInteraction, BlockResponse } from "@emdash-cms/blocks";
 import { CircleNotch } from "@phosphor-icons/react";
-import { BlockRenderer } from "@emdashcms/blocks";
-import type { Block, BlockInteraction, BlockResponse } from "@emdashcms/blocks";
 import { useCallback, useEffect, useState } from "react";
 
 import { apiFetch, API_BASE } from "../lib/api/client.js";

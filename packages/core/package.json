@@ -1,6 +1,6 @@
 {
   "name": "emdash",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Astro-native CMS with WordPress migration support",
   "type": "module",
   "main": "dist/index.mjs",
@@ -149,12 +149,13 @@
     "prepublishOnly": "node --run build",
     "typecheck": "tsgo --noEmit",
     "check": "publint && attw --pack --ignore-rules=cjs-resolves-to-esm --ignore-rules=no-resolution --ignore-rules=internal-resolution-error",
-    "test": "vitest"
+    "test": "vitest",
+    "test:smoke": "vitest run --config vitest.smoke.config.ts"
   },
   "dependencies": {
-    "@emdashcms/admin": "workspace:*",
-    "@emdashcms/auth": "workspace:*",
-    "@emdashcms/gutenberg-to-portable-text": "workspace:*",
+    "@emdash-cms/admin": "workspace:*",
+    "@emdash-cms/auth": "workspace:*",
+    "@emdash-cms/gutenberg-to-portable-text": "workspace:*",
     "@floating-ui/react": "^0.27.16",
     "@modelcontextprotocol/sdk": "^1.26.0",
     "@portabletext/toolkit": "^5.0.1",
@@ -205,7 +206,7 @@
   "devDependencies": {
     "@apidevtools/swagger-parser": "^12.1.0",
     "@arethetypeswrong/cli": "catalog:",
-    "@emdashcms/blocks": "workspace:*",
+    "@emdash-cms/blocks": "workspace:*",
     "@types/better-sqlite3": "^7.6.12",
     "@types/pg": "^8.16.0",
     "@types/sanitize-html": "^2.16.0",
@@ -220,10 +221,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/cloudflare/emdash.git",
+    "url": "git+https://github.com/emdash-cms/emdash.git",
     "directory": "packages/core"
   },
-  "homepage": "https://github.com/cloudflare/emdash",
+  "homepage": "https://github.com/emdash-cms/emdash",
   "keywords": [
     "astro",
     "cms",

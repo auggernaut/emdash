@@ -8,10 +8,10 @@
  * authInfo to simulate different users and roles.
  */
 
+import { Role } from "@emdash-cms/auth";
+import type { RoleLevel } from "@emdash-cms/auth";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { InMemoryTransport } from "@modelcontextprotocol/sdk/inMemory.js";
-import { Role } from "@emdashcms/auth";
-import type { RoleLevel } from "@emdashcms/auth";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import type { EmDashHandlers } from "../../../src/astro/types.js";

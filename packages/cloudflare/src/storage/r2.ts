@@ -5,7 +5,7 @@
  * This avoids the AWS SDK overhead and works with the native R2 API.
  *
  * This module imports directly from cloudflare:workers to access R2 bindings.
- * Do NOT import this at config time - use { r2 } from "@emdashcms/cloudflare" instead.
+ * Do NOT import this at config time - use { r2 } from "@emdash-cms/cloudflare" instead.
  *
  * For Astro 6 / Cloudflare adapter v13+:
  * - Bindings are accessed via `import { env } from 'cloudflare:workers'`
@@ -61,11 +61,7 @@ export class R2Storage implements Storage {
 			};
 		} catch (error) {
 			if (error instanceof EmDashStorageError) throw error;
-			throw new EmDashStorageError(
-				`Failed to upload file: ${options.key}`,
-				"UPLOAD_FAILED",
-				error,
-			);
+			throw new EmDashStorageError(`Failed to upload file: ${options.key}`, "UPLOAD_FAILED", error);
 		}
 	}
 
@@ -107,11 +103,7 @@ export class R2Storage implements Storage {
 			const object = await this.bucket.head(key);
 			return object !== null;
 		} catch (error) {
-			throw new EmDashStorageError(
-				`Failed to check file existence: ${key}`,
-				"HEAD_FAILED",
-				error,
-			);
+			throw new EmDashStorageError(`Failed to check file existence: ${key}`, "HEAD_FAILED", error);
 		}
 	}
 

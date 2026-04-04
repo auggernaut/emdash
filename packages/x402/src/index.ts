@@ -1,5 +1,5 @@
 /**
- * @emdashcms/x402 -- x402 Payment Integration for Astro
+ * @emdash-cms/x402 -- x402 Payment Integration for Astro
  *
  * An Astro integration that provides x402 payment enforcement via
  * Astro.locals.x402. Supports bot-only mode using Cloudflare Bot Management.
@@ -7,7 +7,7 @@
  * @example
  * ```ts
  * // astro.config.mjs
- * import { x402 } from "@emdashcms/x402";
+ * import { x402 } from "@emdash-cms/x402";
  *
  * export default defineConfig({
  *   integrations: [
@@ -46,10 +46,12 @@ const RESOLVED_VIRTUAL_MODULE_ID = "\0" + VIRTUAL_MODULE_ID;
  */
 export function x402(config: X402Config): AstroIntegration {
 	return {
-		name: "@emdashcms/x402",
+		name: "@emdash-cms/x402",
 		hooks: {
 			"astro:config:setup": ({ addMiddleware, updateConfig }) => {
-				// Inject the virtual module that provides config to the middleware
+				// Inject the virtual module that provides config to the middleware.
+				// The middleware must be excluded from Vite's SSR dependency optimizer
+				// because esbuild cannot resolve virtual modules — only Vite plugins can.
 				updateConfig({
 					vite: {
 						plugins: [
@@ -65,12 +67,20 @@ export function x402(config: X402Config): AstroIntegration {
 								},
 							},
 						],
+						optimizeDeps: {
+							exclude: ["@emdash-cms/x402"],
+						},
+						ssr: {
+							optimizeDeps: {
+								exclude: ["@emdash-cms/x402"],
+							},
+						},
 					},
 				});
 
 				// Register the middleware that puts the enforcer on locals
 				addMiddleware({
-					entrypoint: "@emdashcms/x402/middleware",
+					entrypoint: "@emdash-cms/x402/middleware",
 					order: "pre",
 				});
 			},
