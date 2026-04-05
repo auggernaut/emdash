@@ -256,7 +256,12 @@ const seed = {
 				{ slug: "is_top_rated", label: "Top Rated", type: "boolean" },
 				{ slug: "verified", label: "Verified", type: "boolean" },
 				{ slug: "paid", label: "Paid", type: "boolean" },
-				{ slug: "related", label: "Related Games", type: "json" },
+				{
+					slug: "related",
+					label: "Related Games",
+					type: "json",
+					widget: "ttrpg-related:editor",
+				},
 			],
 		},
 		{

@@ -95,7 +95,8 @@
 				{
 					"slug": "related",
 					"label": "Related Games",
-					"type": "json"
+					"type": "json",
+					"widget": "ttrpg-related:editor"
 				}
 			]
 		},
