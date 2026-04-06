@@ -1,5 +1,5 @@
 ---
-import { getEmDashEntry, getEntryTerms, getSeoMeta } from "emdash";
+import { getEmDashCollection, getEmDashEntry, getEntryTerms, getSeoMeta } from "emdash";
 import Base from "../../layouts/Base.astro";
 import type { Badge, GameEntry, RelatedGame } from "../../lib/types";
 
@@ -20,9 +20,36 @@ Astro.cache.set(cacheHint);
 const game = rawGame as unknown as GameEntry;
 const categories = await getEntryTerms("games", game.data.id, "category");
 
+const { entries: rawGames } = await getEmDashCollection("games");
+const games = rawGames as unknown as GameEntry[];
+
 const relatedGames: RelatedGame[] = Array.isArray(game.data.related)
 	? game.data.related
 	: [];
+
+const normalizeLookupValue = (value: string | undefined | null) =>
+	(value ?? "").toLowerCase().normalize("NFKD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]/g, "");
+
+const canonicalSlugByLookup = new Map<string, string>();
+
+for (const entry of games) {
+	canonicalSlugByLookup.set(entry.id, entry.id);
+	canonicalSlugByLookup.set(normalizeLookupValue(entry.id), entry.id);
+	canonicalSlugByLookup.set(normalizeLookupValue(entry.data.title), entry.id);
+}
+
+const resolvedRelatedGames = relatedGames.map((related) => {
+	const canonicalSlug =
+		canonicalSlugByLookup.get(related.slug) ??
+		canonicalSlugByLookup.get(normalizeLookupValue(related.slug)) ??
+		canonicalSlugByLookup.get(normalizeLookupValue(related.title)) ??
+		related.slug;
+
+	return {
+		...related,
+		href: `/item/${canonicalSlug}`,
+	};
+});
 
 const seo = getSeoMeta(game, {
 	siteTitle: "TTRPG Games Directory",
@@ -36,6 +63,65 @@ const badges: Badge[] = [
 	game.data.is_free ? { label: "Free", tone: undefined } : null,
 	game.data.paid ? { label: "Paid", tone: undefined } : null,
 ].filter((badge): badge is Badge => badge !== null);
+
+const stripTags = (value: string) => value.replace(/<[^>]+>/g, "").trim();
+
+const decodeHtmlEntities = (value: string) =>
+	value
+		.replace(/&nbsp;/gi, " ")
+		.replace(/&amp;/gi, "&")
+		.replace(/&quot;/gi, '"')
+		.replace(/&#39;/gi, "'")
+		.replace(/&lt;/gi, "<")
+		.replace(/&gt;/gi, ">");
+
+const extractAtAGlance = (html?: string | null) => {
+	if (!html) return null;
+
+	const trimmed = html.trim();
+	const paragraphMatch = trimmed.match(
+		/^<p>\s*(?:<strong>)?\s*At-a-glance:\s*(?:<\/strong>)?\s*([\s\S]*?)<\/p>/i,
+	);
+
+	if (paragraphMatch?.[1]) {
+		return decodeHtmlEntities(stripTags(paragraphMatch[1]));
+	}
+
+	const plainMatch = trimmed.match(/^At-a-glance:\s*([\s\S]*?)(?:\n\s*\n|<h2\b|$)/i);
+
+	if (plainMatch?.[1]) {
+		return decodeHtmlEntities(stripTags(plainMatch[1]));
+	}
+
+	return null;
+};
+
+const stripLeadingAtAGlance = (html?: string | null) => {
+	if (!html) return html;
+
+	const stripped = html
+		.trim()
+		.replace(/^<p>\s*(?:<strong>)?\s*At-a-glance:\s*(?:<\/strong>)?\s*[\s\S]*?<\/p>\s*/i, "")
+		.replace(/^At-a-glance:\s*[\s\S]*?(?:\n\s*\n(?=<)|\n\s*\n|(?=<h2\b)|$)\s*/i, "");
+
+	return stripped || null;
+};
+
+const escapeHtml = (value: string) =>
+	value
+		.replace(/&/g, "&amp;")
+		.replace(/</g, "&lt;")
+		.replace(/>/g, "&gt;")
+		.replace(/"/g, "&quot;")
+		.replace(/'/g, "&#39;");
+
+const atAGlance = (game.data.at_a_glance?.trim() || extractAtAGlance(game.data.body_html)) ?? null;
+const atAGlanceMarkup = atAGlance
+	? /<[a-z][\s\S]*>/i.test(atAGlance)
+		? atAGlance
+		: `<p>${escapeHtml(atAGlance).replace(/\n/g, "<br />")}</p>`
+	: null;
+const bodyHtml = atAGlance ? stripLeadingAtAGlance(game.data.body_html) : game.data.body_html;
 ---
 
 <Base
@@ -45,13 +131,20 @@ const badges: Badge[] = [
 	image={game.data.image_url || seo.ogImage}
 	content={{ collection: "games", id: game.data.id, slug }}
 >
-	<div class="stack">
-		<section class="hero-card">
-			<div class="detail-layout">
-				<div class="stack" style="gap: 18px;">
-					<span class="eyebrow">Directory item</span>
-					<h1>{game.data.title}</h1>
-					<p>{game.data.blurb || game.data.review_summary}</p>
+		<div class="stack">
+			<section class="hero-card">
+				<div class="detail-layout item-hero-layout">
+					<div class="stack" style="gap: 18px;">
+						<h1>{game.data.title}</h1>
+						<p>{game.data.blurb || game.data.review_summary}</p>
+						{
+							atAGlanceMarkup && (
+								<section class="meta-card at-a-glance-panel">
+									<div class="kicker">At-a-glance</div>
+									<div class="at-a-glance-copy" set:html={atAGlanceMarkup} />
+								</section>
+							)
+						}
 					<div class="badges">
 						{badges.map((badge) => (
 							<span class="badge" data-tone={badge.tone}>
@@ -105,8 +198,8 @@ const badges: Badge[] = [
 		<div class="detail-layout">
 			<section class="panel prose">
 				{
-					game.data.body_html ? (
-						<div set:html={game.data.body_html} />
+					bodyHtml ? (
+						<div set:html={bodyHtml} />
 					) : (
 						<p>{game.data.review_summary || game.data.blurb}</p>
 					)
@@ -139,13 +232,13 @@ const badges: Badge[] = [
 				}
 
 				{
-					relatedGames.length > 0 && (
+					resolvedRelatedGames.length > 0 && (
 						<section class="meta-card">
 							<div class="kicker">Related items</div>
 							<h2>More to explore</h2>
 							<div class="stack" style="gap: 14px;">
-								{relatedGames.map((related) => (
-									<a class="related-item" href={`/item/${related.slug}`}>
+								{resolvedRelatedGames.map((related) => (
+									<a class="related-item" href={related.href}>
 										{
 											related.image_url && (
 												<img src={related.image_url} alt={related.title} />

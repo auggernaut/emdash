@@ -13,6 +13,7 @@ export interface GameData {
 	reviews_url?: string | null;
 	review_summary?: string | null;
 	blurb?: string | null;
+	at_a_glance?: string | null;
 	body_html?: string | null;
 	notes?: string | null;
 	rank?: number | null;

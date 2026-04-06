@@ -30,6 +30,37 @@ const rankedGames = [...games].sort((left, right) => {
 function cardCopy(game: GameEntry): string {
 	return game.data.blurb || game.data.review_summary || "";
 }
+
+const stripTags = (value: string) => value.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
+
+const normalizeText = (value?: string | null) => stripTags(value ?? "").toLowerCase();
+
+const stripLeadingDescription = (html?: string | null, description?: string | null) => {
+	if (!html) return null;
+	if (!description) return html;
+
+	const normalizedDescription = normalizeText(description);
+	if (!normalizedDescription) return html;
+
+	const trimmed = html.trim();
+	const paragraphMatch = trimmed.match(/^<p>([\s\S]*?)<\/p>\s*/i);
+
+	if (paragraphMatch && normalizeText(paragraphMatch[1]) === normalizedDescription) {
+		const remainder = trimmed.slice(paragraphMatch[0].length).trim();
+		return remainder || null;
+	}
+
+	if (normalizeText(trimmed) === normalizedDescription) {
+		return null;
+	}
+
+	return html;
+};
+
+const categoryBodyHtml = stripLeadingDescription(
+	categoryPage?.data.body_html,
+	categoryPage?.data.description,
+);
 ---
 
 <Base
@@ -52,8 +83,8 @@ function cardCopy(game: GameEntry): string {
 		</section>
 
 		{
-			categoryPage?.data.body_html && (
-				<section class="panel prose" set:html={categoryPage.data.body_html} />
+			categoryBodyHtml && (
+				<section class="panel prose" set:html={categoryBodyHtml} />
 			)
 		}
 

@@ -480,9 +480,14 @@ const pageCtx = createPublicPageContext({
 		.game-hero {
 			display: flex;
 			align-items: flex-start;
+			align-self: start;
+			justify-self: end;
+			width: 100%;
+			max-width: 420px;
 		}
 
 		.game-hero img {
+			display: block;
 			width: 100%;
 			height: auto;
 			aspect-ratio: auto;
@@ -572,11 +577,27 @@ const pageCtx = createPublicPageContext({
 			line-height: 1.5;
 		}
 
-		.meta-note a {
-			color: var(--accent-strong);
-			text-decoration: underline;
-			text-underline-offset: 0.16em;
-		}
+	.meta-note a {
+		color: var(--accent-strong);
+		text-decoration: underline;
+		text-underline-offset: 0.16em;
+	}
+
+	.at-a-glance-panel {
+		padding: 18px 20px;
+		background: rgba(255, 250, 245, 0.84);
+	}
+
+	.at-a-glance-copy {
+		margin-top: 10px;
+		font-size: 1rem;
+		line-height: 1.7;
+		color: var(--text);
+	}
+
+	.at-a-glance-copy :is(p, ul, ol) {
+		margin: 0;
+	}
 
 	.badges,
 	.term-list {
@@ -641,11 +662,16 @@ const pageCtx = createPublicPageContext({
 		gap: 28px;
 	}
 
-	.detail-layout {
-		display: grid;
-		grid-template-columns: minmax(0, 1.5fr) minmax(280px, 0.7fr);
-		gap: 24px;
-	}
+		.detail-layout {
+			display: grid;
+			grid-template-columns: minmax(0, 1.5fr) minmax(280px, 0.7fr);
+			gap: 24px;
+		}
+
+		.item-hero-layout {
+			grid-template-columns: minmax(0, 1fr) minmax(320px, 420px);
+			align-items: start;
+		}
 
 	.prose {
 		font-size: 1.02rem;
