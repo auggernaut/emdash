@@ -115,35 +115,46 @@ function resultLabel(collection: string): string {
 			: "Search the TTRPG Games directory."
 	}
 >
-	<div class="stack">
-		<section class="hero-card">
-			<span class="eyebrow">Search</span>
-			<h1>{hasQuery ? `Results for "${query}"` : "Search the directory"}</h1>
-			<p>
+	<div class="stack animate-up" style="gap: 56px;">
+		<section class="hero-section search-hero">
+			<nav class="breadcrumbs" aria-label="Breadcrumb">
+				<a href="/">Home</a>
+				<span class="breadcrumb-separator">/</span>
+				<span aria-current="page" style="color: var(--gold-accent); font-weight: 600;">Search results</span>
+			</nav>
+
+			<span class="eyebrow" style="margin-top: 24px; display: block;">Directory Search</span>
+			<h1 style="margin-top: 12px; font-size: clamp(2.4rem, 5vw, 4.2rem);">
+				{hasQuery ? `Results for "${query}"` : "Search the directory"}
+			</h1>
+			
+			<p class="hero-description">
 				{hasQuery
 					? `${results.items.length} matching result${results.items.length === 1 ? "" : "s"} across games and categories.`
 					: "Use the search box in the header to find games, genres, styles, and category landing pages."}
 			</p>
 		</section>
 
-		<section class="panel">
+		<section>
 			{
 				!hasQuery ? (
-					<div class="empty-state">Enter a search term above to browse matching games and category pages.</div>
+					<div class="empty-state">Enter a search term in the header to browse matching games and category pages.</div>
 				) : cards.length === 0 ? (
 					<div class="empty-state">No results matched "{query}". Try a broader term.</div>
 				) : (
-					<div class="grid games">
+					<div class="grid categories-index">
 						{cards.map((card) => (
-							<article class:list={[card.kind === "game" ? "game-card" : "category-card"]}>
+							<article class:list={["category-index-card", card.kind === "game" ? "game-result" : ""]}>
 								<a href={card.href}>
 									{
 										card.imageUrl && (
-											<img src={card.imageUrl} alt={card.title} loading="lazy" />
+											<div class="card-image-wrapper">
+												<img src={card.imageUrl} alt={card.title} loading="lazy" />
+											</div>
 										)
 									}
 									<div class="card-body">
-										<div class="kicker">{card.label}</div>
+										<div class="kicker-small">{card.label}</div>
 										<h2>{card.title}</h2>
 										<p>{card.description}</p>
 									</div>
@@ -156,3 +167,112 @@ function resultLabel(collection: string): string {
 		</section>
 	</div>
 </Base>
+
+<style>
+	.search-hero {
+		padding: 150px 0 32px;
+	}
+
+	.breadcrumbs {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		font-size: 0.92rem;
+		color: var(--muted);
+	}
+
+	.breadcrumb-separator {
+		opacity: 0.5;
+	}
+
+	.hero-description {
+		margin-top: 24px;
+		max-width: 720px;
+		font-size: 1.25rem;
+		line-height: 1.6;
+		color: var(--muted);
+	}
+
+	.category-index-card {
+		background: var(--surface-glass);
+		border: 1px solid var(--line);
+		border-radius: 20px;
+		overflow: hidden;
+		transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+		backdrop-filter: blur(12px);
+		height: 100%;
+	}
+
+	.category-index-card:hover {
+		transform: translateY(-8px) scale(1.02);
+		border-color: var(--gold-accent);
+		background: #fff;
+		box-shadow: 0 40px 80px rgba(31, 26, 22, 0.12);
+	}
+
+	.card-image-wrapper {
+		width: 100%;
+		aspect-ratio: 16 / 9;
+		overflow: hidden;
+		background: #f8f6f2;
+	}
+
+	.card-image-wrapper img {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		transition: transform 0.6s ease;
+	}
+
+	.category-index-card:hover img {
+		transform: scale(1.08);
+	}
+
+	.card-body {
+		padding: 24px;
+	}
+
+	.kicker-small {
+		font-size: 0.75rem;
+		text-transform: uppercase;
+		letter-spacing: 0.12em;
+		font-weight: 700;
+		color: var(--gold-accent);
+		margin-bottom: 8px;
+	}
+
+	.card-body h2 {
+		font-size: 1.5rem;
+		font-weight: 800;
+		line-height: 1.2;
+		margin: 0 0 12px;
+		color: var(--text);
+	}
+
+	.card-body p {
+		font-size: 1rem;
+		line-height: 1.6;
+		color: var(--muted);
+		margin: 0;
+		display: -webkit-box;
+		-webkit-line-clamp: 3;
+		-webkit-box-orient: vertical;
+		overflow: hidden;
+	}
+
+	.empty-state {
+		padding: 80px 40px;
+		text-align: center;
+		background: var(--surface-glass);
+		border: 1px dashed var(--line-strong);
+		border-radius: 24px;
+		color: var(--muted);
+		font-size: 1.2rem;
+	}
+
+	.grid.categories-index {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+		gap: 32px;
+	}
+</style>

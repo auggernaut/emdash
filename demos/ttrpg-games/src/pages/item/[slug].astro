@@ -131,55 +131,72 @@ const bodyHtml = atAGlance ? stripLeadingAtAGlance(game.data.body_html) : game.d
 	image={game.data.image_url || seo.ogImage}
 	content={{ collection: "games", id: game.data.id, slug }}
 >
-		<div class="stack">
-			<section class="hero-card">
+		<div class="stack animate-up" style="gap: 36px;">
+			<section class="hero-section detail-hero">
+				<nav class="breadcrumbs" aria-label="Breadcrumb" style="margin-bottom: 32px;">
+					<a href="/">Home</a>
+					<span class="breadcrumb-separator">/</span>
+					<a href="/categories">Games</a>
+					<span class="breadcrumb-separator">/</span>
+					<span aria-current="page" style="color: var(--gold-accent); font-weight: 600;">{game.data.title}</span>
+				</nav>
+
 				<div class="detail-layout item-hero-layout">
-					<div class="stack" style="gap: 18px;">
-						<h1>{game.data.title}</h1>
-						<p>{game.data.blurb || game.data.review_summary}</p>
+					<div class="stack" style="gap: 24px;">
+						<div class="section-title-group">
+							<h1 style="margin: 0;">{game.data.title}</h1>
+							<p class="hero-blurb" style="margin-top: 12px; font-size: 1.25rem; color: var(--muted); line-height: 1.6;">
+								{game.data.blurb || game.data.review_summary}
+							</p>
+						</div>
+
 						{
 							atAGlanceMarkup && (
-								<section class="meta-card at-a-glance-panel">
-									<div class="kicker">At-a-glance</div>
-									<div class="at-a-glance-copy" set:html={atAGlanceMarkup} />
+								<section class="glass-panel at-a-glance-panel">
+									<div class="kicker" style="color: var(--gold-accent);">At-a-glance</div>
+									<div class="at-a-glance-copy" style="margin-top: 12px;" set:html={atAGlanceMarkup} />
 								</section>
 							)
 						}
-					<div class="badges">
-						{badges.map((badge) => (
-							<span class="badge" data-tone={badge.tone}>
-								{badge.label}
-							</span>
-						))}
-					</div>
-					{
-						categories.length > 0 && (
-							<div class="term-list">
-								{categories.map((term) => (
-									<a class="term" href={`/category/${term.slug}`}>
-										{term.label}
-									</a>
+
+						<div class="meta-row stack" style="gap: 16px;">
+							<div class="badges">
+								{badges.map((badge) => (
+									<span class="badge" data-tone={badge.tone}>
+										{badge.label}
+									</span>
 								))}
 							</div>
-						)
-					}
-					<div class="badges">
-						{
-							game.data.website_url && (
-								<a class="button-link primary" href={game.data.website_url}>
-									Visit game site
-								</a>
-							)
-						}
-						{
-							game.data.reviews_url && (
-								<a class="button-link" href={game.data.reviews_url}>
-									View reviews or buy
-								</a>
-							)
-						}
+							{
+								categories.length > 0 && (
+									<div class="term-list">
+										{categories.map((term) => (
+											<a class="term-pill" href={`/category/${term.slug}`}>
+												{term.label}
+											</a>
+										))}
+									</div>
+								)
+							}
+						</div>
+
+						<div class="hero-actions" style="display: flex; gap: 12px; margin-top: 8px;">
+							{
+								game.data.website_url && (
+									<a class="button-link primary" href={game.data.website_url}>
+										Visit game site
+									</a>
+								)
+							}
+							{
+								game.data.reviews_url && (
+									<a class="button-link" href={game.data.reviews_url}>
+										View reviews or buy
+									</a>
+								)
+							}
+						</div>
 					</div>
-				</div>
 				<div class="game-hero">
 					{
 						game.data.image_url ? (
@@ -206,58 +223,60 @@ const bodyHtml = atAGlance ? stripLeadingAtAGlance(game.data.body_html) : game.d
 				}
 			</section>
 
-				<aside class="stack" style="gap: 20px;">
-					<section class="meta-card">
-						<div class="kicker">Review synthesis</div>
-						<h2>What players think</h2>
-						<p>{game.data.review_summary || "No review synthesis imported."}</p>
+			<aside class="stack" style="gap: 20px;">
+				<section class="glass-panel">
+					<div class="kicker" style="color: var(--gold-accent);">Review synthesis</div>
+					<h2>What players think</h2>
+					<div class="panel-content">
+						<p class="panel-copy">{game.data.review_summary || "No review synthesis imported."}</p>
 						{
 							game.data.reviews_url && (
-								<p class="meta-note" style="margin-top: 12px;">
+								<p class="meta-note">
 									Generated from published player reviews.{" "}
-									<a href={game.data.reviews_url}>Read the source reviews</a>
+									<a href={game.data.reviews_url}>Read source reviews</a>
 								</p>
 							)
 						}
-					</section>
+					</div>
+				</section>
 
 				{
 					game.data.notes && (
-						<section class="meta-card">
-							<div class="kicker">Notes</div>
+						<section class="glass-panel">
+							<div class="kicker" style="color: var(--gold-accent);">Notes</div>
 							<h2>Import notes</h2>
-							<p>{game.data.notes}</p>
+							<div class="panel-content">
+								<p class="panel-copy">{game.data.notes}</p>
+							</div>
 						</section>
 					)
 				}
 
 				{
 					resolvedRelatedGames.length > 0 && (
-						<section class="meta-card">
-							<div class="kicker">Related items</div>
+						<section class="glass-panel">
+							<div class="kicker" style="color: var(--gold-accent);">Related items</div>
 							<h2>More to explore</h2>
-							<div class="stack" style="gap: 14px;">
-								{resolvedRelatedGames.map((related) => (
-									<a class="related-item" href={related.href}>
-										{
-											related.image_url && (
+							<div class="panel-content">
+								<div class="stack" style="gap: 16px;">
+									{resolvedRelatedGames.map((related) => (
+										<a class="related-item-card" href={related.href}>
+											{related.image_url && (
 												<img src={related.image_url} alt={related.title} />
-											)
-										}
-										<div class="related-item-copy">
-											<strong>{related.title}</strong>
-											{
-												related.description && (
+											)}
+											<div class="related-item-copy">
+												<strong>{related.title}</strong>
+												{related.description && (
 													<div
-														class="muted"
-														style="margin-top: 6px;"
+														class="muted related-description"
+														style="margin-top: 8px;"
 														set:html={related.description}
 													/>
-												)
-											}
-										</div>
-									</a>
-								))}
+												)}
+											</div>
+										</a>
+									))}
+								</div>
 							</div>
 						</section>
 					)
@@ -266,3 +285,180 @@ const bodyHtml = atAGlance ? stripLeadingAtAGlance(game.data.body_html) : game.d
 		</div>
 	</div>
 </Base>
+
+<style>
+	.detail-hero {
+		padding: 130px 0 24px;
+		min-height: auto;
+	}
+
+	.item-hero-layout {
+		display: grid;
+		grid-template-columns: 1.15fr 0.85fr;
+		gap: 80px;
+		align-items: center;
+	}
+
+	.item-hero-layout h1 {
+		font-size: clamp(2.4rem, 4.2vw, 3.8rem);
+		line-height: 1.05;
+		letter-spacing: -0.02em;
+		font-weight: 800;
+	}
+
+	.game-hero img {
+		width: 100%;
+		max-width: 520px;
+		border-radius: 40px;
+		box-shadow: 0 32px 64px rgba(31, 26, 22, 0.2);
+		transform: rotate(2deg);
+		transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+	}
+
+	.game-hero:hover img {
+		transform: rotate(0deg) scale(1.04);
+		box-shadow: 0 40px 80px rgba(31, 26, 22, 0.25);
+	}
+
+	.glass-panel {
+		background: var(--surface-glass);
+		border: 1px solid var(--line);
+		border-radius: 24px;
+		padding: 28px;
+		backdrop-filter: blur(12px);
+		box-shadow: 0 8px 32px rgba(31, 26, 22, 0.05);
+	}
+
+	.glass-panel h2 {
+		margin: 8px 0 0;
+		font-size: 1.5rem;
+		font-weight: 800;
+		line-height: 1.1;
+		letter-spacing: -0.01em;
+	}
+
+	.panel-content {
+		margin-top: 16px;
+	}
+
+	.panel-copy {
+		margin: 0;
+		font-size: 1.05rem;
+		line-height: 1.6;
+		color: var(--muted);
+	}
+
+	.meta-note {
+		margin-top: 16px;
+		font-size: 0.9rem;
+		color: var(--muted);
+		opacity: 0.8;
+	}
+
+	.meta-note a {
+		text-decoration: underline;
+		text-underline-offset: 0.15em;
+	}
+
+	.detail-layout {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) 380px;
+		gap: 56px;
+		margin-top: 48px;
+	}
+
+	.prose {
+		font-size: 1.15rem;
+		line-height: 1.8;
+		color: var(--text);
+	}
+
+	.term-pill {
+		display: inline-flex;
+		padding: 6px 14px;
+		background: rgba(255, 255, 255, 0.6);
+		border: 1px solid var(--line);
+		border-radius: 99px;
+		font-size: 0.85rem;
+		font-weight: 600;
+		transition: all 0.3s ease;
+	}
+
+	.term-pill:hover {
+		background: #fff;
+		border-color: var(--accent);
+		transform: translateY(-2px);
+	}
+
+	.related-item-card {
+		overflow: hidden;
+		background: var(--surface-glass);
+		border: 1px solid var(--line);
+		border-radius: 18px;
+		transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+		backdrop-filter: blur(8px);
+	}
+
+	.related-item-card:hover {
+		transform: translateY(-4px) scale(1.02);
+		border-color: var(--gold-accent);
+		box-shadow: 0 16px 32px rgba(31, 26, 22, 0.12);
+		background: #fff;
+	}
+
+	.related-item-card img {
+		width: 100%;
+		aspect-ratio: 16 / 9;
+		object-fit: cover;
+		transition: transform 0.6s ease;
+	}
+
+	.related-item-card:hover img {
+		transform: scale(1.08);
+	}
+
+	.related-item-copy {
+		padding: 16px;
+	}
+
+	.related-item-copy strong {
+		display: block;
+		font-size: 1.3rem;
+		line-height: 1.25;
+		color: var(--text);
+	}
+
+	.related-description {
+		font-size: 1.05rem;
+		line-height: 1.6;
+		color: var(--muted);
+	}
+
+	.kicker {
+		font-family: var(--font-serif);
+		text-transform: uppercase;
+		letter-spacing: 0.1em;
+		font-size: 0.75rem;
+		font-weight: 700;
+	}
+
+	.breadcrumbs {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		font-size: 0.92rem;
+		color: var(--muted);
+	}
+
+	.breadcrumb-separator {
+		opacity: 0.5;
+	}
+
+	@media (max-width: 960px) {
+		.detail-layout {
+			grid-template-columns: 1fr;
+			gap: 48px;
+		}
+	}
+</style>
+</style>

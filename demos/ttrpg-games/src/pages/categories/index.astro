@@ -21,34 +21,158 @@ const sortedCategories = [...categoryPages].sort((left, right) => {
 	title="Browse TTRPG Categories"
 	description="Browse tabletop RPG categories by genre, mechanics, and tone to find games that match your group."
 >
-	<div class="stack">
-		<section class="hero-card">
-			<span class="eyebrow">Browse by category</span>
-			<h1>Find tabletop RPGs by genre, mechanics, and tone.</h1>
-			<p>
+	<div class="stack animate-up" style="gap: 56px;">
+		<section class="hero-section category-hero">
+			<nav class="breadcrumbs" aria-label="Breadcrumb">
+				<a href="/">Home</a>
+				<span class="breadcrumb-separator">/</span>
+				<span aria-current="page" style="color: var(--gold-accent); font-weight: 600;">Categories</span>
+			</nav>
+
+			<span class="eyebrow" style="margin-top: 24px; display: block;">Directory</span>
+			<h1 style="margin-top: 12px;">Find tabletop RPGs by genre, mechanics, and tone.</h1>
+
+			<p class="hero-description">
 				Start with the kind of play you want. Browse categories for fantasy,
 				horror, cyberpunk, solo play, rules-lite systems, and more, then compare
 				games that share those strengths.
 			</p>
-			<div class="badges" style="margin-top: 18px;">
-				<span class="badge">{sortedCategories.length} category guides</span>
+
+			<div class="hero-actions">
+				<span class="stat-badge">{sortedCategories.length} category guides</span>
+				<a href="/submit" class="secondary-button">Submit your game</a>
 			</div>
 		</section>
 
 		<section>
-			<div class="grid categories">
-				{sortedCategories.map((category) => (
-					<article class="category-card">
-						<a href={`/category/${category.id}`}>
-							<div class="card-body">
-								<div class="kicker">{category.data.type}</div>
-								<h2>{category.data.title}</h2>
-								<p>{category.data.description}</p>
-							</div>
-						</a>
-					</article>
-				))}
+			<div class="grid categories-index">
+				{
+					sortedCategories.map((category) => (
+						<article class="category-index-card">
+							<a href={`/category/${category.id}`}>
+								<div class="card-body">
+									<div class="kicker-small">{category.data.type}</div>
+									<h2>{category.data.title}</h2>
+									<p>{category.data.description}</p>
+								</div>
+							</a>
+						</article>
+					))
+				}
 			</div>
 		</section>
 	</div>
 </Base>
+
+<style>
+	.category-hero {
+		padding: 150px 0 32px;
+	}
+
+	.category-hero h1 {
+		font-size: clamp(2.4rem, 5vw, 4.2rem);
+		line-height: 1;
+		font-weight: 800;
+		letter-spacing: -0.03em;
+	}
+
+	.breadcrumbs {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		font-size: 0.92rem;
+		color: var(--muted);
+	}
+
+	.breadcrumb-separator {
+		opacity: 0.5;
+	}
+
+	.hero-description {
+		margin-top: 24px;
+		max-width: 720px;
+		font-size: 1.25rem;
+		line-height: 1.6;
+		color: var(--muted);
+	}
+
+	.hero-actions {
+		display: flex;
+		align-items: center;
+		gap: 16px;
+		margin-top: 32px;
+	}
+
+	.stat-badge {
+		background: var(--gold-soft);
+		color: var(--gold-accent);
+		padding: 6px 14px;
+		border-radius: 99px;
+		font-weight: 700;
+		font-size: 0.9rem;
+		border: 1px solid var(--gold-accent);
+	}
+
+	.secondary-button {
+		font-weight: 600;
+		color: var(--accent);
+		text-decoration: underline;
+		text-underline-offset: 4px;
+	}
+
+	.grid.categories-index {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+		gap: 32px;
+	}
+
+	.category-index-card {
+		background: var(--surface-glass);
+		border: 1px solid var(--line);
+		border-radius: 24px;
+		overflow: hidden;
+		transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+		backdrop-filter: blur(12px);
+	}
+
+	.category-index-card:hover {
+		transform: translateY(-8px) scale(1.02);
+		border-color: var(--gold-accent);
+		box-shadow: 0 24px 48px rgba(31, 26, 22, 0.12);
+		background: #fff;
+	}
+
+	.card-body {
+		padding: 32px;
+	}
+
+	.kicker-small {
+		font-family: var(--font-serif);
+		text-transform: uppercase;
+		letter-spacing: 0.1em;
+		font-size: 0.72rem;
+		font-weight: 700;
+		color: var(--muted);
+		margin-bottom: 8px;
+	}
+
+	.category-index-card h2 {
+		font-size: 1.6rem;
+		font-weight: 800;
+		letter-spacing: -0.01em;
+		line-height: 1.1;
+		margin: 0 0 12px;
+		color: var(--text);
+	}
+
+	.category-index-card p {
+		margin: 0;
+		font-size: 1rem;
+		line-height: 1.6;
+		color: var(--muted);
+		display: -webkit-box;
+		-webkit-line-clamp: 3;
+		-webkit-box-orient: vertical;
+		overflow: hidden;
+	}
+</style>

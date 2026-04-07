@@ -26,53 +26,56 @@ const errorMessage = errorCode ? errorMessages[errorCode] ?? errorMessages.submi
 	title="Submit a Game | TTRPG Games"
 	description="Submit a tabletop RPG to the directory for editorial review."
 >
-	<div class="stack">
-		<section class="hero-card">
-			<span class="eyebrow">Editorial submissions</span>
-			<h1>Submit a game to the directory.</h1>
-			<p>
+	<div class="stack animate-up" style="gap: 56px;">
+		<section class="hero-section submit-hero">
+			<nav class="breadcrumbs" aria-label="Breadcrumb">
+				<a href="/">Home</a>
+				<span class="breadcrumb-separator">/</span>
+				<span aria-current="page" style="color: var(--gold-accent); font-weight: 600;">Submit a game</span>
+			</nav>
+
+			<span class="eyebrow" style="margin-top: 24px; display: block;">Directory Listing</span>
+			<h1 style="margin-top: 12px; font-size: clamp(2.4rem, 5vw, 4.2rem);">Submit a game to the directory.</h1>
+			
+			<p class="hero-description">
 				Send the core details here and the editorial team can review the
-				submission, clean it up in the admin, and publish it if it belongs in the
-				directory.
+				submission and publish it if it belongs in the directory.
 			</p>
-			<div class="badges" style="margin-top: 18px;">
-				<span class="badge">Dedicated review workflow</span>
-				<span class="badge">Upload an image or paste a path</span>
-				<span class="badge">Published only after approval</span>
-			</div>
 		</section>
 
-			{
-				submitted && (
-					<section class="panel status-banner status-banner-success" id="submission-success">
+		{
+			submitted && (
+				<section class="status-banner status-banner-success" id="submission-success">
+					<div class="banner-content">
 						<strong>Submission received.</strong>
 						<p>
 							Thanks. The editorial team can now review your submission before it is
 							considered for the directory.
 						</p>
-					</section>
-				)
+					</div>
+				</section>
+			)
 		}
 
-			{
-				errorMessage && (
-					<section class="panel status-banner status-banner-error" id="submission-error">
+		{
+			errorMessage && (
+				<section class="status-banner status-banner-error" id="submission-error">
+					<div class="banner-content">
 						<strong>Submission not saved.</strong>
 						<p>{errorMessage}</p>
-					</section>
-				)
-			}
+					</div>
+				</section>
+			)
+		}
 
 		<div class="submission-layout">
-			<section class="panel">
+			<section class="glass-panel submission-card">
 				<div class="section-header">
-					<div>
-						<div class="kicker">Submission form</div>
+					<div class="section-title-group">
+						<div class="kicker-small">Entry Form</div>
 						<h2>Game details</h2>
+						<p>Required fields are limited to what the editor needs to start a review.</p>
 					</div>
-					<p>
-						Required fields are limited to what the editor needs to start a review.
-					</p>
 				</div>
 
 				<form
@@ -103,16 +106,18 @@ const errorMessage = errorCode ? errorMessages[errorCode] ?? errorMessages.submi
 								placeholder="https://example.com/game"
 							/>
 						</label>
+					</div>
 
-						<label class="field">
-							<span>Publisher or creator</span>
-							<input
-								type="text"
-								name="publisherOrCreator"
-								placeholder="Designer, studio, or publisher"
-							/>
-						</label>
+					<label class="field">
+						<span>Publisher or creator</span>
+						<input
+							type="text"
+							name="publisherOrCreator"
+							placeholder="Designer, studio, or publisher"
+						/>
+					</label>
 
+					<div class="field-grid">
 						<label class="field">
 							<span>Your name</span>
 							<input
@@ -183,17 +188,17 @@ const errorMessage = errorCode ? errorMessages[errorCode] ?? errorMessages.submi
 					</div>
 
 					<div class="form-actions">
-							<button type="submit" class="button-link primary">Submit for review</button>
-							<p class="muted">
-								Submissions are reviewed before anything appears in the directory.
-							</p>
-						</div>
-					</form>
+						<button type="submit" class="button-link primary">Submit for review</button>
+						<p class="muted">
+							Submissions are reviewed before anything appears in the directory.
+						</p>
+					</div>
+				</form>
 			</section>
 
-			<aside class="stack" style="gap: 20px;">
-				<section class="meta-card">
-					<div class="kicker">What helps most</div>
+			<aside class="stack sidebar-stack" style="gap: 32px;">
+				<section class="glass-panel sidebar-panel">
+					<div class="kicker-small">Fast track</div>
 					<h2>Editorial checklist</h2>
 					<ul class="helper-list">
 						<li>Use the official game website instead of a storefront mirror when possible.</li>
@@ -203,14 +208,14 @@ const errorMessage = errorCode ? errorMessages[errorCode] ?? errorMessages.submi
 					</ul>
 				</section>
 
-					<section class="meta-card">
-						<div class="kicker">Review flow</div>
-						<h2>What happens next</h2>
-						<p>
-							Each submission is reviewed by the editorial team, who may revise it,
-							follow up for clarification, or add it to the directory if it fits.
-						</p>
-					</section>
+				<section class="glass-panel sidebar-panel">
+					<div class="kicker-small">Review flow</div>
+					<h2>What happens next</h2>
+					<p>
+						Each submission is reviewed by the editorial team, who may revise it,
+						follow up for clarification, or add it to the directory if it fits.
+					</p>
+				</section>
 			</aside>
 		</div>
 	</div>
@@ -230,10 +235,10 @@ const errorMessage = errorCode ? errorMessages[errorCode] ?? errorMessages.submi
 			document.querySelector("#submission-error-runtime")?.remove();
 
 			const banner = document.createElement("section");
-			banner.className = "panel status-banner status-banner-error";
+			banner.className = "status-banner status-banner-error";
 			banner.id = "submission-error-runtime";
-			banner.innerHTML = `<strong>Submission not saved.</strong><p>${message}</p>`;
-			form.parentElement?.before(banner);
+			banner.innerHTML = `<div class=\"banner-content\"><strong>Submission not saved.</strong><p>${message}</p></div>`;
+			form.closest('.submission-card')?.before(banner);
 			banner.scrollIntoView({ behavior: "smooth", block: "nearest" });
 		};
 
@@ -266,9 +271,49 @@ const errorMessage = errorCode ? errorMessages[errorCode] ?? errorMessages.submi
 </script>
 
 <style>
-	.status-banner {
-		display: grid;
+	.submit-hero {
+		padding: 120px 0 40px;
+	}
+
+	.breadcrumbs {
+		display: flex;
+		align-items: center;
 		gap: 8px;
+		font-size: 0.92rem;
+		color: var(--muted);
+	}
+
+	.breadcrumb-separator {
+		opacity: 0.5;
+	}
+
+	.hero-description {
+		margin-top: 24px;
+		max-width: 720px;
+		font-size: 1.25rem;
+		line-height: 1.6;
+		color: var(--muted);
+	}
+
+	.glass-panel {
+		background: var(--surface-glass);
+		border: 1px solid var(--line);
+		border-radius: 24px;
+		padding: 32px;
+		backdrop-filter: blur(12px);
+		box-shadow: 0 8px 32px rgba(31, 26, 22, 0.05);
+	}
+
+	.status-banner {
+		padding: 24px;
+		border-radius: 20px;
+		border: 1px solid;
+		margin-bottom: 8px;
+	}
+
+	.banner-content {
+		display: grid;
+		gap: 4px;
 	}
 
 	.status-banner p,
@@ -277,104 +322,158 @@ const errorMessage = errorCode ? errorMessages[errorCode] ?? errorMessages.submi
 	}
 
 	.status-banner-success {
-		border-color: rgba(47, 111, 79, 0.24);
-		background: rgba(47, 111, 79, 0.08);
+		border-color: rgba(47, 111, 79, 0.2);
+		background: rgba(47, 111, 79, 0.05);
+		color: #2f6f4f;
 	}
 
 	.status-banner-error {
-		border-color: rgba(177, 78, 44, 0.24);
-		background: rgba(177, 78, 44, 0.08);
+		border-color: rgba(177, 78, 44, 0.2);
+		background: rgba(177, 78, 44, 0.05);
+		color: #b14e2c;
 	}
 
 	.submission-layout {
 		display: grid;
-		grid-template-columns: minmax(0, 1.65fr) minmax(280px, 0.95fr);
-		gap: 24px;
+		grid-template-columns: minmax(0, 1fr) 380px;
+		gap: 48px;
 		align-items: start;
 	}
 
 	.submission-form {
 		display: grid;
-		gap: 18px;
+		gap: 24px;
+		margin-top: 32px;
 	}
 
 	.field-grid {
 		display: grid;
-		grid-template-columns: repeat(2, minmax(0, 1fr));
-		gap: 16px;
-	}
-
-	.media-grid {
-		align-items: start;
+		grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+		gap: 20px;
 	}
 
 	.field {
 		display: grid;
 		gap: 8px;
-		font-size: 0.98rem;
 	}
 
 	.field span {
 		font-weight: 600;
+		font-size: 0.88rem;
+		text-transform: uppercase;
+		letter-spacing: 0.06em;
+		color: var(--muted);
 	}
 
 	.field input,
 	.field textarea {
 		width: 100%;
-		padding: 14px 16px;
+		padding: 14px 18px;
 		border: 1px solid var(--line-strong);
-		border-radius: 14px;
-		background: rgba(255, 255, 255, 0.92);
+		border-radius: 12px;
+		background: white;
 		color: var(--text);
-		font: inherit;
+		transition: all 0.2s ease;
+		font-size: 1rem;
+		font-family: inherit;
+	}
+
+	.field input::placeholder,
+	.field textarea::placeholder {
+		color: var(--muted);
+		opacity: 0.6;
+		font-family: inherit;
 	}
 
 	.field input:focus,
 	.field textarea:focus {
-		outline: 2px solid rgba(177, 78, 44, 0.18);
-		outline-offset: 1px;
-		border-color: rgba(177, 78, 44, 0.45);
+		outline: none;
+		border-color: var(--gold-accent);
+		box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.1);
+	}
+
+	.field input[type="file"] {
+		padding: 10px 14px;
+		cursor: pointer;
+	}
+
+	.field input[type="file"]::file-selector-button {
+		background: var(--bg);
+		border: 1px solid var(--line-strong);
+		padding: 6px 12px;
+		border-radius: 8px;
+		font-size: 0.9rem;
+		font-weight: 600;
+		color: var(--text);
+		margin-right: 12px;
+		cursor: pointer;
+		transition: all 0.2s ease;
+	}
+
+	.field input[type="file"]::file-selector-button:hover {
+		background: white;
+		border-color: var(--gold-accent);
 	}
 
 	.field small {
+		font-size: 0.85rem;
 		color: var(--muted);
-	}
-
-	.form-actions {
-		display: grid;
-		gap: 12px;
-		align-items: start;
-	}
-
-	.form-actions .button-link {
-		border: 0;
-		cursor: pointer;
-		font: inherit;
-	}
-
-	.form-actions p {
-		margin: 0;
-	}
-
-	.helper-list {
-		display: grid;
-		gap: 10px;
-		padding-left: 18px;
-		margin: 0;
-		color: var(--muted);
+		margin-top: 4px;
 	}
 
 	.honeypot {
-		position: absolute;
-		left: -9999px;
-		opacity: 0;
-		pointer-events: none;
+		display: none;
 	}
 
-	@media (max-width: 900px) {
-		.submission-layout,
-		.field-grid {
+	.form-actions {
+		padding-top: 24px;
+		border-top: 1px solid var(--line);
+		display: flex;
+		align-items: center;
+		gap: 24px;
+	}
+
+	.button-link.primary {
+		padding: 16px 32px;
+		font-weight: 700;
+		border-radius: 12px;
+	}
+
+	.section-title-group h2 {
+		font-size: 2rem;
+		font-weight: 800;
+		margin: 8px 0;
+	}
+
+	.kicker-small {
+		font-size: 0.8rem;
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 0.1em;
+		color: var(--gold-accent);
+	}
+
+	.helper-list {
+		margin-top: 16px;
+		padding-left: 20px;
+		display: grid;
+		gap: 12px;
+		color: var(--muted);
+		line-height: 1.5;
+	}
+
+	.sidebar-panel h2 {
+		font-size: 1.4rem;
+		font-weight: 800;
+		margin-top: 4px;
+	}
+
+	@media (max-width: 960px) {
+		.submission-layout {
 			grid-template-columns: 1fr;
+		}
+		.sidebar-stack {
+			order: -1;
 		}
 	}
 </style>

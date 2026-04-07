@@ -14,6 +14,8 @@ interface Props {
 
 const { title, description, image, canonical, content, structuredData = [] } = Astro.props;
 
+const isHome = Astro.url.pathname === "/" || Astro.url.pathname === "" || Astro.url.pathname.endsWith("/index.html");
+
 const logoSrc = "/_emdash/api/media/file/01KN700FE50XVF7AG34QJ4YMFM.webp";
 const primaryLinks = [
 	{ label: "Categories", url: "/categories" },
@@ -49,7 +51,7 @@ const pageCtx = createPublicPageContext({
 	<body>
 		<EmDashBodyStart page={pageCtx} />
 
-		<header class="site-header">
+		<header class="site-header header-transparent">
 			<nav class="nav-shell">
 				<a href="/" class="brand">
 					<img class="brand-logo" src={logoSrc} alt="TTRPG Games" />
@@ -85,38 +87,62 @@ const pageCtx = createPublicPageContext({
 		</main>
 
 		<footer class="site-footer">
-			<div class="footer-grid">
-				<div class="footer-column">
-					<strong>TTRPG Games Directory</strong>
-					<p>
-						A tabletop RPG guide for players who want clearer ways to compare
-						games, narrow the field, and choose what to play next.
+			<div class="footer-main">
+				<div class="footer-brand">
+					<a href="/" class="brand">
+						<img class="brand-logo" src={logoSrc} alt="TTRPG Games" />
+						<span class="brand-copy">
+							<strong>TTRPG Games Directory</strong>
+						</span>
+					</a>
+					<p class="footer-description">
+						A guide for players to compare systems, discover new genres, 
+						and find the game that fits their group’s soul. Curated by the 
+						community and editorial team.
 					</p>
 				</div>
-				<div class="footer-column">
-					<strong>Explore</strong>
-					<div class="footer-links">
-						<a href="/">Home</a>
-						<a href="/categories">Categories</a>
-						<a href="/#top-rated-games">Top Rated Games</a>
-						<a href="/#recently-added-games">Recently Added</a>
+				
+				<div class="footer-nav-groups">
+					<div class="footer-nav-group">
+						<strong>Explore</strong>
+						<ul>
+							<li><a href="/">Home</a></li>
+							<li><a href="/categories">All Categories</a></li>
+							<li><a href="/blog">Editorial Blog</a></li>
+						</ul>
 					</div>
-				</div>
-				<div class="footer-column">
-					<strong>Contact</strong>
-					<p>Have a game suggestion or correction to share?</p>
-					<div class="footer-links">
-						<a href="/submit-game">Submit your game</a>
-						<a href="https://x.com/augustinbralley">Contact on X</a>
+					
+					<div class="footer-nav-group">
+						<strong>Community</strong>
+						<ul>
+							<li><a href="/#top-rated-games">Top Rated Games</a></li>
+							<li><a href="/#recently-added-games">Recently Added</a></li>
+							<li><a href="/submit-game">Submit a Game</a></li>
+						</ul>
+					</div>
+					
+					<div class="footer-nav-group">
+						<strong>Connect</strong>
+						<ul>
+							<li><a href="https://x.com/augustinbralley">Follow on X</a></li>
+							<li><a href="mailto:hello@emdash.local">Email Inquiries</a></li>
+							<li><a href="/terms-of-use">Editorial Policy</a></li>
+						</ul>
 					</div>
 				</div>
 			</div>
-			<div class="footer-policies">
-				<a href="/terms-of-use">Terms of Use</a>
-				<a href="/privacy-policy">Privacy Policy</a>
-			</div>
-			<div class="footer-meta">
-				<span>© 2026 TTRPG Games Directory. All rights reserved.</span>
+
+			<div class="footer-bottom">
+				<div class="footer-bottom-content">
+					<div class="footer-copyright">
+						<span>© 2026 TTRPG Games Directory. All rights reserved.</span>
+					</div>
+					<div class="footer-legal">
+						<a href="/terms-of-use">Terms of Use</a>
+						<span class="dot">·</span>
+						<a href="/privacy-policy">Privacy Policy</a>
+					</div>
+				</div>
 			</div>
 		</footer>
 
@@ -127,28 +153,35 @@ const pageCtx = createPublicPageContext({
 <style is:global>
 	:root {
 		color-scheme: light;
-		--bg: #f5efe7;
-		--surface: rgba(255, 255, 255, 0.84);
-		--surface-strong: #fffdf9;
-		--line: rgba(120, 97, 74, 0.14);
-		--line-strong: rgba(120, 97, 74, 0.24);
-		--text: #1f1a16;
+		--bg: #f8f3ed;
+		--surface: rgba(255, 255, 255, 0.88);
+		--surface-strong: #fffdfc;
+		--surface-glass: rgba(255, 255, 255, 0.72);
+		--line: rgba(120, 97, 74, 0.12);
+		--line-strong: rgba(120, 97, 74, 0.22);
+		--text: #1a1614;
 		--muted: #6b5f53;
 		--accent: #b14e2c;
-		--accent-strong: #7a331d;
-		--accent-soft: rgba(240, 172, 138, 0.14);
-		--pill: rgba(122, 51, 29, 0.05);
+		--accent-strong: #8a3a1d;
+		--accent-soft: rgba(177, 78, 44, 0.12);
+		--gold-accent: #c4a052;
+		--gold-soft: rgba(196, 160, 82, 0.15);
+		--pill: rgba(122, 51, 29, 0.04);
 		--success: #2f6f4f;
-		--shadow: 0 22px 44px rgba(31, 26, 22, 0.08);
-		--shadow-soft: 0 12px 24px rgba(31, 26, 22, 0.045);
-		--radius: 18px;
-		font-family:
-			"Spectral",
-			"Iowan Old Style",
-			"Palatino Linotype",
-			"Book Antiqua",
-			Palatino,
-			serif;
+		--shadow: 0 24px 48px rgba(31, 26, 22, 0.1);
+		--shadow-soft: 0 12px 24px rgba(31, 26, 22, 0.06);
+		--radius: 20px;
+		--font-serif: "Spectral", "Iowan Old Style", "Palatino Linotype", serif;
+		font-family: var(--font-serif);
+	}
+
+	@keyframes fade-up {
+		from { opacity: 0; transform: translateY(20px); }
+		to { opacity: 1; transform: translateY(0); }
+	}
+
+	.animate-up {
+		animation: fade-up 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
 	}
 
 	* {
@@ -189,14 +222,44 @@ const pageCtx = createPublicPageContext({
 
 	.site-header {
 		padding: 18px 0 18px;
+		position: relative;
+		z-index: 100;
+	}
+
+	.header-transparent {
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		width: 100%;
+		max-width: none;
+		padding-inline: max(16px, (100vw - 1180px) / 2);
+		padding-block: 0 !important;
+		z-index: 1000;
+	}
+
+	.header-transparent .nav-shell {
+		background: transparent !important;
+		border-color: transparent !important;
+		box-shadow: none !important;
+		padding-inline: 0 !important;
+		padding-block: 8px !important;
+	}
+
+	.header-transparent .nav-shell::before {
+		display: none;
+	}
+
+	.header-transparent .brand-copy strong {
+		font-weight: 800;
 	}
 
 	.nav-shell {
 		position: relative;
 		display: grid;
-		grid-template-columns: auto auto minmax(0, 1fr);
+		grid-template-columns: auto 1fr auto;
 		align-items: center;
-		gap: 22px;
+		gap: 32px;
 		padding: 16px 18px;
 		border: 1px solid var(--line);
 		border-radius: 22px;
@@ -345,70 +408,127 @@ const pageCtx = createPublicPageContext({
 	}
 
 	.site-footer {
-		display: grid;
-		gap: 20px;
-		padding: 8px 0 44px;
+		margin-top: 120px;
+		padding-bottom: 48px;
 		color: var(--muted);
 	}
 
-	.site-footer p {
-		margin: 6px 0 0;
-		max-width: 40rem;
-	}
-
-	.footer-grid {
+	.footer-main {
 		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-		gap: 20px;
-		padding: 24px;
+		grid-template-columns: 1.2fr 2fr;
+		gap: 80px;
+		padding: 60px 40px;
+		background: var(--surface-glass);
 		border: 1px solid var(--line);
-		border-radius: var(--radius);
-		background: rgba(255, 255, 255, 0.66);
-		box-shadow: var(--shadow-soft);
+		border-radius: 32px;
+		backdrop-filter: blur(20px);
+		-webkit-backdrop-filter: blur(20px);
+		box-shadow: 0 20px 50px rgba(31, 26, 22, 0.04);
 	}
 
-	.footer-column {
+	.footer-brand {
 		display: grid;
-		gap: 10px;
+		gap: 24px;
 		align-content: start;
 	}
 
-	.footer-links {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 10px;
+	.footer-brand .brand-logo {
+		width: 120px;
 	}
 
-	.footer-links a {
-		padding: 9px 12px;
-		border-radius: 12px;
-		background: rgba(255, 255, 255, 0.62);
-		border: 1px solid var(--line);
+	.footer-description {
+		font-size: 1.05rem;
+		line-height: 1.6;
+		color: var(--muted);
+		max-width: 320px;
+		margin: 0;
 	}
 
-	.footer-meta {
+	.footer-nav-groups {
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		gap: 40px;
+	}
+
+	.footer-nav-group {
+		display: grid;
+		gap: 20px;
+		align-content: start;
+	}
+
+	.footer-nav-group strong {
+		font-size: 0.85rem;
+		text-transform: uppercase;
+		letter-spacing: 0.12em;
+		color: var(--text);
+		font-weight: 800;
+	}
+
+	.footer-nav-group ul {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		display: grid;
+		gap: 12px;
+	}
+
+	.footer-nav-group a {
+		font-size: 1rem;
+		color: var(--muted);
+		transition: color 0.2s ease;
+	}
+
+	.footer-nav-group a:hover {
+		color: var(--accent);
+	}
+
+	.footer-bottom {
+		margin-top: 32px;
+		padding: 0 10px;
+	}
+
+	.footer-bottom-content {
 		display: flex;
 		justify-content: space-between;
-		gap: 12px;
+		align-items: center;
+		padding-top: 24px;
+		border-top: 1px solid var(--line);
 		font-size: 0.92rem;
-	}
-
-	.footer-policies {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 12px;
-		justify-content: center;
-		font-size: 0.92rem;
-	}
-
-	.footer-policies a {
 		color: var(--muted);
-		text-decoration: underline;
-		text-underline-offset: 0.16em;
 	}
 
-	.footer-policies a:hover {
+	.footer-legal {
+		display: flex;
+		align-items: center;
+		gap: 12px;
+	}
+
+	.footer-legal a:hover {
 		color: var(--text);
+		text-decoration: underline;
+	}
+
+	.footer-legal .dot {
+		opacity: 0.3;
+	}
+
+	@media (max-width: 960px) {
+		.footer-main {
+			grid-template-columns: 1fr;
+			gap: 48px;
+			padding: 40px 24px;
+		}
+		
+		.footer-nav-groups {
+			grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+			gap: 32px;
+		}
+
+		.footer-bottom-content {
+			flex-direction: column;
+			gap: 16px;
+			text-align: center;
+		}
 	}
 
 	.eyebrow {
@@ -435,6 +555,8 @@ const pageCtx = createPublicPageContext({
 		border-radius: var(--radius);
 		background: var(--surface);
 		box-shadow: var(--shadow-soft);
+		backdrop-filter: blur(12px);
+		-webkit-backdrop-filter: blur(12px);
 	}
 
 	.hero-card,
@@ -507,27 +629,36 @@ const pageCtx = createPublicPageContext({
 		display: flex;
 		flex-wrap: wrap;
 		justify-content: space-between;
-		align-items: end;
-		gap: 14px;
-		margin-bottom: 18px;
+		align-items: flex-end;
+		gap: 24px;
+		margin-bottom: 32px;
+	}
+
+	.section-title-group {
+		display: grid;
+		gap: 8px;
 	}
 
 	.section-header h1,
 	.section-header h2 {
 		margin: 0;
-		font-size: clamp(1.8rem, 3vw, 2.7rem);
-		line-height: 1;
+		font-size: clamp(2rem, 4vw, 3rem);
+		line-height: 1.1;
+		font-weight: 800;
+		letter-spacing: -0.02em;
 	}
 
 	.section-header p {
-		margin: 0;
-		max-width: 42rem;
+		margin: 8px 0 0;
+		max-width: 48rem;
 		color: var(--muted);
+		font-size: 1.15rem;
+		line-height: 1.6;
 	}
 
 	.grid {
 		display: grid;
-		gap: 24px;
+		gap: 32px;
 	}
 
 	.section-actions {
@@ -535,20 +666,26 @@ const pageCtx = createPublicPageContext({
 	}
 
 	.grid.games {
-		grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+		grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
 	}
 
 	.grid.categories {
-		grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+		grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+	}
+
+	.glass-panel {
+		background: var(--surface-glass);
+		border: 1px solid var(--line);
+		border-radius: var(--radius);
+		padding: 24px;
+		backdrop-filter: blur(12px);
+		box-shadow: var(--shadow-soft);
 	}
 
 	.game-card,
 	.category-card {
 		overflow: hidden;
-		transition:
-			transform 0.18s ease,
-			border-color 0.18s ease,
-			box-shadow 0.18s ease;
+		transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 	}
 
 	.game-card a,
@@ -557,11 +694,11 @@ const pageCtx = createPublicPageContext({
 		height: 100%;
 	}
 
-		.game-card img {
-			aspect-ratio: 16 / 10;
-			object-fit: cover;
-			background: linear-gradient(145deg, #e5d7bf, #f7efe3);
-		}
+	.game-card img {
+		aspect-ratio: 16 / 10;
+		object-fit: cover;
+		transition: transform 0.6s ease;
+	}
 
 	.game-card:hover,
 	.category-card:hover,
@@ -569,6 +706,7 @@ const pageCtx = createPublicPageContext({
 	.panel:hover {
 		border-color: var(--line-strong);
 		box-shadow: var(--shadow);
+		background: var(--surface-strong);
 	}
 
 	.game-card:hover,

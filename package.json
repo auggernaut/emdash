@@ -25,7 +25,8 @@
 		"knip": "knip --no-exit-code --exclude unlisted,unresolved,exports,types,duplicates",
 		"new": "create-emdash",
 		"screenshots": "node scripts/screenshot-all-templates.mjs",
-		"sync:upstream": "git fetch upstream && git checkout main && git rebase upstream/main && git push origin main"
+		"sync:upstream": "git fetch upstream && git checkout main && git rebase upstream/main && git push origin main",
+		"dev:ttrpg": "pnpm --filter @emdash-cms/demo-ttrpg-games dev"
 	},
 	"keywords": [],
 	"author": "Matt Kane",

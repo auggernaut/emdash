@@ -247,18 +247,18 @@ function renderFaqAnswer(answer: string): string {
 	content={categoryPage ? { collection: "category_pages", id: categoryPage.data.id, slug } : undefined}
 	structuredData={[breadcrumbSchema]}
 >
-		<div class="stack">
-			<nav class="breadcrumbs" aria-label="Breadcrumb">
-				<a href="/">Home</a>
-				<span class="breadcrumb-separator">/</span>
-				<a href="/categories">Categories</a>
-				<span class="breadcrumb-separator">/</span>
-				<span aria-current="page">{term.label}</span>
-			</nav>
+		<div class="stack animate-up" style="gap: 60px;">
+			<section class="hero-section category-hero">
+				<nav class="breadcrumbs" aria-label="Breadcrumb">
+					<a href="/">Home</a>
+					<span class="breadcrumb-separator">/</span>
+					<a href="/categories">Categories</a>
+					<span class="breadcrumb-separator">/</span>
+					<span aria-current="page" style="color: var(--gold-accent); font-weight: 600;">{term.label}</span>
+				</nav>
 
-			<section class="hero-card category-hero-card">
-				<span class="eyebrow">{categoryPage?.data.type || "Category archive"}</span>
-				<h1>{heroTitle}</h1>
+				<span class="eyebrow" style="margin-top: 24px; display: block;">{categoryPage?.data.type || "Category archive"}</span>
+				<h1 style="margin-top: 12px;">{heroTitle}</h1>
 				{
 					categoryBodyHtml && (
 						<div class="prose hero-prose" set:html={categoryBodyHtml} />
@@ -266,21 +266,21 @@ function renderFaqAnswer(answer: string): string {
 				}
 				{
 					!categoryBodyHtml && categoryPage?.data.description && (
-						<p>{categoryPage.data.description}</p>
+						<p class="hero-description">{categoryPage.data.description}</p>
 					)
 				}
-				<div class="badges" style="margin-top: 18px;">
-					<span class="badge">{rankedGames.length} games</span>
-					<a href="/categories" class="button-link">All categories</a>
+				<div class="hero-actions">
+					<span class="stat-badge">{rankedGames.length} games</span>
+					<a href="/categories" class="secondary-button">All categories</a>
 				</div>
 			</section>
 
-				{
-					featuredPicks.length > 0 && (
+			{
+				featuredPicks.length > 0 && (
 					<section>
 						<div class="section-header">
-							<div>
-								<div class="kicker">Top picks</div>
+							<div class="section-title-group">
+								<div class="kicker" style="color: var(--gold-accent);">Top picks</div>
 								<h2>Best games in this category</h2>
 								<p>
 									Quick starting points if you want the clearest expressions of what
@@ -295,11 +295,13 @@ function renderFaqAnswer(answer: string): string {
 									<a href={`/item/${game.id}`}>
 										{
 											game.data.image_url && (
-												<img src={game.data.image_url} alt={game.data.title} loading="lazy" />
+												<div class="card-image">
+													<img src={game.data.image_url} alt={game.data.title} loading="lazy" />
+												</div>
 											)
 										}
 										<div class="card-body">
-											<div class="kicker">Top pick</div>
+											<div class="kicker" style="color: var(--gold-accent);">Top pick</div>
 											<h3>{game.data.title}</h3>
 											<p>{note.featured_reason || cardCopy(game)}</p>
 										</div>
@@ -313,14 +315,14 @@ function renderFaqAnswer(answer: string): string {
 
 			{
 				faqs.length > 0 && (
-					<section>
+					<section class="faq-section">
 						<div class="section-header">
-							<div>
-								<div class="kicker">FAQ</div>
+							<div class="section-title-group">
+								<div class="kicker" style="color: var(--gold-accent);">FAQ</div>
 								<h2>Questions players ask</h2>
 							</div>
 						</div>
-						<div class="faq-grid">
+						<div class="faq-list">
 							{faqs.map((faq) => (
 								<details class="faq-item">
 									<summary>{faq.question}</summary>
@@ -334,8 +336,8 @@ function renderFaqAnswer(answer: string): string {
 
 			<section>
 				<div class="section-header">
-					<div>
-						<div class="kicker">Full list</div>
+					<div class="section-title-group">
+						<div class="kicker" style="color: var(--gold-accent);">Full list</div>
 						<h2>All games in this category</h2>
 					</div>
 				</div>
@@ -349,11 +351,13 @@ function renderFaqAnswer(answer: string): string {
 									<a href={`/item/${game.id}`}>
 										{
 											game.data.image_url && (
-												<img
-													src={game.data.image_url}
-													alt={game.data.title}
-													loading="lazy"
-												/>
+												<div class="card-image">
+													<img
+														src={game.data.image_url}
+														alt={game.data.title}
+														loading="lazy"
+													/>
+												</div>
 											)
 										}
 										<div class="card-body">
@@ -377,8 +381,8 @@ function renderFaqAnswer(answer: string): string {
 				relatedCategories.length > 0 && (
 					<section>
 						<div class="section-header">
-							<div>
-								<div class="kicker">Keep browsing</div>
+							<div class="section-title-group">
+								<div class="kicker" style="color: var(--gold-accent);">Keep browsing</div>
 								<h2>Related categories</h2>
 							</div>
 						</div>
@@ -387,7 +391,7 @@ function renderFaqAnswer(answer: string): string {
 								<article class="category-card">
 									<a href={`/category/${item.page.id}`}>
 										<div class="card-body">
-											<div class="kicker">{item.page.data.type}</div>
+											<div class="kicker" style="color: var(--gold-accent);">{item.page.data.type}</div>
 											<h3>{item.page.data.title}</h3>
 											<p>{item.reason || item.page.data.description}</p>
 										</div>
@@ -400,3 +404,200 @@ function renderFaqAnswer(answer: string): string {
 			}
 		</div>
 	</Base>
+
+<style>
+	.category-hero {
+		padding: 250px 0 32px;
+	}
+
+	.category-hero h1 {
+		font-size: clamp(2.4rem, 5vw, 4.2rem);
+		line-height: 1;
+		font-weight: 800;
+		letter-spacing: -0.03em;
+	}
+
+	.hero-prose {
+		margin-top: 24px;
+		max-width: 720px;
+		font-size: 1.2rem;
+		line-height: 1.6;
+		color: var(--muted);
+	}
+
+	.hero-description {
+		margin-top: 24px;
+		font-size: 1.25rem;
+		color: var(--muted);
+	}
+
+	.hero-actions {
+		display: flex;
+		align-items: center;
+		gap: 16px;
+		margin-top: 32px;
+	}
+
+	.stat-badge {
+		background: var(--gold-soft);
+		color: var(--gold-accent);
+		padding: 6px 14px;
+		border-radius: 99px;
+		font-weight: 700;
+		font-size: 0.9rem;
+		border: 1px solid var(--gold-accent);
+	}
+
+	.secondary-button {
+		font-weight: 600;
+		color: var(--accent);
+		text-decoration: underline;
+		text-underline-offset: 4px;
+	}
+
+	.section-header {
+		margin-bottom: 40px;
+	}
+
+	.section-header h2 {
+		font-size: 2.2rem;
+		font-weight: 800;
+		letter-spacing: -0.01em;
+		margin: 8px 0;
+	}
+
+	.grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+		gap: 32px;
+	}
+
+	.game-card {
+		background: var(--surface-glass);
+		border: 1px solid var(--line);
+		border-radius: 24px;
+		overflow: hidden;
+		transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+		backdrop-filter: blur(8px);
+	}
+
+	.game-card:hover {
+		transform: translateY(-10px) scale(1.02);
+		border-color: var(--gold-accent);
+		box-shadow: 0 32px 64px rgba(31, 26, 22, 0.15);
+	}
+
+	.card-image {
+		aspect-ratio: 16/10;
+		overflow: hidden;
+	}
+
+	.card-image img {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		transition: transform 0.8s ease;
+	}
+
+	.game-card:hover .card-image img {
+		transform: scale(1.1);
+	}
+
+	.card-body {
+		padding: 24px;
+	}
+
+	.card-body h3 {
+		font-size: 1.5rem;
+		font-weight: 800;
+		margin: 8px 0;
+	}
+
+	.card-body p {
+		font-size: 1rem;
+		line-height: 1.6;
+		color: var(--muted);
+	}
+
+	.category-card {
+		background: #fff;
+		border: 1px solid var(--line);
+		border-radius: 24px;
+		transition: all 0.4s ease;
+	}
+
+	.category-card:hover {
+		border-color: var(--accent);
+		background: var(--surface-glass);
+		transform: translateY(-4px);
+	}
+
+	.faq-list {
+		display: flex;
+		flex-direction: column;
+		gap: 16px;
+		max-width: 800px;
+	}
+
+	.faq-item {
+		background: var(--surface-glass);
+		border: 1px solid var(--line);
+		border-radius: 16px;
+		overflow: hidden;
+	}
+
+	.faq-item summary {
+		padding: 20px 24px;
+		font-weight: 700;
+		font-size: 1.1rem;
+		cursor: pointer;
+		list-style: none;
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+	}
+
+	.faq-item summary::after {
+		content: "+";
+		font-size: 1.4rem;
+		color: var(--gold-accent);
+	}
+
+	.faq-item[open] summary::after {
+		content: "−";
+	}
+
+	.faq-answer {
+		padding: 0 24px 24px;
+		line-height: 1.6;
+		color: var(--muted);
+	}
+
+	.breadcrumbs {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		font-size: 0.9rem;
+		margin-bottom: -150px; /* Pull into hero area */
+		position: relative;
+		z-index: 10;
+		color: var(--muted);
+	}
+
+	.kicker {
+		font-family: var(--font-serif);
+		text-transform: uppercase;
+		letter-spacing: 0.1em;
+		font-size: 0.75rem;
+		font-weight: 700;
+	}
+
+	.eyebrow {
+		font-family: var(--font-serif);
+		text-transform: uppercase;
+		letter-spacing: 0.15em;
+		font-size: 0.85rem;
+		font-weight: 700;
+		color: var(--accent);
+	}
+</style>
