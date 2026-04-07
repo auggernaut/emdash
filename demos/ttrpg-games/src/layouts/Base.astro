@@ -203,7 +203,7 @@ const pageCtx = createPublicPageContext({
 		background:
 			linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(255, 252, 247, 0.88));
 		box-shadow: 0 10px 26px rgba(31, 26, 22, 0.04);
-		overflow: hidden;
+		overflow: visible;
 	}
 
 	.nav-shell::before {
@@ -286,6 +286,8 @@ const pageCtx = createPublicPageContext({
 	}
 
 		.nav-search {
+			position: relative;
+			z-index: 20;
 			min-width: 0;
 			width: 100%;
 			display: block;
