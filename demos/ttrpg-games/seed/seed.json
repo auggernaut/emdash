@@ -2518,7 +2518,7 @@
 				"data": {
 					"title": "Dungeons & Dragons",
 					"website_url": "https://www.dndbeyond.com/",
-					"image_url": "https://res.cloudinary.com/dfy7duoia/image/upload/v1772483064/games/dungeons--dragons.webp",
+					"image_url": "https://www.dungeonsanddragons.com/cms/global/social-share.jpg",
 					"reviews_url": "https://www.drivethrurpg.com/en/publisher/44/wizards-of-the-coast?affiliate_id=1659151",
 					"review_summary": "The text provided does not contain any user reviews. Instead, it is comprised of product listings, descriptions, and information about various Dungeons & Dragons products published by Wizards of the Coast.",
 					"blurb": "Dungeons and Dragons is a foundational fantasy role-playing game where players create characters to embark on epic quests and combat various creatures in a richly detailed, collaborative story world. Utilizing a mix of strategic combat, chance, and character-driven narratives, it offers endless possibilities for adventure and exploration, making it immensely popular among those who enjoy creativity, teamwork, and immersive role-playing.",
@@ -11657,7 +11657,7 @@
 				"data": {
 					"title": "The Hero's Journey",
 					"website_url": "https://www.drivethrurpg.com/en/product/295279/The-Heros-Journey-Second-Edition",
-					"image_url": "https://res.cloudinary.com/dfy7duoia/image/upload/v1772656000/games/the-heros-journey.jpg",
+					"image_url": "/images/games/the-heros-journey.jpg",
 					"reviews_url": "https://www.drivethrurpg.com/en/product/295279/The-Heros-Journey-Second-Edition",
 					"review_summary": "Reviewers praise The Hero's Journey as an ideal entry point into OSR gaming, highlighting its streamlined rules based on Swords & Wizardry White Box, excellent teaching structure for new players, and nostalgic fairy-tale tone. The 2nd edition improves organization while maintaining the soul of classic fantasy RPGs. Common caveats include limited character options compared to crunchier systems and the need for GM improvisation.",
 					"blurb": "The Hero's Journey is a rules-lite OSR fantasy RPG built on Swords & Wizardry White Box. Class-based and designed for new players, it blends classic D&D sensibilities with modern clarity. Emphasizing heroic low-fantasy inspired by fairy tales and timeless fantasy literature, it offers accessible character creation and straightforward mechanics ideal for introducing beginners to old-school play.",
@@ -12291,7 +12291,7 @@
 				"data": {
 					"title": "OSE Advanced Fantasy",
 					"website_url": "https://necroticgnome.com/products/old-school-essentials-advanced-fantasy-players-tome",
-					"image_url": "https://res.cloudinary.com/dfy7duoia/image/upload/v1772821000/games/ose-advanced-fantasy.jpg",
+					"image_url": "/images/games/ose-advanced-fantasy.png",
 					"reviews_url": "https://www.drivethrurpg.com/en/product/279411/old-school-essentials-basic-rules",
 					"review_summary": "Widely praised as the definitive presentation of classic D&D rules, with exceptional organization and production values. The Advanced expansion successfully integrates 1E options without sacrificing B/X's elegant core. Some note the physical books are premium-priced, though the content justifies the cost for dedicated players.",
 					"blurb": "OSE Advanced Fantasy is a rules-lite OSR retroclone expanding Classic Fantasy with Advanced D&D options. Race-class separation, additional classes, and expanded magic bring 1E depth to B/X simplicity. Modular, clean presentation makes it ideal for players wanting classic complexity without the cruft.",
@@ -12340,7 +12340,7 @@
 				"data": {
 					"title": "Sword & Wizardry",
 					"website_url": "https://www.mythmeregames.com/",
-					"image_url": "https://res.cloudinary.com/dfy7duoia/image/upload/v1741285200/games/sword-wizardry.jpg",
+					"image_url": "/images/games/sword-wizardry.png",
 					"reviews_url": "https://www.drivethrurpg.com/en/product/439173/swords-wizardry-complete-rulebook-revised-erol-otus-cover",
 					"review_summary": "The ENNIE award-winning retroclone receives consistent praise for organizing Original D&D into a coherent, playable format. Reviewers highlight the ascending AC option, unified saving throws, and comprehensive coverage of classes and races from the early supplements. The 144-page hardcover format offers exceptional value compared to multi-volume alternatives, with the 2023 Revised Edition earning particular acclaim for improved layout and presentation.",
 					"blurb": "An ENNIE award-winning retroclone of Original D&D (1974-1978) that delivers AD&D-level content in a streamlined 144-page package. Features ascending AC, unified saving throws, and all core classes from the early supplements. Compatible with five decades of fantasy RPG material.",
@@ -12431,7 +12431,7 @@
 				"data": {
 					"title": "Neoclassical Geek Revival",
 					"website_url": "https://www.drivethrurpg.com/en/product/354615/neoclassical-geek-revival-basic-2nd-edition",
-					"image_url": "https://d1vzi28wh99zvq.cloudfront.net/images/neoclassical-geek-revival-cover.jpg",
+					"image_url": "/images/games/neoclassical-geek-revival.jpg",
 					"reviews_url": "https://www.drivethrurpg.com/en/product/354615/neoclassical-geek-revival-basic-2nd-edition",
 					"review_summary": "Reviewers praise NGR as a surprising evolution of OSR design that preserves old-school sensibilities while introducing genuinely innovative mechanics. The Pie Piece class system and Schrödinger's Character creation receive particular acclaim for enabling fluid, organic character development. Critics note the steep learning curve and crunchy mechanics, but consistently find the payoff worthwhile for groups seeking depth beyond typical retro-clones.",
 					"blurb": "An innovative OSR RPG by Zzarchov Kowolski featuring the unique Pie Piece class system, Luck Points instead of hit points, and Schrödinger's Character creation where you build your hero through play. Supports hijinks, social conflict, and creative problem-solving.",
@@ -12474,7 +12474,7 @@
 				"data": {
 					"title": "Lion & Dragon",
 					"website_url": "https://www.drivethrurpg.com/en/product/226022/lion-dragon",
-					"image_url": "https://www.drivethrurpg.com/images/4264/226022.jpg",
+					"image_url": "/images/games/lion-dragon.jpg",
 					"reviews_url": "https://www.drivethrurpg.com/en/product/226022/lion-dragon",
 					"review_summary": "Reviewers praise Lion & Dragon for its bold commitment to historical authenticity and its distinctive magic system based on real medieval grimoires. The integration of social class with equipment and economics receives particular acclaim for making character possessions meaningful. Critics note the learning curve for players accustomed to high-magic fantasy, but supporters argue this friction creates more immersive and rewarding gameplay.",
 					"blurb": "A Medieval Authentic OSR RPG that strips away anachronisms for historically grounded fantasy. Features a rigid feudal social system, gritty combat, and magic based on real historical grimoires rather than high fantasy tropes.",
@@ -12489,7 +12489,7 @@
 						{
 							"title": "The Hero's Journey",
 							"slug": "the-heros-journey",
-							"image_url": "https://res.cloudinary.com/dfy7duoia/image/upload/v1772483737/games/the-heros-journey.jpg",
+							"image_url": "/images/games/the-heros-journey.jpg",
 							"description": "Another OSR game that reimagines classic D&D through a specific thematic lens, The Hero's Journey focuses on mythic fantasy and epic storytelling. Where Lion & Dragon emphasizes historical medieval authenticity, The Hero's Journey embraces folklore and legend. Both games share OSR mechanical compatibility while offering distinctly different campaign experiences."
 						},
 						{
@@ -12501,7 +12501,7 @@
 						{
 							"title": "Swords & Wizardry",
 							"slug": "swords-wizardry",
-							"image_url": "https://res.cloudinary.com/dfy7duoia/image/upload/v1772483737/games/swords-wizardry.jpg",
+							"image_url": "/images/games/sword-wizardry.png",
 							"description": "Swords & Wizardry provides a clean, compatible foundation for OSR play that works well as a mechanical reference for Lion & Dragon. While Swords & Wizardry presents a more traditional fantasy approach, its streamlined rules make it easy to port material between systems. Groups wanting to add more traditional fantasy elements to Lion & Dragon can do so seamlessly."
 						}
 					]
@@ -12691,7 +12691,7 @@
 						{
 							"title": "Dungeons & Dragons",
 							"slug": "dungeonsanddragons",
-							"image_url": "https://res.cloudinary.com/dfy7duoia/image/upload/v1772483064/games/dungeons--dragons.webp",
+							"image_url": "https://www.dungeonsanddragons.com/cms/global/social-share.jpg",
 							"description": "<i>Dungeons & Dragons</i> and <i>Cosmere RPG</i> both utilize d20-based mechanics and class-like character progression, but diverge significantly in their approach to magic and narrative integration. While <i>D&D</i> offers a broad toolkit of spells and abilities applicable across generic fantasy settings, <i>Cosmere RPG</i> focuses on deeply integrated, lore-specific magic systems with strict rules and limitations that drive storytelling. For example, <i>Cosmere's</i> \"plot die\" mechanic weaves narrative stakes directly into resolution, whereas <i>D&D</i> typically separates mechanics from story consequences."
 						},
 						{

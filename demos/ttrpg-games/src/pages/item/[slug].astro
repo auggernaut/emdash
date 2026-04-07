@@ -57,12 +57,12 @@ const seo = getSeoMeta(game, {
 	path: `/item/${slug}`,
 });
 
-const badges: Badge[] = [
+const badges: Badge[] = ([
 	game.data.rank ? { label: `Rank #${game.data.rank}`, tone: "strong" } : null,
 	game.data.is_top_rated ? { label: "Top rated", tone: "strong" } : null,
-	game.data.is_free ? { label: "Free", tone: undefined } : null,
-	game.data.paid ? { label: "Paid", tone: undefined } : null,
-].filter((badge): badge is Badge => badge !== null);
+	game.data.is_free ? { label: "Free" } : null,
+	game.data.paid ? { label: "Paid" } : null,
+] as (Badge | null)[]).filter((badge): badge is Badge => badge !== null);
 
 const stripTags = (value: string) => value.replace(/<[^>]+>/g, "").trim();
 

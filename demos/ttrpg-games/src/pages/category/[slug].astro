@@ -257,8 +257,8 @@ function renderFaqAnswer(answer: string): string {
 					<span aria-current="page" style="color: var(--gold-accent); font-weight: 600;">{term.label}</span>
 				</nav>
 
-				<span class="eyebrow" style="margin-top: 24px; display: block;">{categoryPage?.data.type || "Category archive"}</span>
-				<h1 style="margin-top: 12px;">{heroTitle}</h1>
+				<span class="eyebrow">{categoryPage?.data.type || "Category archive"}</span>
+				<h1>{heroTitle}</h1>
 				{
 					categoryBodyHtml && (
 						<div class="prose hero-prose" set:html={categoryBodyHtml} />
@@ -407,14 +407,19 @@ function renderFaqAnswer(answer: string): string {
 
 <style>
 	.category-hero {
-		padding: 250px 0 32px;
+		padding: 150px 0 32px;
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 0;
 	}
 
 	.category-hero h1 {
 		font-size: clamp(2.4rem, 5vw, 4.2rem);
-		line-height: 1;
+		line-height: 1.05;
 		font-weight: 800;
 		letter-spacing: -0.03em;
+		margin: 12px 0 0;
 	}
 
 	.hero-prose {
@@ -576,9 +581,10 @@ function renderFaqAnswer(answer: string): string {
 	.breadcrumbs {
 		display: flex;
 		align-items: center;
+		flex-wrap: wrap;
 		gap: 8px;
 		font-size: 0.9rem;
-		margin-bottom: -150px; /* Pull into hero area */
+		margin: 0;
 		position: relative;
 		z-index: 10;
 		color: var(--muted);
@@ -593,6 +599,8 @@ function renderFaqAnswer(answer: string): string {
 	}
 
 	.eyebrow {
+		display: block;
+		margin-top: 24px;
 		font-family: var(--font-serif);
 		text-transform: uppercase;
 		letter-spacing: 0.15em;
