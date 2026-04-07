@@ -74,8 +74,7 @@ function normalizeGameNotes(value: unknown): CategoryGameNote[] {
 			game_slug: typeof item.game_slug === "string" ? item.game_slug : "",
 			fit_blurb: typeof item.fit_blurb === "string" ? item.fit_blurb : "",
 			featured: Boolean(item.featured),
-			featured_reason:
-				typeof item.featured_reason === "string" ? item.featured_reason : "",
+			featured_reason: typeof item.featured_reason === "string" ? item.featured_reason : "",
 			sort_order:
 				typeof item.sort_order === "number"
 					? item.sort_order
@@ -244,15 +243,14 @@ function CategoryGameNotesEditor({
 			)}
 
 			<div className="rounded-xl border border-dashed border-kumo-border p-3 text-sm text-kumo-subtle">
-				Write the category-specific card copy shown on this archive page. Describe each
-				game through the lens of this category, and use featured picks to populate the Top
-				Picks section.
+				Write the category-specific card copy shown on this archive page. Describe each game through
+				the lens of this category, and use featured picks to populate the Top Picks section.
 			</div>
 
 			{!categorySlug ? (
 				<div className="rounded-xl border border-kumo-border bg-kumo-surface p-4 text-sm text-kumo-subtle">
-					Save this category page with a slug first, then reload to edit category-specific
-					game notes.
+					Save this category page with a slug first, then reload to edit category-specific game
+					notes.
 				</div>
 			) : loading ? (
 				<div className="rounded-xl border border-kumo-border bg-kumo-surface p-4 text-sm text-kumo-subtle">
@@ -314,14 +312,12 @@ function CategoryGameNotesEditor({
 
 								<div className="grid gap-3 md:grid-cols-[minmax(0,1fr)_140px]">
 									<div className="grid gap-1.5">
-											<label className="text-xs font-medium uppercase tracking-wide text-kumo-subtle">
-												Category-specific blurb
-											</label>
+										<label className="text-xs font-medium uppercase tracking-wide text-kumo-subtle">
+											Category-specific blurb
+										</label>
 										<textarea
 											value={note?.fit_blurb ?? ""}
-											onChange={(event) =>
-												updateNote(game.slug, { fit_blurb: event.target.value })
-											}
+											onChange={(event) => updateNote(game.slug, { fit_blurb: event.target.value })}
 											rows={4}
 											className="min-h-24 rounded-md border border-kumo-border bg-transparent px-3 py-2 text-sm"
 										/>
@@ -348,9 +344,7 @@ function CategoryGameNotesEditor({
 												value={note?.sort_order ?? ""}
 												onChange={(event) =>
 													updateNote(game.slug, {
-														sort_order: event.target.value
-															? Number(event.target.value)
-															: null,
+														sort_order: event.target.value ? Number(event.target.value) : null,
 													})
 												}
 												className="h-10 rounded-md border border-kumo-border bg-transparent px-3 text-sm"
@@ -381,19 +375,14 @@ function CategoryGameNotesEditor({
 	);
 }
 
-function CategoryFaqEditor({
-	value,
-	onChange,
-	label,
-	id,
-	required,
-	minimal,
-}: FieldWidgetProps) {
+function CategoryFaqEditor({ value, onChange, label, id, required, minimal }: FieldWidgetProps) {
 	const items = React.useMemo(() => normalizeFaqs(value), [value]);
 
 	const updateItems = (next: CategoryFaq[]) => onChange(sanitizeFaqs(next));
 	const updateItem = (index: number, patch: Partial<CategoryFaq>) => {
-		updateItems(items.map((item, itemIndex) => (itemIndex === index ? { ...item, ...patch } : item)));
+		updateItems(
+			items.map((item, itemIndex) => (itemIndex === index ? { ...item, ...patch } : item)),
+		);
 	};
 
 	return (
@@ -498,9 +487,8 @@ function RelatedCategoriesEditor({
 							title:
 								typeof item.data.title === "string" && item.data.title
 									? item.data.title
-									: item.slug ?? "",
-							type:
-								typeof item.data.type === "string" ? item.data.type : "",
+									: (item.slug ?? ""),
+							type: typeof item.data.type === "string" ? item.data.type : "",
 						}))
 						.sort((left, right) => left.title.localeCompare(right.title)),
 				),
@@ -513,7 +501,9 @@ function RelatedCategoriesEditor({
 	const options = categories.filter((category) => category.slug !== currentSlug);
 	const updateItems = (next: RelatedCategoryLink[]) => onChange(sanitizeRelatedCategories(next));
 	const updateItem = (index: number, patch: Partial<RelatedCategoryLink>) => {
-		updateItems(items.map((item, itemIndex) => (itemIndex === index ? { ...item, ...patch } : item)));
+		updateItems(
+			items.map((item, itemIndex) => (itemIndex === index ? { ...item, ...patch } : item)),
+		);
 	};
 
 	return (

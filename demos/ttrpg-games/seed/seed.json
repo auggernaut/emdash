@@ -15,12 +15,7 @@
 			"slug": "games",
 			"label": "Games",
 			"labelSingular": "Game",
-			"supports": [
-				"drafts",
-				"revisions",
-				"search",
-				"seo"
-			],
+			"supports": ["drafts", "revisions", "search", "seo"],
 			"fields": [
 				{
 					"slug": "title",
@@ -129,11 +124,7 @@
 			"slug": "category_pages",
 			"label": "Category Pages",
 			"labelSingular": "Category Page",
-			"supports": [
-				"drafts",
-				"revisions",
-				"search"
-			],
+			"supports": ["drafts", "revisions", "search"],
 			"fields": [
 				{
 					"slug": "title",
@@ -169,9 +160,7 @@
 			"label": "Categories",
 			"labelSingular": "Category",
 			"hierarchical": false,
-			"collections": [
-				"games"
-			],
+			"collections": ["games"],
 			"terms": [
 				{
 					"slug": "5e-compatible",
@@ -5400,13 +5389,7 @@
 					]
 				},
 				"taxonomies": {
-					"category": [
-						"cosmic-horror",
-						"mystery",
-						"psychological",
-						"narrative-driven",
-						"solo-play"
-					]
+					"category": ["cosmic-horror", "mystery", "psychological", "narrative-driven", "solo-play"]
 				}
 			},
 			{
@@ -6291,13 +6274,7 @@
 					]
 				},
 				"taxonomies": {
-					"category": [
-						"fantasy",
-						"rules-lite",
-						"classless",
-						"quick-play",
-						"low-prep"
-					]
+					"category": ["fantasy", "rules-lite", "classless", "quick-play", "low-prep"]
 				}
 			},
 			{
@@ -6340,13 +6317,7 @@
 					]
 				},
 				"taxonomies": {
-					"category": [
-						"fantasy",
-						"rules-lite",
-						"narrative-driven",
-						"quick-play",
-						"low-prep"
-					]
+					"category": ["fantasy", "rules-lite", "narrative-driven", "quick-play", "low-prep"]
 				}
 			},
 			{
@@ -6536,13 +6507,7 @@
 					]
 				},
 				"taxonomies": {
-					"category": [
-						"science-fiction",
-						"rules-lite",
-						"quick-play",
-						"classless",
-						"low-prep"
-					]
+					"category": ["science-fiction", "rules-lite", "quick-play", "classless", "low-prep"]
 				}
 			},
 			{
@@ -6839,13 +6804,7 @@
 					]
 				},
 				"taxonomies": {
-					"category": [
-						"comedy",
-						"rules-lite",
-						"quick-play",
-						"low-prep",
-						"narrative-driven"
-					]
+					"category": ["comedy", "rules-lite", "quick-play", "low-prep", "narrative-driven"]
 				}
 			},
 			{
@@ -6888,13 +6847,7 @@
 					]
 				},
 				"taxonomies": {
-					"category": [
-						"romance",
-						"narrative-driven",
-						"gm-less",
-						"rules-lite",
-						"low-prep"
-					]
+					"category": ["romance", "narrative-driven", "gm-less", "rules-lite", "low-prep"]
 				}
 			},
 			{
@@ -7140,14 +7093,7 @@
 					]
 				},
 				"taxonomies": {
-					"category": [
-						"rules-lite",
-						"modern",
-						"paranormal",
-						"military",
-						"classless",
-						"low-prep"
-					]
+					"category": ["rules-lite", "modern", "paranormal", "military", "classless", "low-prep"]
 				}
 			},
 			{
@@ -8170,13 +8116,7 @@
 					]
 				},
 				"taxonomies": {
-					"category": [
-						"post-apocalyptic",
-						"horror",
-						"survival",
-						"campaign",
-						"low-prep"
-					]
+					"category": ["post-apocalyptic", "horror", "survival", "campaign", "low-prep"]
 				}
 			},
 			{
@@ -8219,13 +8159,7 @@
 					]
 				},
 				"taxonomies": {
-					"category": [
-						"horror",
-						"survival",
-						"rules-lite",
-						"classless",
-						"low-prep"
-					]
+					"category": ["horror", "survival", "rules-lite", "classless", "low-prep"]
 				}
 			},
 			{
@@ -8581,13 +8515,7 @@
 					]
 				},
 				"taxonomies": {
-					"category": [
-						"science-fiction",
-						"solo-play",
-						"survival",
-						"quick-play",
-						"rules-lite"
-					]
+					"category": ["science-fiction", "solo-play", "survival", "quick-play", "rules-lite"]
 				}
 			},
 			{
@@ -8680,13 +8608,7 @@
 					]
 				},
 				"taxonomies": {
-					"category": [
-						"fantasy",
-						"high-fantasy",
-						"exploration-driven",
-						"survival",
-						"campaign"
-					]
+					"category": ["fantasy", "high-fantasy", "exploration-driven", "survival", "campaign"]
 				}
 			},
 			{
@@ -8835,10 +8757,7 @@
 					]
 				},
 				"taxonomies": {
-					"category": [
-						"rules-lite",
-						"survival"
-					]
+					"category": ["rules-lite", "survival"]
 				}
 			},
 			{
@@ -8983,13 +8902,7 @@
 					]
 				},
 				"taxonomies": {
-					"category": [
-						"survival",
-						"narrative-driven",
-						"rules-lite",
-						"low-prep",
-						"quick-play"
-					]
+					"category": ["survival", "narrative-driven", "rules-lite", "low-prep", "quick-play"]
 				}
 			},
 			{
@@ -9032,13 +8945,7 @@
 					]
 				},
 				"taxonomies": {
-					"category": [
-						"horror",
-						"survival",
-						"modern",
-						"rules-lite",
-						"quick-play"
-					]
+					"category": ["horror", "survival", "modern", "rules-lite", "quick-play"]
 				}
 			},
 			{
@@ -9233,13 +9140,7 @@
 					]
 				},
 				"taxonomies": {
-					"category": [
-						"science-fiction",
-						"survival",
-						"horror",
-						"resource-management",
-						"low-prep"
-					]
+					"category": ["science-fiction", "survival", "horror", "resource-management", "low-prep"]
 				}
 			},
 			{
@@ -9480,12 +9381,7 @@
 					]
 				},
 				"taxonomies": {
-					"category": [
-						"survival",
-						"rules-lite",
-						"horror",
-						"modern"
-					]
+					"category": ["survival", "rules-lite", "horror", "modern"]
 				}
 			},
 			{
@@ -9579,14 +9475,7 @@
 					]
 				},
 				"taxonomies": {
-					"category": [
-						"horror",
-						"post-apocalyptic",
-						"survival",
-						"modern",
-						"campaign",
-						"low-prep"
-					]
+					"category": ["horror", "post-apocalyptic", "survival", "modern", "campaign", "low-prep"]
 				}
 			},
 			{
@@ -9729,13 +9618,7 @@
 					]
 				},
 				"taxonomies": {
-					"category": [
-						"survival",
-						"rules-lite",
-						"resource-management",
-						"environmental",
-						"low-prep"
-					]
+					"category": ["survival", "rules-lite", "resource-management", "environmental", "low-prep"]
 				}
 			},
 			{
@@ -9778,13 +9661,7 @@
 					]
 				},
 				"taxonomies": {
-					"category": [
-						"survival",
-						"science-fiction",
-						"prison-drama",
-						"low-prep",
-						"collaborative"
-					]
+					"category": ["survival", "science-fiction", "prison-drama", "low-prep", "collaborative"]
 				}
 			},
 			{
@@ -10072,12 +9949,7 @@
 					]
 				},
 				"taxonomies": {
-					"category": [
-						"horror",
-						"survival",
-						"rules-lite",
-						"quick-play"
-					]
+					"category": ["horror", "survival", "rules-lite", "quick-play"]
 				}
 			},
 			{
@@ -10373,13 +10245,7 @@
 					]
 				},
 				"taxonomies": {
-					"category": [
-						"survival",
-						"horror",
-						"rules-lite",
-						"low-prep",
-						"quick-play"
-					]
+					"category": ["survival", "horror", "rules-lite", "low-prep", "quick-play"]
 				}
 			},
 			{
@@ -10522,12 +10388,7 @@
 					]
 				},
 				"taxonomies": {
-					"category": [
-						"horror",
-						"survival",
-						"narrative-driven",
-						"rules-lite"
-					]
+					"category": ["horror", "survival", "narrative-driven", "rules-lite"]
 				}
 			},
 			{
@@ -10821,12 +10682,7 @@
 					]
 				},
 				"taxonomies": {
-					"category": [
-						"survival",
-						"horror",
-						"science-fiction",
-						"rules-lite"
-					]
+					"category": ["survival", "horror", "science-fiction", "rules-lite"]
 				}
 			},
 			{
@@ -10869,12 +10725,7 @@
 					]
 				},
 				"taxonomies": {
-					"category": [
-						"survival",
-						"post-apocalyptic",
-						"science-fiction",
-						"rules-lite"
-					]
+					"category": ["survival", "post-apocalyptic", "science-fiction", "rules-lite"]
 				}
 			},
 			{
@@ -11264,12 +11115,7 @@
 					]
 				},
 				"taxonomies": {
-					"category": [
-						"survival",
-						"science-fiction",
-						"horror",
-						"rules-lite"
-					]
+					"category": ["survival", "science-fiction", "horror", "rules-lite"]
 				}
 			},
 			{
@@ -11312,13 +11158,7 @@
 					]
 				},
 				"taxonomies": {
-					"category": [
-						"survival",
-						"rules-lite",
-						"quick-play",
-						"low-prep",
-						"environmental"
-					]
+					"category": ["survival", "rules-lite", "quick-play", "low-prep", "environmental"]
 				}
 			},
 			{
@@ -11410,13 +11250,7 @@
 					]
 				},
 				"taxonomies": {
-					"category": [
-						"survival",
-						"science-fiction",
-						"horror",
-						"solo-play",
-						"rules-lite"
-					]
+					"category": ["survival", "science-fiction", "horror", "solo-play", "rules-lite"]
 				}
 			},
 			{
@@ -11509,12 +11343,7 @@
 					]
 				},
 				"taxonomies": {
-					"category": [
-						"fantasy",
-						"old-school-renaissance-osr",
-						"rules-lite",
-						"5e-compatible"
-					]
+					"category": ["fantasy", "old-school-renaissance-osr", "rules-lite", "5e-compatible"]
 				}
 			},
 			{
@@ -11589,12 +11418,7 @@
 					]
 				},
 				"taxonomies": {
-					"category": [
-						"rules-lite",
-						"old-school-renaissance-osr",
-						"fantasy",
-						"5e-compatible"
-					]
+					"category": ["rules-lite", "old-school-renaissance-osr", "fantasy", "5e-compatible"]
 				}
 			},
 			{
@@ -11688,12 +11512,7 @@
 					]
 				},
 				"taxonomies": {
-					"category": [
-						"rules-lite",
-						"old-school-renaissance-osr",
-						"fantasy",
-						"sandbox"
-					]
+					"category": ["rules-lite", "old-school-renaissance-osr", "fantasy", "sandbox"]
 				}
 			},
 			{
@@ -11785,12 +11604,7 @@
 					]
 				},
 				"taxonomies": {
-					"category": [
-						"rules-lite",
-						"old-school-renaissance-osr",
-						"fantasy",
-						"5e-compatible"
-					]
+					"category": ["rules-lite", "old-school-renaissance-osr", "fantasy", "5e-compatible"]
 				}
 			},
 			{
@@ -11833,12 +11647,7 @@
 					]
 				},
 				"taxonomies": {
-					"category": [
-						"rules-lite",
-						"old-school-renaissance-osr",
-						"fantasy",
-						"5e-compatible"
-					]
+					"category": ["rules-lite", "old-school-renaissance-osr", "fantasy", "5e-compatible"]
 				}
 			},
 			{
@@ -11912,12 +11721,7 @@
 					"related": []
 				},
 				"taxonomies": {
-					"category": [
-						"rules-lite",
-						"old-school-renaissance-osr",
-						"fantasy",
-						"5e-compatible"
-					]
+					"category": ["rules-lite", "old-school-renaissance-osr", "fantasy", "5e-compatible"]
 				}
 			},
 			{
@@ -11960,12 +11764,7 @@
 					]
 				},
 				"taxonomies": {
-					"category": [
-						"rules-lite",
-						"old-school-renaissance-osr",
-						"fantasy",
-						"5e-compatible"
-					]
+					"category": ["rules-lite", "old-school-renaissance-osr", "fantasy", "5e-compatible"]
 				}
 			},
 			{
@@ -12439,12 +12238,7 @@
 					]
 				},
 				"taxonomies": {
-					"category": [
-						"rules-lite",
-						"old-school-renaissance-osr",
-						"fantasy",
-						"sandbox"
-					]
+					"category": ["rules-lite", "old-school-renaissance-osr", "fantasy", "sandbox"]
 				}
 			},
 			{
@@ -12487,11 +12281,7 @@
 					]
 				},
 				"taxonomies": {
-					"category": [
-						"rules-lite",
-						"dark-fantasy",
-						"sword-and-sorcery"
-					]
+					"category": ["rules-lite", "dark-fantasy", "sword-and-sorcery"]
 				}
 			},
 			{
@@ -12583,12 +12373,7 @@
 					]
 				},
 				"taxonomies": {
-					"category": [
-						"rules-lite",
-						"fantasy",
-						"old-school-renaissance-osr",
-						"class-based"
-					]
+					"category": ["rules-lite", "fantasy", "old-school-renaissance-osr", "class-based"]
 				}
 			},
 			{
@@ -12679,11 +12464,7 @@
 					]
 				},
 				"taxonomies": {
-					"category": [
-						"old-school-renaissance-osr",
-						"rules-lite",
-						"fantasy"
-					]
+					"category": ["old-school-renaissance-osr", "rules-lite", "fantasy"]
 				}
 			},
 			{
@@ -12726,11 +12507,7 @@
 					]
 				},
 				"taxonomies": {
-					"category": [
-						"fantasy",
-						"old-school-renaissance-osr",
-						"historical"
-					]
+					"category": ["fantasy", "old-school-renaissance-osr", "historical"]
 				}
 			},
 			{
@@ -12865,12 +12642,7 @@
 					]
 				},
 				"taxonomies": {
-					"category": [
-						"fantasy",
-						"5e-compatible",
-						"high-fantasy",
-						"rules-medium"
-					]
+					"category": ["fantasy", "5e-compatible", "high-fantasy", "rules-medium"]
 				}
 			},
 			{
@@ -12894,11 +12666,7 @@
 					"related": []
 				},
 				"taxonomies": {
-					"category": [
-						"urban-fantasy",
-						"modern",
-						"rules-medium"
-					]
+					"category": ["urban-fantasy", "modern", "rules-medium"]
 				}
 			},
 			{

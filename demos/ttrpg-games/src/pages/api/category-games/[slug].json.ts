@@ -1,5 +1,6 @@
 import type { APIRoute } from "astro";
 import { getEmDashCollection, getTerm } from "emdash";
+
 import type { GameEntry } from "../../../lib/types";
 
 export const GET: APIRoute = async ({ params }) => {

@@ -121,7 +121,8 @@ export const POST: APIRoute = async ({ request, locals, cache }) => {
 		const submissionNotes = getTrimmedString(formData, "submissionNotes");
 		const imagePath = normalizeImagePath(getTrimmedString(formData, "imagePath"));
 		const imageFileEntry = formData.get("imageFile");
-		const imageFile = imageFileEntry instanceof File && imageFileEntry.size > 0 ? imageFileEntry : null;
+		const imageFile =
+			imageFileEntry instanceof File && imageFileEntry.size > 0 ? imageFileEntry : null;
 
 		if (imagePath && imageFile) {
 			throw new SubmissionError("both_image_inputs");
@@ -243,9 +244,6 @@ export const POST: APIRoute = async ({ request, locals, cache }) => {
 			return redirectToSubmissionPage(request, new URLSearchParams({ error: error.code }));
 		}
 		console.error("[GAME_SUBMISSION_ERROR]", error);
-		return redirectToSubmissionPage(
-			request,
-			new URLSearchParams({ error: "submission_failed" }),
-		);
+		return redirectToSubmissionPage(request, new URLSearchParams({ error: "submission_failed" }));
 	}
 };

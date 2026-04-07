@@ -41,14 +41,7 @@ function normalizeRelatedGames(value: unknown): RelatedGame[] {
 		}));
 }
 
-function RelatedGamesEditor({
-	value,
-	onChange,
-	label,
-	id,
-	required,
-	minimal,
-}: FieldWidgetProps) {
+function RelatedGamesEditor({ value, onChange, label, id, required, minimal }: FieldWidgetProps) {
 	const items = normalizeRelatedGames(value);
 
 	const updateItems = (next: RelatedGame[]) => {
@@ -56,7 +49,9 @@ function RelatedGamesEditor({
 	};
 
 	const updateItem = (index: number, patch: Partial<RelatedGame>) => {
-		updateItems(items.map((item, itemIndex) => (itemIndex === index ? { ...item, ...patch } : item)));
+		updateItems(
+			items.map((item, itemIndex) => (itemIndex === index ? { ...item, ...patch } : item)),
+		);
 	};
 
 	const removeItem = (index: number) => {
