@@ -3,6 +3,8 @@ import { getEmDashCollection } from "emdash";
 import Base from "../layouts/Base.astro";
 import type { Badge, CategoryPageEntry, GameEntry } from "../lib/types";
 
+const NON_ALPHANUMERIC_PATTERN = /[^a-z0-9]/g;
+
 const { entries: rawGames, cacheHint } = await getEmDashCollection("games");
 const { entries: rawCategoryPages } = await getEmDashCollection("category_pages");
 Astro.cache.set(cacheHint);
@@ -10,7 +12,7 @@ Astro.cache.set(cacheHint);
 const games = rawGames as unknown as GameEntry[];
 const categoryPages = rawCategoryPages as unknown as CategoryPageEntry[];
 
-const rankedGames = [...games].sort((left, right) => {
+const rankedGames = games.toSorted((left, right) => {
 	const leftRank = left.data.rank ?? Number.MAX_SAFE_INTEGER;
 	const rightRank = right.data.rank ?? Number.MAX_SAFE_INTEGER;
 	if (leftRank !== rightRank) return leftRank - rightRank;
@@ -19,14 +21,14 @@ const rankedGames = [...games].sort((left, right) => {
 
 const topRatedGames = rankedGames.filter((game) => game.data.is_top_rated).slice(0, 8);
 
-const categoryCards = [...categoryPages].sort((left, right) => {
+const categoryCards = categoryPages.toSorted((left, right) => {
 	if (left.data.type !== right.data.type) {
 		return left.data.type.localeCompare(right.data.type);
 	}
 	return left.data.title.localeCompare(right.data.title);
 });
 
-const preferredCategoryIds = [
+const preferredCategoryIds = new Set([
 	"fantasy",
 	"highfantasy",
 	"darkfantasy",
@@ -35,22 +37,22 @@ const preferredCategoryIds = [
 	"postapocalyptic",
 	"horror",
 	"cosmichorror",
-];
+]);
 
 function normalizeCategoryId(value: string): string {
-	return value.toLowerCase().replace(/[^a-z0-9]/g, "");
+	return value.toLowerCase().replace(NON_ALPHANUMERIC_PATTERN, "");
 }
 
 const popularCategories = [
 	...categoryCards.filter((category) =>
-		preferredCategoryIds.includes(normalizeCategoryId(category.id))
+		preferredCategoryIds.has(normalizeCategoryId(category.id))
 	),
 	...categoryCards.filter(
-		(category) => !preferredCategoryIds.includes(normalizeCategoryId(category.id))
+		(category) => !preferredCategoryIds.has(normalizeCategoryId(category.id))
 	),
 ].slice(0, 8);
 
-const recentlyAddedGames = [...games].slice(-12).reverse();
+const recentlyAddedGames = games.toReversed().slice(0, 12);
 
 const faqs = [
 	{
@@ -90,15 +92,16 @@ function cardCopy(game: GameEntry): string {
 
 <Base
 	title="TTRPG Games Directory"
-	description="Discover tabletop RPGs by genre, style, and tone. Compare top-rated picks, explore categories, and find your next game."
+	description="Compare tabletop RPGs, explore category guides, and find the game that best fits your group, campaign style, and taste."
 >
 	<div class="stack">
-		<section class="hero-card">
+		<section class="hero-card home-hero-card">
 			<span class="eyebrow">Find your next game</span>
-			<h1>Discover tabletop RPGs by genre, style, and tone.</h1>
+			<h1>Find the tabletop RPG that best fits your group.</h1>
 			<p>
-				Explore standout systems, compare what makes each one unique, and find
-				games that fit your group’s preferred mechanics, mood, and campaign style.
+				Use category guides, top picks, and game-by-game breakdowns to narrow the
+				field faster and choose a system that matches your group’s mechanics,
+				mood, and campaign style.
 			</p>
 			<div class="badges" style="margin-top: 18px;">
 				<span class="badge">{games.length} games to explore</span>
@@ -234,7 +237,9 @@ function cardCopy(game: GameEntry): string {
 				{faqs.map((faq) => (
 					<details class="faq-item">
 						<summary>{faq.question}</summary>
-						<p>{faq.answer}</p>
+						<div class="faq-answer">
+							<p>{faq.answer}</p>
+						</div>
 					</details>
 				))}
 			</div>
@@ -263,8 +268,8 @@ function cardCopy(game: GameEntry): string {
 					</p>
 				</div>
 				<div class="stack" style="gap: 12px;">
-					<a href="https://www.ttrpg-games.com" class="button-link primary">
-						Submit on the main site
+					<a href="/submit-game" class="button-link primary">
+						Open the submission form
 					</a>
 					<a href="https://x.com/augustinbralley" class="button-link">
 						Contact on X

@@ -1,0 +1,380 @@
+---
+import Base from "../layouts/Base.astro";
+
+const submitted = Astro.url.searchParams.get("submitted") === "1";
+const errorCode = Astro.url.searchParams.get("error");
+
+const errorMessages: Record<string, string> = {
+	missing_required: "Fill in the required fields before submitting.",
+	invalid_website_url: "Enter a valid game website URL starting with http:// or https://.",
+	invalid_image_path:
+		"Enter a valid image URL or a root-relative path such as /images/cover.png.",
+	invalid_email: "Enter a valid email address so the editor can follow up if needed.",
+	both_image_inputs: "Choose either an image URL/path or an uploaded image, not both.",
+	invalid_image_type: "Upload a JPG, PNG, WEBP, AVIF, or GIF image.",
+	image_too_large: "Uploaded images must be 10 MB or smaller.",
+	storage_not_configured: "Image uploads are temporarily unavailable. Use an image URL/path instead.",
+	forbidden: "This submission was rejected. Reload the page and try again from this site.",
+	not_configured: "Submissions are temporarily unavailable.",
+	submission_failed: "The submission could not be saved. Try again in a moment.",
+};
+
+const errorMessage = errorCode ? errorMessages[errorCode] ?? errorMessages.submission_failed : null;
+---
+
+<Base
+	title="Submit a Game | TTRPG Games"
+	description="Submit a tabletop RPG to the directory for editorial review."
+>
+	<div class="stack">
+		<section class="hero-card">
+			<span class="eyebrow">Editorial submissions</span>
+			<h1>Submit a game to the directory.</h1>
+			<p>
+				Send the core details here and the editorial team can review the
+				submission, clean it up in the admin, and publish it if it belongs in the
+				directory.
+			</p>
+			<div class="badges" style="margin-top: 18px;">
+				<span class="badge">Dedicated review workflow</span>
+				<span class="badge">Upload an image or paste a path</span>
+				<span class="badge">Published only after approval</span>
+			</div>
+		</section>
+
+			{
+				submitted && (
+					<section class="panel status-banner status-banner-success" id="submission-success">
+						<strong>Submission received.</strong>
+						<p>
+							Thanks. The editorial team can now review your submission before it is
+							considered for the directory.
+						</p>
+					</section>
+				)
+		}
+
+			{
+				errorMessage && (
+					<section class="panel status-banner status-banner-error" id="submission-error">
+						<strong>Submission not saved.</strong>
+						<p>{errorMessage}</p>
+					</section>
+				)
+			}
+
+		<div class="submission-layout">
+			<section class="panel">
+				<div class="section-header">
+					<div>
+						<div class="kicker">Submission form</div>
+						<h2>Game details</h2>
+					</div>
+					<p>
+						Required fields are limited to what the editor needs to start a review.
+					</p>
+				</div>
+
+				<form
+					class="submission-form"
+					id="game-submission-form"
+					action="/api/game-submissions"
+					method="post"
+					enctype="multipart/form-data"
+					data-error-messages={JSON.stringify(errorMessages)}
+				>
+					<div class="field-grid">
+						<label class="field">
+							<span>Game title</span>
+							<input
+								type="text"
+								name="title"
+								required
+								placeholder="For example: Blades in the Dark"
+							/>
+						</label>
+
+						<label class="field">
+							<span>Official website</span>
+							<input
+								type="url"
+								name="websiteUrl"
+								required
+								placeholder="https://example.com/game"
+							/>
+						</label>
+
+						<label class="field">
+							<span>Publisher or creator</span>
+							<input
+								type="text"
+								name="publisherOrCreator"
+								placeholder="Designer, studio, or publisher"
+							/>
+						</label>
+
+						<label class="field">
+							<span>Your name</span>
+							<input
+								type="text"
+								name="submitterName"
+								required
+								placeholder="How the editor should refer to you"
+							/>
+						</label>
+
+						<label class="field">
+							<span>Your email</span>
+							<input
+								type="email"
+								name="submitterEmail"
+								required
+								placeholder="you@example.com"
+							/>
+						</label>
+					</div>
+
+					<label class="field">
+						<span>Why it belongs in the directory</span>
+						<textarea
+							name="description"
+							required
+							rows="6"
+							placeholder="Write a short summary of what the game is, who it suits, and what makes it stand out."
+						/>
+					</label>
+
+					<div class="field-grid media-grid">
+						<label class="field">
+							<span>Image URL or site path</span>
+							<input
+								type="text"
+								name="imagePath"
+								placeholder="https://example.com/cover.jpg or /images/cover.jpg"
+							/>
+							<small>Paste an existing hosted image path if you have one.</small>
+						</label>
+
+						<label class="field">
+							<span>Upload cover image</span>
+							<input
+								type="file"
+								name="imageFile"
+								accept="image/jpeg,image/png,image/webp,image/avif,image/gif"
+							/>
+							<small>Upload instead of pasting a path. Max 10 MB.</small>
+						</label>
+					</div>
+
+					<label class="field">
+						<span>Notes for the editor</span>
+						<textarea
+							name="submissionNotes"
+							rows="4"
+							placeholder="Optional: category suggestions, corrections, review links, or anything else that helps with moderation."
+						/>
+					</label>
+
+					<div class="honeypot" aria-hidden="true">
+						<label>
+							<span>Company</span>
+							<input type="text" name="company" tabindex="-1" autocomplete="off" />
+						</label>
+					</div>
+
+					<div class="form-actions">
+							<button type="submit" class="button-link primary">Submit for review</button>
+							<p class="muted">
+								Submissions are reviewed before anything appears in the directory.
+							</p>
+						</div>
+					</form>
+			</section>
+
+			<aside class="stack" style="gap: 20px;">
+				<section class="meta-card">
+					<div class="kicker">What helps most</div>
+					<h2>Editorial checklist</h2>
+					<ul class="helper-list">
+						<li>Use the official game website instead of a storefront mirror when possible.</li>
+						<li>Add a clean cover image path or upload so the editor can review presentation quickly.</li>
+						<li>Describe tone, player count, complexity, or standout mechanics in plain language.</li>
+						<li>Use the notes field for corrections, category suggestions, or useful review links.</li>
+					</ul>
+				</section>
+
+					<section class="meta-card">
+						<div class="kicker">Review flow</div>
+						<h2>What happens next</h2>
+						<p>
+							Each submission is reviewed by the editorial team, who may revise it,
+							follow up for clarification, or add it to the directory if it fits.
+						</p>
+					</section>
+			</aside>
+		</div>
+	</div>
+</Base>
+
+<script is:inline>
+	const form = document.querySelector("#game-submission-form");
+	if (form instanceof HTMLFormElement) {
+		const submitButton = form.querySelector('button[type="submit"]');
+		const errorMessages = JSON.parse(form.dataset.errorMessages ?? "{}");
+
+		const renderError = (message) => {
+			const initialError = document.querySelector("#submission-error");
+			const initialSuccess = document.querySelector("#submission-success");
+			if (initialError instanceof HTMLElement) initialError.remove();
+			if (initialSuccess instanceof HTMLElement) initialSuccess.remove();
+			document.querySelector("#submission-error-runtime")?.remove();
+
+			const banner = document.createElement("section");
+			banner.className = "panel status-banner status-banner-error";
+			banner.id = "submission-error-runtime";
+			banner.innerHTML = `<strong>Submission not saved.</strong><p>${message}</p>`;
+			form.parentElement?.before(banner);
+			banner.scrollIntoView({ behavior: "smooth", block: "nearest" });
+		};
+
+		form.addEventListener("submit", async (event) => {
+			event.preventDefault();
+			if (submitButton instanceof HTMLButtonElement) submitButton.disabled = true;
+
+			try {
+				const response = await fetch(form.action, {
+					method: form.method,
+					body: new FormData(form),
+					credentials: "same-origin",
+				});
+
+				const finalUrl = new URL(response.url, window.location.href);
+				if (finalUrl.searchParams.get("submitted") === "1") {
+					window.location.assign(finalUrl.toString());
+					return;
+				}
+
+				const errorCode = finalUrl.searchParams.get("error") ?? "submission_failed";
+				renderError(errorMessages[errorCode] ?? errorMessages.submission_failed);
+			} catch {
+				renderError(errorMessages.submission_failed);
+			} finally {
+				if (submitButton instanceof HTMLButtonElement) submitButton.disabled = false;
+			}
+		});
+	}
+</script>
+
+<style>
+	.status-banner {
+		display: grid;
+		gap: 8px;
+	}
+
+	.status-banner p,
+	.status-banner strong {
+		margin: 0;
+	}
+
+	.status-banner-success {
+		border-color: rgba(47, 111, 79, 0.24);
+		background: rgba(47, 111, 79, 0.08);
+	}
+
+	.status-banner-error {
+		border-color: rgba(177, 78, 44, 0.24);
+		background: rgba(177, 78, 44, 0.08);
+	}
+
+	.submission-layout {
+		display: grid;
+		grid-template-columns: minmax(0, 1.65fr) minmax(280px, 0.95fr);
+		gap: 24px;
+		align-items: start;
+	}
+
+	.submission-form {
+		display: grid;
+		gap: 18px;
+	}
+
+	.field-grid {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 16px;
+	}
+
+	.media-grid {
+		align-items: start;
+	}
+
+	.field {
+		display: grid;
+		gap: 8px;
+		font-size: 0.98rem;
+	}
+
+	.field span {
+		font-weight: 600;
+	}
+
+	.field input,
+	.field textarea {
+		width: 100%;
+		padding: 14px 16px;
+		border: 1px solid var(--line-strong);
+		border-radius: 14px;
+		background: rgba(255, 255, 255, 0.92);
+		color: var(--text);
+		font: inherit;
+	}
+
+	.field input:focus,
+	.field textarea:focus {
+		outline: 2px solid rgba(177, 78, 44, 0.18);
+		outline-offset: 1px;
+		border-color: rgba(177, 78, 44, 0.45);
+	}
+
+	.field small {
+		color: var(--muted);
+	}
+
+	.form-actions {
+		display: grid;
+		gap: 12px;
+		align-items: start;
+	}
+
+	.form-actions .button-link {
+		border: 0;
+		cursor: pointer;
+		font: inherit;
+	}
+
+	.form-actions p {
+		margin: 0;
+	}
+
+	.helper-list {
+		display: grid;
+		gap: 10px;
+		padding-left: 18px;
+		margin: 0;
+		color: var(--muted);
+	}
+
+	.honeypot {
+		position: absolute;
+		left: -9999px;
+		opacity: 0;
+		pointer-events: none;
+	}
+
+	@media (max-width: 900px) {
+		.submission-layout,
+		.field-grid {
+			grid-template-columns: 1fr;
+		}
+	}
+</style>

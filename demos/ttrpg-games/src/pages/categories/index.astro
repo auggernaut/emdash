@@ -19,18 +19,19 @@ const sortedCategories = [...categoryPages].sort((left, right) => {
 
 <Base
 	title="Browse TTRPG Categories"
-	description="Category landing pages imported from the source sheet."
+	description="Browse tabletop RPG categories by genre, mechanics, and tone to find games that match your group."
 >
 	<div class="stack">
 		<section class="hero-card">
-			<span class="eyebrow">Imported categories</span>
-			<h1>Browse the directory by genre, theme, and mechanics.</h1>
+			<span class="eyebrow">Browse by category</span>
+			<h1>Find tabletop RPGs by genre, mechanics, and tone.</h1>
 			<p>
-				Each category page came from your categories tab and is connected to an
-				archive route for the matching game entries.
+				Start with the kind of play you want. Browse categories for fantasy,
+				horror, cyberpunk, solo play, rules-lite systems, and more, then compare
+				games that share those strengths.
 			</p>
 			<div class="badges" style="margin-top: 18px;">
-				<span class="badge">{sortedCategories.length} imported category pages</span>
+				<span class="badge">{sortedCategories.length} category guides</span>
 			</div>
 		</section>
 

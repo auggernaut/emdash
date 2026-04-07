@@ -5,6 +5,9 @@ interface FieldWidgetProps {
 	id: string;
 	required?: boolean;
 	minimal?: boolean;
+	collection?: string;
+	fieldName?: string;
+	entry?: { id: string; slug: string | null; data?: Record<string, unknown> } | null;
 }
 
 interface RelatedGame {

@@ -13,6 +13,10 @@ export interface CategoryPage {
   type?: string;
   description?: string;
   body_html?: string;
+  comparison_html?: string;
+  game_notes?: unknown;
+  faqs?: unknown;
+  related_categories?: unknown;
   createdAt: Date;
   updatedAt: Date;
   publishedAt: Date | null;
@@ -29,6 +33,7 @@ export interface Game {
   reviews_url?: string;
   review_summary?: string;
   blurb?: string;
+  at_a_glance?: string;
   body_html?: string;
   notes?: string;
   rank?: number;

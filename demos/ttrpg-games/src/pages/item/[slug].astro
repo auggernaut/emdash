@@ -126,7 +126,7 @@ const bodyHtml = atAGlance ? stripLeadingAtAGlance(game.data.body_html) : game.d
 
 <Base
 	title={seo.title}
-	description={seo.description || game.data.review_summary}
+	description={seo.description || game.data.blurb || game.data.review_summary}
 	canonical={seo.canonical}
 	image={game.data.image_url || seo.ogImage}
 	content={{ collection: "games", id: game.data.id, slug }}

@@ -40,6 +40,11 @@
 					"type": "string"
 				},
 				{
+					"slug": "publisher_or_creator",
+					"label": "Publisher or Creator",
+					"type": "string"
+				},
+				{
 					"slug": "reviews_url",
 					"label": "Reviews URL",
 					"type": "string"
@@ -65,6 +70,26 @@
 				{
 					"slug": "notes",
 					"label": "Notes",
+					"type": "text"
+				},
+				{
+					"slug": "submitted_by_visitor",
+					"label": "Submitted by Visitor",
+					"type": "boolean"
+				},
+				{
+					"slug": "submitter_name",
+					"label": "Submitter Name",
+					"type": "string"
+				},
+				{
+					"slug": "submitter_email",
+					"label": "Submitter Email",
+					"type": "string"
+				},
+				{
+					"slug": "submission_notes",
+					"label": "Submission Notes",
 					"type": "text"
 				},
 				{

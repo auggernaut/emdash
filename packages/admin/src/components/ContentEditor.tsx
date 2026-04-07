@@ -612,6 +612,8 @@ export function ContentEditor({
 									field={field}
 									value={formData[name]}
 									onChange={handleFieldChange}
+									collection={collection}
+									entry={item}
 									onEditorReady={field.kind === "portableText" ? setPortableTextEditor : undefined}
 									minimal={isDistractionFree}
 									pluginBlocks={pluginBlocks}
@@ -917,6 +919,8 @@ interface FieldRendererProps {
 	field: FieldDescriptor;
 	value: unknown;
 	onChange: (name: string, value: unknown) => void;
+	collection: string;
+	entry?: ContentItem | null;
 	/** Callback when a portableText editor is ready */
 	onEditorReady?: (editor: Editor) => void;
 	/** Minimal chrome - hides toolbar, fades labels, removes borders (distraction-free mode) */
@@ -939,6 +943,8 @@ function FieldRenderer({
 	field,
 	value,
 	onChange,
+	collection,
+	entry,
 	onEditorReady,
 	minimal,
 	pluginBlocks,
@@ -974,6 +980,9 @@ function FieldRenderer({
 						required?: boolean;
 						options?: Array<{ value: string; label: string }>;
 						minimal?: boolean;
+						fieldName?: string;
+						collection?: string;
+						entry?: ContentItem | null;
 				  }>
 				| undefined;
 			if (typeof PluginField === "function") {
@@ -987,6 +996,9 @@ function FieldRenderer({
 							required={field.required}
 							options={field.options}
 							minimal={minimal}
+							fieldName={name}
+							collection={collection}
+							entry={entry}
 						/>
 					</PluginFieldErrorBoundary>
 				);
@@ -1045,7 +1057,7 @@ function FieldRenderer({
 			return (
 				<Switch
 					label={label}
-					checked={typeof value === "boolean" ? value : false}
+					checked={typeof value === "boolean" ? value : value === 1}
 					onCheckedChange={handleChange}
 				/>
 			);

@@ -1,5 +1,4 @@
 ---
-import { getMenu } from "emdash";
 import { EmDashHead, EmDashBodyStart, EmDashBodyEnd } from "emdash/ui";
 import { createPublicPageContext } from "emdash/page";
 import LiveSearch from "emdash/ui/search";
@@ -10,12 +9,17 @@ interface Props {
 	image?: string | null;
 	canonical?: string | null;
 	content?: { collection: string; id: string; slug?: string | null };
+	structuredData?: unknown[];
 }
 
-const { title, description, image, canonical, content } = Astro.props;
+const { title, description, image, canonical, content, structuredData = [] } = Astro.props;
 
-const menu = await getMenu("primary");
 const logoSrc = "/_emdash/api/media/file/01KN700FE50XVF7AG34QJ4YMFM.webp";
+const primaryLinks = [
+	{ label: "Categories", url: "/categories" },
+	{ label: "Submit", url: "/submit-game" },
+	{ label: "Blog", url: "/blog" },
+];
 
 const pageCtx = createPublicPageContext({
 	Astro,
@@ -35,8 +39,11 @@ const pageCtx = createPublicPageContext({
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title>{title}</title>
-		{description && <meta name="description" content={description} />}
-		{canonical && <link rel="canonical" href={canonical} />}
+		{
+			structuredData.map((item) => (
+				<script is:inline type="application/ld+json" set:html={JSON.stringify(item)} />
+			))
+		}
 		<EmDashHead page={pageCtx} />
 	</head>
 	<body>
@@ -47,18 +54,16 @@ const pageCtx = createPublicPageContext({
 				<a href="/" class="brand">
 					<img class="brand-logo" src={logoSrc} alt="TTRPG Games" />
 					<span class="brand-copy">
-						<strong>TTRPG Games</strong>
-						<small>Discover tabletop RPGs by genre, style, and tone</small>
+						<strong>TTRPG Games Directory</strong>
+						<small>Discover your next tabletop roleplay game.</small>
 					</span>
 				</a>
 				<div class="nav-links">
-					{
-						menu?.items.map((item) => (
-							<a href={item.url} target={item.target} class="nav-link">
-								{item.label}
-							</a>
-						))
-					}
+					{primaryLinks.map((item) => (
+						<a href={item.url} class="nav-link">
+							{item.label}
+						</a>
+					))}
 				</div>
 				<div class="nav-search">
 						<LiveSearch
@@ -84,8 +89,8 @@ const pageCtx = createPublicPageContext({
 				<div class="footer-column">
 					<strong>TTRPG Games Directory</strong>
 					<p>
-						A discovery guide for tabletop RPG players who want faster ways to
-						compare games by genre, mechanics, and tone.
+						A tabletop RPG guide for players who want clearer ways to compare
+						games, narrow the field, and choose what to play next.
 					</p>
 				</div>
 				<div class="footer-column">
@@ -101,17 +106,14 @@ const pageCtx = createPublicPageContext({
 					<strong>Contact</strong>
 					<p>Have a game suggestion or correction to share?</p>
 					<div class="footer-links">
-						<a href="/#submit-your-game">Submit your game</a>
+						<a href="/submit-game">Submit your game</a>
 						<a href="https://x.com/augustinbralley">Contact on X</a>
 					</div>
 				</div>
-				<div class="footer-column">
-					<strong>Legal</strong>
-					<p>
-						Game names, logos, cover art, and trademarks belong to their
-						respective owners. This directory is for discovery and editorial use.
-					</p>
-				</div>
+			</div>
+			<div class="footer-policies">
+				<a href="/terms-of-use">Terms of Use</a>
+				<a href="/privacy-policy">Privacy Policy</a>
 			</div>
 			<div class="footer-meta">
 				<span>© 2026 TTRPG Games Directory. All rights reserved.</span>
@@ -125,21 +127,21 @@ const pageCtx = createPublicPageContext({
 <style is:global>
 	:root {
 		color-scheme: light;
-		--bg: #f6f1ea;
-		--surface: rgba(255, 255, 255, 0.82);
+		--bg: #f5efe7;
+		--surface: rgba(255, 255, 255, 0.84);
 		--surface-strong: #fffdf9;
-		--line: rgba(120, 97, 74, 0.16);
-		--line-strong: rgba(120, 97, 74, 0.28);
+		--line: rgba(120, 97, 74, 0.14);
+		--line-strong: rgba(120, 97, 74, 0.24);
 		--text: #1f1a16;
 		--muted: #6b5f53;
 		--accent: #b14e2c;
 		--accent-strong: #7a331d;
-		--accent-soft: rgba(240, 172, 138, 0.18);
-		--pill: rgba(122, 51, 29, 0.06);
+		--accent-soft: rgba(240, 172, 138, 0.14);
+		--pill: rgba(122, 51, 29, 0.05);
 		--success: #2f6f4f;
-		--shadow: 0 18px 48px rgba(31, 26, 22, 0.07);
-		--shadow-soft: 0 10px 28px rgba(31, 26, 22, 0.05);
-		--radius: 20px;
+		--shadow: 0 22px 44px rgba(31, 26, 22, 0.08);
+		--shadow-soft: 0 12px 24px rgba(31, 26, 22, 0.045);
+		--radius: 18px;
 		font-family:
 			"Spectral",
 			"Iowan Old Style",
@@ -158,9 +160,9 @@ const pageCtx = createPublicPageContext({
 		margin: 0;
 		padding: 0;
 		background:
-			radial-gradient(circle at top right, rgba(243, 215, 200, 0.34), transparent 28%),
-			radial-gradient(circle at top left, rgba(255, 255, 255, 0.78), transparent 24%),
-			linear-gradient(180deg, #fbf8f3 0%, var(--bg) 100%);
+			radial-gradient(circle at top right, rgba(243, 215, 200, 0.18), transparent 24%),
+			radial-gradient(circle at top left, rgba(255, 255, 255, 0.68), transparent 18%),
+			linear-gradient(180deg, #fbf8f4 0%, var(--bg) 100%);
 		color: var(--text);
 	}
 
@@ -186,21 +188,31 @@ const pageCtx = createPublicPageContext({
 	}
 
 	.site-header {
-		padding: 24px 0 20px;
+		padding: 18px 0 18px;
 	}
 
-		.nav-shell {
-			display: grid;
-			grid-template-columns: auto auto minmax(0, 1fr);
-			align-items: center;
-			gap: 18px;
-			padding: 16px 18px;
-			border: 1px solid var(--line);
-			border-radius: 26px;
-			background: rgba(255, 255, 255, 0.68);
-			backdrop-filter: blur(12px);
-			box-shadow: var(--shadow-soft);
-		}
+	.nav-shell {
+		position: relative;
+		display: grid;
+		grid-template-columns: auto auto minmax(0, 1fr);
+		align-items: center;
+		gap: 22px;
+		padding: 16px 18px;
+		border: 1px solid var(--line);
+		border-radius: 22px;
+		background:
+			linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(255, 252, 247, 0.88));
+		box-shadow: 0 10px 26px rgba(31, 26, 22, 0.04);
+		overflow: hidden;
+	}
+
+	.nav-shell::before {
+		content: "";
+		position: absolute;
+		inset: 0 0 auto;
+		height: 3px;
+		background: linear-gradient(90deg, rgba(177, 78, 44, 0.75), rgba(177, 78, 44, 0.12));
+	}
 
 	.brand {
 		display: inline-flex;
@@ -209,11 +221,12 @@ const pageCtx = createPublicPageContext({
 		min-width: 0;
 	}
 
-		.brand-logo {
-			width: 150px;
-			height: auto;
-			flex: 0 0 auto;
-		}
+	.brand-logo {
+		width: 144px;
+		height: auto;
+		flex: 0 0 auto;
+		filter: drop-shadow(0 4px 10px rgba(31, 26, 22, 0.08));
+	}
 
 	.brand-copy {
 		display: grid;
@@ -223,12 +236,12 @@ const pageCtx = createPublicPageContext({
 
 	.brand-copy strong {
 		font-size: 1.18rem;
-		letter-spacing: 0.02em;
+		letter-spacing: 0.015em;
 	}
 
 	.brand-copy small {
 		color: var(--muted);
-		font-size: 0.95rem;
+		font-size: 0.92rem;
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
@@ -243,18 +256,33 @@ const pageCtx = createPublicPageContext({
 		}
 
 	.nav-link {
-		padding: 10px 12px;
-		border-radius: 12px;
-		font-size: 0.96rem;
+		position: relative;
+		padding: 8px 2px;
+		border-radius: 0;
+		font-size: 0.97rem;
 		color: var(--muted);
-		transition:
-			background-color 0.18s ease,
-			color 0.18s ease;
+		transition: color 0.18s ease;
+	}
+
+	.nav-link::after {
+		content: "";
+		position: absolute;
+		left: 0;
+		right: 0;
+		bottom: 2px;
+		height: 1.5px;
+		background: linear-gradient(90deg, var(--accent), transparent);
+		transform: scaleX(0);
+		transform-origin: left center;
+		transition: transform 0.18s ease;
 	}
 
 	.nav-link:hover {
-		background: rgba(255, 255, 255, 0.72);
 		color: var(--text);
+	}
+
+	.nav-link:hover::after {
+		transform: scaleX(1);
 	}
 
 		.nav-search {
@@ -283,8 +311,8 @@ const pageCtx = createPublicPageContext({
 			border: 1px solid var(--line);
 			border-radius: 14px;
 			padding: 12px 18px;
-			background: rgba(255, 255, 255, 0.9);
-			box-shadow: none;
+			background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(251, 246, 240, 0.92));
+			box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.75);
 			appearance: none;
 			font: inherit;
 			font-size: 0.95rem;
@@ -297,6 +325,9 @@ const pageCtx = createPublicPageContext({
 		.nav-search .header-search-component input[type="search"]:focus {
 			outline: none;
 			border-color: var(--line-strong);
+			box-shadow:
+				inset 0 1px 0 rgba(255, 255, 255, 0.82),
+				0 0 0 4px rgba(177, 78, 44, 0.08);
 		}
 
 		.nav-search .header-search-input::placeholder,
@@ -360,17 +391,36 @@ const pageCtx = createPublicPageContext({
 		font-size: 0.92rem;
 	}
 
+	.footer-policies {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 12px;
+		justify-content: center;
+		font-size: 0.92rem;
+	}
+
+	.footer-policies a {
+		color: var(--muted);
+		text-decoration: underline;
+		text-underline-offset: 0.16em;
+	}
+
+	.footer-policies a:hover {
+		color: var(--text);
+	}
+
 	.eyebrow {
 		display: inline-flex;
 		align-items: center;
 		gap: 8px;
-		padding: 7px 12px;
-		border-radius: 999px;
-		background: var(--accent-soft);
+		padding: 0 0 0 12px;
+		border-radius: 0;
+		background: none;
+		border-left: 3px solid rgba(177, 78, 44, 0.75);
 		color: var(--accent-strong);
 		font-size: 0.8rem;
 		font-weight: 700;
-		letter-spacing: 0.08em;
+		letter-spacing: 0.12em;
 		text-transform: uppercase;
 	}
 
@@ -392,16 +442,63 @@ const pageCtx = createPublicPageContext({
 	}
 
 	.hero-card {
-		padding: 40px;
+		position: relative;
+		padding: 38px 40px;
+		overflow: hidden;
 		background:
-			linear-gradient(135deg, rgba(255, 255, 255, 0.92), rgba(255, 249, 243, 0.76)),
+			linear-gradient(135deg, rgba(255, 255, 255, 0.96), rgba(255, 250, 244, 0.8)),
 			var(--surface);
+	}
+
+	.hero-card::before {
+		content: "";
+		position: absolute;
+		inset: 0 0 auto;
+		height: 4px;
+		background: linear-gradient(90deg, var(--accent), rgba(177, 78, 44, 0.18) 55%, transparent);
+	}
+
+	.hero-card::after {
+		content: "";
+		position: absolute;
+		top: -60px;
+		right: -40px;
+		width: 220px;
+		height: 220px;
+		border-radius: 50%;
+		background: radial-gradient(circle, rgba(243, 215, 200, 0.24), transparent 70%);
+		pointer-events: none;
 	}
 
 	.hero-card > p {
 		max-width: 48rem;
 		font-size: 1.06rem;
 		line-height: 1.7;
+	}
+
+	.hero-card h1 {
+		font-size: clamp(2.6rem, 4.8vw, 4.5rem);
+		line-height: 0.95;
+		letter-spacing: -0.03em;
+		text-wrap: pretty;
+	}
+
+	.category-hero-card h1 {
+		font-size: clamp(2.4rem, 4.2vw, 4.8rem);
+		text-wrap: pretty;
+	}
+
+	.home-hero-card h1 {
+		text-wrap: pretty;
+	}
+
+	.item-hero-layout h1 {
+		max-width: 14ch;
+	}
+
+	.hero-card > :not(img) {
+		position: relative;
+		z-index: 1;
 	}
 
 	.section-header {
@@ -633,7 +730,7 @@ const pageCtx = createPublicPageContext({
 		align-items: center;
 		justify-content: center;
 		padding: 12px 16px;
-		border-radius: 14px;
+		border-radius: 12px;
 		border: 1px solid var(--line-strong);
 		background: rgba(255, 255, 255, 0.86);
 		font-weight: 600;
@@ -662,16 +759,43 @@ const pageCtx = createPublicPageContext({
 		gap: 28px;
 	}
 
+	.breadcrumbs {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 8px;
+		color: var(--muted);
+		font-size: 0.92rem;
+	}
+
+	.breadcrumbs a {
+		color: var(--muted);
+	}
+
+	.breadcrumbs a:hover {
+		color: var(--text);
+		text-decoration: underline;
+		text-underline-offset: 0.16em;
+	}
+
+	.breadcrumb-separator {
+		color: rgba(107, 95, 83, 0.65);
+	}
+
 		.detail-layout {
 			display: grid;
 			grid-template-columns: minmax(0, 1.5fr) minmax(280px, 0.7fr);
 			gap: 24px;
 		}
 
-		.item-hero-layout {
-			grid-template-columns: minmax(0, 1fr) minmax(320px, 420px);
-			align-items: start;
-		}
+	.item-hero-layout {
+		grid-template-columns: minmax(0, 1fr) minmax(320px, 420px);
+		align-items: start;
+	}
+
+	.item-hero-layout > :first-child {
+		align-self: start;
+	}
 
 	.prose {
 		font-size: 1.02rem;
@@ -717,26 +841,79 @@ const pageCtx = createPublicPageContext({
 	}
 
 	.faq-item {
-		padding: 16px 18px;
+		padding: 0;
 		border: 1px solid var(--line);
 		border-radius: 18px;
-		background: rgba(255, 255, 255, 0.66);
+		background: rgba(255, 255, 255, 0.72);
+		overflow: hidden;
+		transition:
+			border-color 0.18s ease,
+			box-shadow 0.18s ease,
+			background-color 0.18s ease;
 	}
 
 	.faq-item summary {
 		cursor: pointer;
 		font-weight: 700;
 		list-style: none;
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) auto;
+		align-items: center;
+		gap: 14px;
+		padding: 18px 20px;
 	}
 
 	.faq-item summary::-webkit-details-marker {
 		display: none;
 	}
 
-	.faq-item p {
-		margin: 12px 0 0;
+	.faq-item summary::after {
+		content: "+";
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		width: 32px;
+		height: 32px;
+		border-radius: 999px;
+		border: 1px solid var(--line);
+		background: rgba(255, 248, 241, 0.95);
+		color: var(--accent-strong);
+		font-size: 1.2rem;
+		line-height: 1;
+		font-weight: 600;
+		flex: 0 0 auto;
+	}
+
+	.faq-item[open] {
+		border-color: var(--line-strong);
+		box-shadow: var(--shadow-soft);
+		background: rgba(255, 253, 248, 0.94);
+	}
+
+	.faq-item[open] summary {
+		border-bottom: 1px solid rgba(120, 97, 74, 0.1);
+	}
+
+	.faq-item[open] summary::after {
+		content: "−";
+	}
+
+	.faq-answer {
+		margin: 0;
+		padding: 16px 20px 18px;
 		color: var(--muted);
 		line-height: 1.65;
+	}
+
+	.faq-answer a {
+		color: var(--accent-strong);
+		font-weight: 600;
+		text-decoration-thickness: 1.5px;
+		text-underline-offset: 0.16em;
+	}
+
+	.faq-answer a:hover {
+		color: var(--ink);
 	}
 
 	.submit-panel {
@@ -822,6 +999,10 @@ const pageCtx = createPublicPageContext({
 
 		.hero-card {
 			padding: 28px;
+		}
+
+		.hero-card h1 {
+			max-width: none;
 		}
 
 		.footer-meta {

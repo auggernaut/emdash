@@ -5,6 +5,24 @@ export interface RelatedGame {
 	description?: string | null;
 }
 
+export interface CategoryGameNote {
+	game_slug: string;
+	fit_blurb?: string | null;
+	featured?: boolean | null;
+	featured_reason?: string | null;
+	sort_order?: number | null;
+}
+
+export interface CategoryFaq {
+	question: string;
+	answer: string;
+}
+
+export interface RelatedCategoryLink {
+	slug: string;
+	reason?: string | null;
+}
+
 export interface GameData {
 	id: string;
 	title: string;
@@ -35,6 +53,9 @@ export interface CategoryPageData {
 	type: string;
 	description?: string | null;
 	body_html?: string | null;
+	game_notes?: CategoryGameNote[] | null;
+	faqs?: CategoryFaq[] | null;
+	related_categories?: RelatedCategoryLink[] | null;
 }
 
 export interface CategoryPageEntry {

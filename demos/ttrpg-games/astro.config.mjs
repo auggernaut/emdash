@@ -3,6 +3,7 @@ import react from "@astrojs/react";
 import { defineConfig } from "astro/config";
 import emdash, { local } from "emdash/astro";
 import { sqlite } from "emdash/db";
+import { categoryPageWidgetsPlugin } from "./src/plugins/category-page-widgets/index.ts";
 import { relatedGamesWidgetPlugin } from "./src/plugins/related-widget/index.ts";
 
 export default defineConfig({
@@ -18,7 +19,7 @@ export default defineConfig({
 		react(),
 		emdash({
 			database: sqlite({ url: "file:./data.db" }),
-			plugins: [relatedGamesWidgetPlugin()],
+			plugins: [relatedGamesWidgetPlugin(), categoryPageWidgetsPlugin()],
 			storage: local({
 				directory: "./uploads",
 				baseUrl: "/_emdash/api/media/file",

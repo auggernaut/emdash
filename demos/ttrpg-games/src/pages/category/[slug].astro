@@ -1,7 +1,14 @@
 ---
 import { getTerm, getEmDashCollection, getEmDashEntry } from "emdash";
+import { getDb } from "emdash/runtime";
 import Base from "../../layouts/Base.astro";
-import type { CategoryPageEntry, GameEntry } from "../../lib/types";
+import type {
+	CategoryFaq,
+	CategoryGameNote,
+	CategoryPageEntry,
+	GameEntry,
+	RelatedCategoryLink,
+} from "../../lib/types";
 
 const { slug } = Astro.params;
 const term = slug ? await getTerm("category", slug) : null;
@@ -16,9 +23,13 @@ const { entries: rawGames, cacheHint } = await getEmDashCollection("games", {
 Astro.cache.set(cacheHint);
 
 const { entry: rawCategoryPage } = await getEmDashEntry("category_pages", term.slug);
+const { entries: rawCategoryPages, cacheHint: categoryPagesCacheHint } =
+	await getEmDashCollection("category_pages");
+Astro.cache.set(categoryPagesCacheHint);
 
 const games = rawGames as unknown as GameEntry[];
 const categoryPage = rawCategoryPage as unknown as CategoryPageEntry | null;
+const allCategoryPages = rawCategoryPages as unknown as CategoryPageEntry[];
 
 const rankedGames = [...games].sort((left, right) => {
 	const leftRank = left.data.rank ?? Number.MAX_SAFE_INTEGER;
@@ -27,106 +38,365 @@ const rankedGames = [...games].sort((left, right) => {
 	return left.data.title.localeCompare(right.data.title);
 });
 
-function cardCopy(game: GameEntry): string {
-	return game.data.blurb || game.data.review_summary || "";
+function asArray<T>(value: unknown): T[] {
+	const parsed =
+		typeof value === "string"
+			? (() => {
+					try {
+						return JSON.parse(value) as unknown;
+					} catch {
+						return [];
+					}
+				})()
+			: value;
+
+	return Array.isArray(parsed) ? (parsed as T[]) : [];
 }
 
-const stripTags = (value: string) => value.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
+function normalizeGameNotes(value: unknown): CategoryGameNote[] {
+	return asArray<Record<string, unknown>>(value)
+		.map((item) => ({
+			game_slug: typeof item.game_slug === "string" ? item.game_slug : "",
+			fit_blurb: typeof item.fit_blurb === "string" ? item.fit_blurb : "",
+			featured: Boolean(item.featured),
+			featured_reason: typeof item.featured_reason === "string" ? item.featured_reason : "",
+			sort_order:
+				typeof item.sort_order === "number"
+					? item.sort_order
+					: typeof item.sort_order === "string" && item.sort_order.trim()
+						? Number(item.sort_order)
+						: null,
+		}))
+		.filter((item) => item.game_slug);
+}
 
-const normalizeText = (value?: string | null) => stripTags(value ?? "").toLowerCase();
+function normalizeFaqs(value: unknown): CategoryFaq[] {
+	return asArray<Record<string, unknown>>(value)
+		.map((item) => ({
+			question: typeof item.question === "string" ? item.question : "",
+			answer: typeof item.answer === "string" ? item.answer : "",
+		}))
+		.filter((item) => item.question && item.answer);
+}
 
-const stripLeadingDescription = (html?: string | null, description?: string | null) => {
-	if (!html) return null;
-	if (!description) return html;
+function normalizeRelatedCategories(value: unknown): RelatedCategoryLink[] {
+	return asArray<Record<string, unknown>>(value)
+		.map((item) => ({
+			slug: typeof item.slug === "string" ? item.slug : "",
+			reason: typeof item.reason === "string" ? item.reason : "",
+		}))
+		.filter((item) => item.slug);
+}
 
-	const normalizedDescription = normalizeText(description);
-	if (!normalizedDescription) return html;
+const gameNotes = normalizeGameNotes(categoryPage?.data.game_notes);
+const gameNotesBySlug = new Map(gameNotes.map((item) => [item.game_slug, item]));
+const categoryPagesBySlug = new Map(allCategoryPages.map((item) => [item.id, item]));
 
-	const trimmed = html.trim();
-	const paragraphMatch = trimmed.match(/^<p>([\s\S]*?)<\/p>\s*/i);
+function cardCopy(game: GameEntry): string {
+	return (
+		gameNotesBySlug.get(game.id)?.fit_blurb ||
+		game.data.blurb ||
+		game.data.review_summary ||
+		""
+	);
+}
 
-	if (paragraphMatch && normalizeText(paragraphMatch[1]) === normalizedDescription) {
-		const remainder = trimmed.slice(paragraphMatch[0].length).trim();
-		return remainder || null;
-	}
+const categoryBodyHtml = categoryPage?.data.body_html || null;
 
-	if (normalizeText(trimmed) === normalizedDescription) {
-		return null;
+const featuredPicks = gameNotes
+	.filter((item) => item.featured)
+	.map((item) => ({
+		note: item,
+		game: rankedGames.find((game) => game.id === item.game_slug),
+	}))
+	.filter((item): item is { note: CategoryGameNote; game: GameEntry } => Boolean(item.game))
+	.sort((left, right) => {
+		const leftOrder = left.note.sort_order ?? Number.MAX_SAFE_INTEGER;
+		const rightOrder = right.note.sort_order ?? Number.MAX_SAFE_INTEGER;
+		if (leftOrder !== rightOrder) return leftOrder - rightOrder;
+		const leftRank = left.game.data.rank ?? Number.MAX_SAFE_INTEGER;
+		const rightRank = right.game.data.rank ?? Number.MAX_SAFE_INTEGER;
+		if (leftRank !== rightRank) return leftRank - rightRank;
+		return left.game.data.title.localeCompare(right.game.data.title);
+	});
+
+const faqs = normalizeFaqs(categoryPage?.data.faqs);
+const relatedCategories = normalizeRelatedCategories(categoryPage?.data.related_categories)
+	.map((item) => ({
+		...item,
+		page: categoryPagesBySlug.get(item.slug),
+	}))
+	.filter(
+		(item): item is RelatedCategoryLink & { page: CategoryPageEntry } => Boolean(item.page),
+	);
+
+const db = await getDb();
+const seoRow = categoryPage
+	? await db
+			.selectFrom("_emdash_seo")
+			.select(["seo_title", "seo_description", "seo_image", "seo_canonical"])
+			.where("collection", "=", "category_pages")
+			.where("content_id", "=", categoryPage.data.id)
+			.executeTakeFirst()
+	: null;
+
+const pageTitle = seoRow?.seo_title
+	? `${seoRow.seo_title} | TTRPG Games Directory`
+	: `${term.label} RPGs | TTRPG Games Directory`;
+const pageDescription =
+	seoRow?.seo_description ||
+	categoryPage?.data.description ||
+	`Browse tabletop RPGs tagged ${term.label}.`;
+const canonical = seoRow?.seo_canonical || Astro.url.href;
+const pageImage = seoRow?.seo_image || featuredPicks[0]?.game.data.image_url || null;
+
+const breadcrumbItems = [
+	{ name: "Home", item: new URL("/", Astro.url).href },
+	{ name: "Categories", item: new URL("/categories", Astro.url).href },
+	{ name: term.label, item: Astro.url.href },
+];
+
+const breadcrumbSchema = {
+	"@context": "https://schema.org",
+	"@type": "BreadcrumbList",
+	itemListElement: breadcrumbItems.map((item, index) => ({
+		"@type": "ListItem",
+		position: index + 1,
+		name: item.name,
+		item: item.item,
+	})),
+};
+
+const heroTitle = `Best ${term.label} TTRPGs`;
+
+function escapeHtml(value: string): string {
+	return value
+		.replaceAll("&", "&amp;")
+		.replaceAll("<", "&lt;")
+		.replaceAll(">", "&gt;")
+		.replaceAll('"', "&quot;")
+		.replaceAll("'", "&#39;");
+}
+
+function escapeRegExp(value: string): string {
+	return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+const faqLinkableGames = [...rankedGames]
+	.sort((left, right) => right.data.title.length - left.data.title.length)
+	.map((game) => ({
+		href: `/item/${game.id}`,
+		pattern: new RegExp(`\\b${escapeRegExp(game.data.title)}\\b`, "gi"),
+	}));
+
+function renderFaqAnswer(answer: string): string {
+	let html = "";
+	let cursor = 0;
+
+	while (cursor < answer.length) {
+		let nextMatch:
+			| {
+					href: string;
+					index: number;
+					length: number;
+					text: string;
+			  }
+			| undefined;
+
+		for (const game of faqLinkableGames) {
+			game.pattern.lastIndex = 0;
+			const segment = answer.slice(cursor);
+			const match = game.pattern.exec(segment);
+			if (!match || match.index === undefined) continue;
+
+			const candidate = {
+				href: game.href,
+				index: cursor + match.index,
+				length: match[0].length,
+				text: match[0],
+			};
+
+			if (
+				!nextMatch ||
+				candidate.index < nextMatch.index ||
+				(candidate.index === nextMatch.index && candidate.length > nextMatch.length)
+			) {
+				nextMatch = candidate;
+			}
+		}
+
+		if (!nextMatch) {
+			html += escapeHtml(answer.slice(cursor));
+			break;
+		}
+
+		html += escapeHtml(answer.slice(cursor, nextMatch.index));
+		html += `<a href="${nextMatch.href}">${escapeHtml(nextMatch.text)}</a>`;
+		cursor = nextMatch.index + nextMatch.length;
 	}
 
 	return html;
-};
-
-const categoryBodyHtml = stripLeadingDescription(
-	categoryPage?.data.body_html,
-	categoryPage?.data.description,
-);
+}
 ---
 
 <Base
-	title={`${term.label} RPGs`}
-	description={categoryPage?.data.description || `Browse tabletop RPGs tagged ${term.label}.`}
+	title={pageTitle}
+	description={pageDescription}
+	canonical={canonical}
+	image={pageImage}
 	content={categoryPage ? { collection: "category_pages", id: categoryPage.data.id, slug } : undefined}
+	structuredData={[breadcrumbSchema]}
 >
-	<div class="stack">
-		<section class="hero-card">
-			<span class="eyebrow">{categoryPage?.data.type || "Category archive"}</span>
-			<h1>{term.label}</h1>
-			<p>
-				{categoryPage?.data.description ||
-					`Browse imported TTRPG listings tagged with ${term.label}.`}
-			</p>
-			<div class="badges" style="margin-top: 18px;">
-				<span class="badge">{rankedGames.length} games</span>
-				<a href="/categories" class="button-link">All categories</a>
-			</div>
-		</section>
+		<div class="stack">
+			<nav class="breadcrumbs" aria-label="Breadcrumb">
+				<a href="/">Home</a>
+				<span class="breadcrumb-separator">/</span>
+				<a href="/categories">Categories</a>
+				<span class="breadcrumb-separator">/</span>
+				<span aria-current="page">{term.label}</span>
+			</nav>
 
-		{
-			categoryBodyHtml && (
-				<section class="panel prose" set:html={categoryBodyHtml} />
-			)
-		}
-
-		<section>
-			<div class="section-header">
-				<div>
-					<div class="kicker">Matching games</div>
-					<h2>Listings in this category</h2>
+			<section class="hero-card category-hero-card">
+				<span class="eyebrow">{categoryPage?.data.type || "Category archive"}</span>
+				<h1>{heroTitle}</h1>
+				{
+					categoryBodyHtml && (
+						<div class="prose hero-prose" set:html={categoryBodyHtml} />
+					)
+				}
+				{
+					!categoryBodyHtml && categoryPage?.data.description && (
+						<p>{categoryPage.data.description}</p>
+					)
+				}
+				<div class="badges" style="margin-top: 18px;">
+					<span class="badge">{rankedGames.length} games</span>
+					<a href="/categories" class="button-link">All categories</a>
 				</div>
-			</div>
-			{
-				rankedGames.length === 0 ? (
-					<div class="empty-state">No games are currently assigned to this category.</div>
-				) : (
-					<div class="grid games">
-						{rankedGames.map((game) => (
-							<article class="game-card">
-								<a href={`/item/${game.id}`}>
-									{
-										game.data.image_url && (
-											<img
-												src={game.data.image_url}
-												alt={game.data.title}
-												loading="lazy"
-											/>
-										)
-									}
-									<div class="card-body">
-										<div class="kicker">
-											{game.data.rank
-												? `Rank #${game.data.rank}`
-												: "Directory entry"}
+			</section>
+
+				{
+					featuredPicks.length > 0 && (
+					<section>
+						<div class="section-header">
+							<div>
+								<div class="kicker">Top picks</div>
+								<h2>Best games in this category</h2>
+								<p>
+									Quick starting points if you want the clearest expressions of what
+									{` ${term.label} `}
+									games do well.
+								</p>
+							</div>
+						</div>
+						<div class="grid games">
+							{featuredPicks.map(({ game, note }) => (
+								<article class="game-card">
+									<a href={`/item/${game.id}`}>
+										{
+											game.data.image_url && (
+												<img src={game.data.image_url} alt={game.data.title} loading="lazy" />
+											)
+										}
+										<div class="card-body">
+											<div class="kicker">Top pick</div>
+											<h3>{game.data.title}</h3>
+											<p>{note.featured_reason || cardCopy(game)}</p>
 										</div>
-										<h3>{game.data.title}</h3>
-										<p>{cardCopy(game)}</p>
-									</div>
-								</a>
-							</article>
-						))}
-					</div>
+									</a>
+								</article>
+							))}
+						</div>
+					</section>
 				)
 			}
-		</section>
-	</div>
-</Base>
+
+			{
+				faqs.length > 0 && (
+					<section>
+						<div class="section-header">
+							<div>
+								<div class="kicker">FAQ</div>
+								<h2>Questions players ask</h2>
+							</div>
+						</div>
+						<div class="faq-grid">
+							{faqs.map((faq) => (
+								<details class="faq-item">
+									<summary>{faq.question}</summary>
+									<div class="faq-answer" set:html={renderFaqAnswer(faq.answer)} />
+								</details>
+							))}
+						</div>
+					</section>
+				)
+			}
+
+			<section>
+				<div class="section-header">
+					<div>
+						<div class="kicker">Full list</div>
+						<h2>All games in this category</h2>
+					</div>
+				</div>
+				{
+					rankedGames.length === 0 ? (
+						<div class="empty-state">No games are currently assigned to this category.</div>
+					) : (
+						<div class="grid games">
+							{rankedGames.map((game) => (
+								<article class="game-card">
+									<a href={`/item/${game.id}`}>
+										{
+											game.data.image_url && (
+												<img
+													src={game.data.image_url}
+													alt={game.data.title}
+													loading="lazy"
+												/>
+											)
+										}
+										<div class="card-body">
+											<div class="kicker">
+												{game.data.rank
+													? `Rank #${game.data.rank}`
+													: "Directory entry"}
+											</div>
+											<h3>{game.data.title}</h3>
+											<p>{cardCopy(game)}</p>
+										</div>
+									</a>
+								</article>
+							))}
+						</div>
+					)
+				}
+			</section>
+
+			{
+				relatedCategories.length > 0 && (
+					<section>
+						<div class="section-header">
+							<div>
+								<div class="kicker">Keep browsing</div>
+								<h2>Related categories</h2>
+							</div>
+						</div>
+						<div class="grid categories">
+							{relatedCategories.map((item) => (
+								<article class="category-card">
+									<a href={`/category/${item.page.id}`}>
+										<div class="card-body">
+											<div class="kicker">{item.page.data.type}</div>
+											<h3>{item.page.data.title}</h3>
+											<p>{item.reason || item.page.data.description}</p>
+										</div>
+									</a>
+								</article>
+							))}
+						</div>
+					</section>
+				)
+			}
+		</div>
+	</Base>
