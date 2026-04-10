@@ -15,12 +15,7 @@
 			"slug": "games",
 			"label": "Games",
 			"labelSingular": "Game",
-			"supports": [
-				"drafts",
-				"revisions",
-				"search",
-				"seo"
-			],
+			"supports": ["drafts", "revisions", "search", "seo"],
 			"fields": [
 				{
 					"slug": "title",
@@ -158,12 +153,7 @@
 					"label": "Prep Level",
 					"type": "select",
 					"validation": {
-						"options": [
-							"none",
-							"low",
-							"medium",
-							"high"
-						]
+						"options": ["none", "low", "medium", "high"]
 					}
 				},
 				{
@@ -191,12 +181,7 @@
 					"label": "Improv Burden",
 					"type": "select",
 					"validation": {
-						"options": [
-							"none",
-							"low",
-							"medium",
-							"high"
-						]
+						"options": ["none", "low", "medium", "high"]
 					}
 				},
 				{
@@ -204,11 +189,7 @@
 					"label": "Structure Level",
 					"type": "select",
 					"validation": {
-						"options": [
-							"guided",
-							"balanced",
-							"open"
-						]
+						"options": ["guided", "balanced", "open"]
 					}
 				},
 				{
@@ -236,11 +217,7 @@
 					"label": "Price Model",
 					"type": "select",
 					"validation": {
-						"options": [
-							"free",
-							"paid",
-							"pwyw"
-						]
+						"options": ["free", "paid", "pwyw"]
 					}
 				},
 				{
@@ -268,11 +245,7 @@
 					"label": "Content Intensity",
 					"type": "select",
 					"validation": {
-						"options": [
-							"low",
-							"medium",
-							"high"
-						]
+						"options": ["low", "medium", "high"]
 					}
 				},
 				{
@@ -342,12 +315,7 @@
 			"slug": "category_pages",
 			"label": "Category Pages",
 			"labelSingular": "Category Page",
-			"supports": [
-				"drafts",
-				"revisions",
-				"search",
-				"seo"
-			],
+			"supports": ["drafts", "revisions", "search", "seo"],
 			"fields": [
 				{
 					"slug": "title",
@@ -379,14 +347,7 @@
 					"label": "Source Taxonomy",
 					"type": "select",
 					"validation": {
-						"options": [
-							"genre",
-							"system",
-							"mechanic",
-							"theme",
-							"compatibility",
-							"decision_tag"
-						]
+						"options": ["genre", "system", "mechanic", "theme", "compatibility", "decision_tag"]
 					}
 				},
 				{
@@ -450,9 +411,7 @@
 			"label": "Genres",
 			"labelSingular": "Genre",
 			"hierarchical": false,
-			"collections": [
-				"games"
-			],
+			"collections": ["games"],
 			"terms": [
 				{
 					"slug": "aliens",
@@ -585,9 +544,7 @@
 			"label": "Systems",
 			"labelSingular": "System",
 			"hierarchical": false,
-			"collections": [
-				"games"
-			],
+			"collections": ["games"],
 			"terms": [
 				{
 					"slug": "d20-system",
@@ -624,9 +581,7 @@
 			"label": "Mechanics",
 			"labelSingular": "Mechanic",
 			"hierarchical": false,
-			"collections": [
-				"games"
-			],
+			"collections": ["games"],
 			"terms": [
 				{
 					"slug": "campaign",
@@ -735,9 +690,7 @@
 			"label": "Themes",
 			"labelSingular": "Theme",
 			"hierarchical": false,
-			"collections": [
-				"games"
-			],
+			"collections": ["games"],
 			"terms": [
 				{
 					"slug": "bleak",
@@ -786,9 +739,7 @@
 			"label": "Compatibility",
 			"labelSingular": "Compatibility Signal",
 			"hierarchical": false,
-			"collections": [
-				"games"
-			],
+			"collections": ["games"],
 			"terms": [
 				{
 					"slug": "5e-compatible",
@@ -801,9 +752,7 @@
 			"label": "Decision Tags",
 			"labelSingular": "Decision Tag",
 			"hierarchical": false,
-			"collections": [
-				"games"
-			],
+			"collections": ["games"],
 			"terms": [
 				{
 					"slug": "award-winning",
@@ -930,22 +879,10 @@
 					"beginner_friendly": true
 				},
 				"taxonomies": {
-					"genre": [
-						"fantasy",
-						"dark-fantasy"
-					],
-					"system": [
-						"old-school-renaissance-osr"
-					],
-					"mechanic": [
-						"rules-lite",
-						"exploration-driven",
-						"character-customization",
-						"solo-play"
-					],
-					"decision_tag": [
-						"beginner-friendly"
-					]
+					"genre": ["fantasy", "dark-fantasy"],
+					"system": ["old-school-renaissance-osr"],
+					"mechanic": ["rules-lite", "exploration-driven", "character-customization", "solo-play"],
+					"decision_tag": ["beginner-friendly"]
 				}
 			},
 			{
@@ -1001,13 +938,8 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"cyberpunk",
-						"dystopian"
-					],
-					"theme": [
-						"dark"
-					],
+					"genre": ["cyberpunk", "dystopian"],
+					"theme": ["dark"],
 					"mechanic": [
 						"character-customization",
 						"skill-based",
@@ -1069,22 +1001,15 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"fantasy",
-						"high-fantasy"
-					],
+					"genre": ["fantasy", "high-fantasy"],
 					"mechanic": [
 						"class-based",
 						"collaborative-worldbuilding",
 						"narrative-driven",
 						"tactical-combat"
 					],
-					"theme": [
-						"cinematic"
-					],
-					"compatibility": [
-						"5e-compatible"
-					]
+					"theme": ["cinematic"],
+					"compatibility": ["5e-compatible"]
 				}
 			},
 			{
@@ -1140,21 +1065,10 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"horror",
-						"supernatural"
-					],
-					"theme": [
-						"dark"
-					],
-					"system": [
-						"powered-by-the-apocalypse-pbta"
-					],
-					"mechanic": [
-						"narrative-driven",
-						"investigation",
-						"team-based"
-					]
+					"genre": ["horror", "supernatural"],
+					"theme": ["dark"],
+					"system": ["powered-by-the-apocalypse-pbta"],
+					"mechanic": ["narrative-driven", "investigation", "team-based"]
 				}
 			},
 			{
@@ -1210,20 +1124,10 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"fantasy"
-					],
-					"theme": [
-						"dark"
-					],
-					"mechanic": [
-						"narrative-driven",
-						"rules-lite",
-						"collaborative-worldbuilding"
-					],
-					"decision_tag": [
-						"quick-play"
-					]
+					"genre": ["fantasy"],
+					"theme": ["dark"],
+					"mechanic": ["narrative-driven", "rules-lite", "collaborative-worldbuilding"],
+					"decision_tag": ["quick-play"]
 				}
 			},
 			{
@@ -1279,20 +1183,10 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"post-apocalyptic"
-					],
-					"theme": [
-						"dark",
-						"bleak"
-					],
-					"system": [
-						"powered-by-the-apocalypse-pbta"
-					],
-					"mechanic": [
-						"narrative-driven",
-						"collaborative-worldbuilding"
-					]
+					"genre": ["post-apocalyptic"],
+					"theme": ["dark", "bleak"],
+					"system": ["powered-by-the-apocalypse-pbta"],
+					"mechanic": ["narrative-driven", "collaborative-worldbuilding"]
 				}
 			},
 			{
@@ -1348,21 +1242,10 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"dark-fantasy"
-					],
-					"theme": [
-						"dark"
-					],
-					"system": [
-						"old-school-renaissance-osr"
-					],
-					"mechanic": [
-						"exploration-driven",
-						"survival",
-						"tactical-combat",
-						"resource-management"
-					]
+					"genre": ["dark-fantasy"],
+					"theme": ["dark"],
+					"system": ["old-school-renaissance-osr"],
+					"mechanic": ["exploration-driven", "survival", "tactical-combat", "resource-management"]
 				}
 			},
 			{
@@ -1418,21 +1301,10 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"fantasy",
-						"high-fantasy"
-					],
-					"system": [
-						"old-school-renaissance-osr"
-					],
-					"mechanic": [
-						"exploration-driven",
-						"sandbox",
-						"tactical-combat"
-					],
-					"compatibility": [
-						"5e-compatible"
-					]
+					"genre": ["fantasy", "high-fantasy"],
+					"system": ["old-school-renaissance-osr"],
+					"mechanic": ["exploration-driven", "sandbox", "tactical-combat"],
+					"compatibility": ["5e-compatible"]
 				}
 			},
 			{
@@ -1488,19 +1360,9 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"dark-fantasy",
-						"gothic"
-					],
-					"theme": [
-						"dark",
-						"social-intrigue"
-					],
-					"mechanic": [
-						"narrative-driven",
-						"character-customization",
-						"tactical-combat"
-					]
+					"genre": ["dark-fantasy", "gothic"],
+					"theme": ["dark", "social-intrigue"],
+					"mechanic": ["narrative-driven", "character-customization", "tactical-combat"]
 				}
 			},
 			{
@@ -1556,19 +1418,14 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"science-fiction",
-						"interstellar-travel"
-					],
+					"genre": ["science-fiction", "interstellar-travel"],
 					"mechanic": [
 						"exploration-driven",
 						"character-customization",
 						"resource-management",
 						"tactical-combat"
 					],
-					"theme": [
-						"political"
-					]
+					"theme": ["political"]
 				}
 			},
 			{
@@ -1624,10 +1481,7 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"fantasy",
-						"high-fantasy"
-					],
+					"genre": ["fantasy", "high-fantasy"],
 					"mechanic": [
 						"class-based",
 						"character-customization",
@@ -1635,9 +1489,7 @@
 						"exploration-driven",
 						"collaborative-worldbuilding"
 					],
-					"compatibility": [
-						"5e-compatible"
-					]
+					"compatibility": ["5e-compatible"]
 				}
 			},
 			{
@@ -1693,10 +1545,7 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"fantasy",
-						"dark-fantasy"
-					],
+					"genre": ["fantasy", "dark-fantasy"],
 					"mechanic": [
 						"exploration-driven",
 						"survival",
@@ -1758,13 +1607,8 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"science-fiction",
-						"space-opera"
-					],
-					"theme": [
-						"political"
-					],
+					"genre": ["science-fiction", "space-opera"],
+					"theme": ["political"],
 					"mechanic": [
 						"narrative-driven",
 						"tactical-combat",
@@ -1826,18 +1670,9 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"science-fiction",
-						"military"
-					],
-					"mechanic": [
-						"tactical-combat",
-						"resource-management",
-						"character-customization"
-					],
-					"theme": [
-						"political"
-					]
+					"genre": ["science-fiction", "military"],
+					"mechanic": ["tactical-combat", "resource-management", "character-customization"],
+					"theme": ["political"]
 				}
 			},
 			{
@@ -1893,19 +1728,9 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"science-fiction",
-						"horror"
-					],
-					"theme": [
-						"bleak"
-					],
-					"mechanic": [
-						"survival",
-						"resource-management",
-						"tactical-combat",
-						"team-based"
-					]
+					"genre": ["science-fiction", "horror"],
+					"theme": ["bleak"],
+					"mechanic": ["survival", "resource-management", "tactical-combat", "team-based"]
 				}
 			},
 			{
@@ -1961,10 +1786,7 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"fantasy",
-						"comedy"
-					],
+					"genre": ["fantasy", "comedy"],
 					"mechanic": [
 						"character-customization",
 						"universal",
@@ -2026,21 +1848,10 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"fantasy",
-						"non-western"
-					],
-					"theme": [
-						"environmental"
-					],
-					"system": [
-						"powered-by-the-apocalypse-pbta"
-					],
-					"mechanic": [
-						"narrative-driven",
-						"collaborative-worldbuilding",
-						"skill-based"
-					]
+					"genre": ["fantasy", "non-western"],
+					"theme": ["environmental"],
+					"system": ["powered-by-the-apocalypse-pbta"],
+					"mechanic": ["narrative-driven", "collaborative-worldbuilding", "skill-based"]
 				}
 			},
 			{
@@ -2096,19 +1907,9 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"horror"
-					],
-					"theme": [
-						"dark",
-						"bleak"
-					],
-					"mechanic": [
-						"narrative-driven",
-						"survival",
-						"gm-less",
-						"resource-management"
-					]
+					"genre": ["horror"],
+					"theme": ["dark", "bleak"],
+					"mechanic": ["narrative-driven", "survival", "gm-less", "resource-management"]
 				}
 			},
 			{
@@ -2164,18 +1965,9 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"horror"
-					],
-					"theme": [
-						"psychological",
-						"dark"
-					],
-					"mechanic": [
-						"innovative-mechanics",
-						"collaborative-worldbuilding",
-						"gm-less"
-					]
+					"genre": ["horror"],
+					"theme": ["psychological", "dark"],
+					"mechanic": ["innovative-mechanics", "collaborative-worldbuilding", "gm-less"]
 				}
 			},
 			{
@@ -2231,19 +2023,9 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"horror",
-						"dark-fantasy"
-					],
-					"theme": [
-						"psychological",
-						"mature"
-					],
-					"mechanic": [
-						"narrative-driven",
-						"character-customization",
-						"investigation"
-					]
+					"genre": ["horror", "dark-fantasy"],
+					"theme": ["psychological", "mature"],
+					"mechanic": ["narrative-driven", "character-customization", "investigation"]
 				}
 			},
 			{
@@ -2299,20 +2081,10 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"dark-fantasy",
-						"gothic"
-					],
-					"theme": [
-						"psychological"
-					],
-					"system": [
-						"powered-by-the-apocalypse-pbta"
-					],
-					"mechanic": [
-						"narrative-driven",
-						"collaborative-worldbuilding"
-					]
+					"genre": ["dark-fantasy", "gothic"],
+					"theme": ["psychological"],
+					"system": ["powered-by-the-apocalypse-pbta"],
+					"mechanic": ["narrative-driven", "collaborative-worldbuilding"]
 				}
 			},
 			{
@@ -2368,18 +2140,9 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"fantasy"
-					],
-					"theme": [
-						"political",
-						"social-intrigue"
-					],
-					"mechanic": [
-						"collaborative-worldbuilding",
-						"narrative-driven",
-						"resource-management"
-					]
+					"genre": ["fantasy"],
+					"theme": ["political", "social-intrigue"],
+					"mechanic": ["collaborative-worldbuilding", "narrative-driven", "resource-management"]
 				}
 			},
 			{
@@ -2435,19 +2198,9 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"cosmic-horror"
-					],
-					"theme": [
-						"dark",
-						"psychological"
-					],
-					"mechanic": [
-						"investigation",
-						"tactical",
-						"team-based",
-						"resource-management"
-					]
+					"genre": ["cosmic-horror"],
+					"theme": ["dark", "psychological"],
+					"mechanic": ["investigation", "tactical", "team-based", "resource-management"]
 				}
 			},
 			{
@@ -2503,13 +2256,8 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"horror"
-					],
-					"theme": [
-						"environmental",
-						"dark"
-					],
+					"genre": ["horror"],
+					"theme": ["environmental", "dark"],
 					"mechanic": [
 						"narrative-driven",
 						"resource-management",
@@ -2571,13 +2319,8 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"fantasy",
-						"gothic"
-					],
-					"theme": [
-						"dark"
-					],
+					"genre": ["fantasy", "gothic"],
+					"theme": ["dark"],
 					"mechanic": [
 						"investigation",
 						"narrative-driven",
@@ -2639,21 +2382,10 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"science-fiction",
-						"space-opera"
-					],
-					"theme": [
-						"bleak"
-					],
-					"system": [
-						"forged-in-the-dark-fitd"
-					],
-					"mechanic": [
-						"resource-management",
-						"heist",
-						"team-based"
-					]
+					"genre": ["science-fiction", "space-opera"],
+					"theme": ["bleak"],
+					"system": ["forged-in-the-dark-fitd"],
+					"mechanic": ["resource-management", "heist", "team-based"]
 				}
 			},
 			{
@@ -2709,19 +2441,9 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"science-fiction",
-						"space-opera",
-						"star-trek"
-					],
-					"mechanic": [
-						"exploration-driven",
-						"narrative-driven",
-						"team-based"
-					],
-					"theme": [
-						"political"
-					]
+					"genre": ["science-fiction", "space-opera", "star-trek"],
+					"mechanic": ["exploration-driven", "narrative-driven", "team-based"],
+					"theme": ["political"]
 				}
 			},
 			{
@@ -2777,13 +2499,8 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"science-fiction",
-						"space-opera"
-					],
-					"theme": [
-						"environmental"
-					],
+					"genre": ["science-fiction", "space-opera"],
+					"theme": ["environmental"],
 					"mechanic": [
 						"narrative-driven",
 						"exploration-driven",
@@ -2845,13 +2562,8 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"science-fiction",
-						"interstellar-travel"
-					],
-					"theme": [
-						"political"
-					],
+					"genre": ["science-fiction", "interstellar-travel"],
+					"theme": ["political"],
 					"mechanic": [
 						"resource-management",
 						"narrative-driven",
@@ -2913,13 +2625,8 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"science-fiction"
-					],
-					"theme": [
-						"dark",
-						"psychological"
-					],
+					"genre": ["science-fiction"],
+					"theme": ["dark", "psychological"],
 					"mechanic": [
 						"character-customization",
 						"exploration-driven",
@@ -2981,12 +2688,8 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"science-fiction"
-					],
-					"theme": [
-						"environmental"
-					],
+					"genre": ["science-fiction"],
+					"theme": ["environmental"],
 					"mechanic": [
 						"narrative-driven",
 						"survival",
@@ -3049,18 +2752,14 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"fantasy"
-					],
+					"genre": ["fantasy"],
 					"mechanic": [
 						"narrative-driven",
 						"character-customization",
 						"collaborative-worldbuilding",
 						"exploration-driven"
 					],
-					"theme": [
-						"cinematic"
-					]
+					"theme": ["cinematic"]
 				}
 			},
 			{
@@ -3116,19 +2815,9 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"horror",
-						"cosmic-horror"
-					],
-					"mechanic": [
-						"investigation",
-						"skill-based",
-						"resource-management"
-					],
-					"theme": [
-						"bleak",
-						"psychological"
-					]
+					"genre": ["horror", "cosmic-horror"],
+					"mechanic": ["investigation", "skill-based", "resource-management"],
+					"theme": ["bleak", "psychological"]
 				}
 			},
 			{
@@ -3184,15 +2873,9 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"dark-fantasy"
-					],
-					"theme": [
-						"bleak"
-					],
-					"system": [
-						"old-school-renaissance-osr"
-					],
+					"genre": ["dark-fantasy"],
+					"theme": ["bleak"],
+					"system": ["old-school-renaissance-osr"],
 					"mechanic": [
 						"rules-lite",
 						"collaborative-worldbuilding",
@@ -3254,21 +2937,10 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"fantasy",
-						"high-fantasy"
-					],
-					"theme": [
-						"dark"
-					],
-					"system": [
-						"powered-by-the-apocalypse-pbta"
-					],
-					"mechanic": [
-						"narrative-driven",
-						"collaborative-worldbuilding",
-						"character-customization"
-					]
+					"genre": ["fantasy", "high-fantasy"],
+					"theme": ["dark"],
+					"system": ["powered-by-the-apocalypse-pbta"],
+					"mechanic": ["narrative-driven", "collaborative-worldbuilding", "character-customization"]
 				}
 			},
 			{
@@ -3324,19 +2996,14 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"fantasy",
-						"dark-fantasy"
-					],
+					"genre": ["fantasy", "dark-fantasy"],
 					"mechanic": [
 						"narrative-driven",
 						"innovative-mechanics",
 						"collaborative-worldbuilding",
 						"character-customization"
 					],
-					"decision_tag": [
-						"quick-play"
-					]
+					"decision_tag": ["quick-play"]
 				}
 			},
 			{
@@ -3392,19 +3059,9 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"fantasy",
-						"science-fiction"
-					],
-					"theme": [
-						"cinematic"
-					],
-					"mechanic": [
-						"universal",
-						"streamlined",
-						"character-customization",
-						"team-based"
-					]
+					"genre": ["fantasy", "science-fiction"],
+					"theme": ["cinematic"],
+					"mechanic": ["universal", "streamlined", "character-customization", "team-based"]
 				}
 			},
 			{
@@ -3460,10 +3117,7 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"fantasy",
-						"high-fantasy"
-					],
+					"genre": ["fantasy", "high-fantasy"],
 					"mechanic": [
 						"class-based",
 						"character-customization",
@@ -3526,18 +3180,9 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"fantasy",
-						"high-fantasy"
-					],
-					"mechanic": [
-						"rules-lite",
-						"narrative-driven",
-						"character-customization"
-					],
-					"decision_tag": [
-						"quick-play"
-					]
+					"genre": ["fantasy", "high-fantasy"],
+					"mechanic": ["rules-lite", "narrative-driven", "character-customization"],
+					"decision_tag": ["quick-play"]
 				}
 			},
 			{
@@ -3593,20 +3238,10 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"dark-fantasy"
-					],
-					"theme": [
-						"dark"
-					],
-					"mechanic": [
-						"heist",
-						"narrative-driven",
-						"team-based"
-					],
-					"system": [
-						"forged-in-the-dark-fitd"
-					]
+					"genre": ["dark-fantasy"],
+					"theme": ["dark"],
+					"mechanic": ["heist", "narrative-driven", "team-based"],
+					"system": ["forged-in-the-dark-fitd"]
 				}
 			},
 			{
@@ -3662,18 +3297,14 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"fantasy"
-					],
+					"genre": ["fantasy"],
 					"mechanic": [
 						"narrative-driven",
 						"collaborative-worldbuilding",
 						"character-customization",
 						"rules-lite"
 					],
-					"theme": [
-						"social-intrigue"
-					]
+					"theme": ["social-intrigue"]
 				}
 			},
 			{
@@ -3729,13 +3360,8 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"fantasy",
-						"mythology"
-					],
-					"theme": [
-						"dark"
-					],
+					"genre": ["fantasy", "mythology"],
+					"theme": ["dark"],
 					"mechanic": [
 						"narrative-driven",
 						"gm-less",
@@ -3797,13 +3423,8 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"fantasy",
-						"science-fiction"
-					],
-					"theme": [
-						"dark"
-					],
+					"genre": ["fantasy", "science-fiction"],
+					"theme": ["dark"],
 					"mechanic": [
 						"universal",
 						"character-customization",
@@ -3865,13 +3486,8 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"fantasy",
-						"high-fantasy"
-					],
-					"theme": [
-						"dark"
-					],
+					"genre": ["fantasy", "high-fantasy"],
+					"theme": ["dark"],
 					"mechanic": [
 						"class-based",
 						"tactical-combat",
@@ -3933,19 +3549,9 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"science-fiction",
-						"cosmic-horror"
-					],
-					"theme": [
-						"dark"
-					],
-					"mechanic": [
-						"survival",
-						"exploration-driven",
-						"streamlined",
-						"team-based"
-					]
+					"genre": ["science-fiction", "cosmic-horror"],
+					"theme": ["dark"],
+					"mechanic": ["survival", "exploration-driven", "streamlined", "team-based"]
 				}
 			},
 			{
@@ -4001,21 +3607,10 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"science-fiction",
-						"space-opera"
-					],
-					"theme": [
-						"bleak"
-					],
-					"system": [
-						"old-school-renaissance-osr"
-					],
-					"mechanic": [
-						"exploration-driven",
-						"sandbox",
-						"character-customization"
-					]
+					"genre": ["science-fiction", "space-opera"],
+					"theme": ["bleak"],
+					"system": ["old-school-renaissance-osr"],
+					"mechanic": ["exploration-driven", "sandbox", "character-customization"]
 				}
 			},
 			{
@@ -4071,10 +3666,7 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"science-fiction",
-						"space-opera"
-					],
+					"genre": ["science-fiction", "space-opera"],
 					"mechanic": [
 						"tactical-combat",
 						"character-customization",
@@ -4137,18 +3729,9 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"fantasy"
-					],
-					"theme": [
-						"political",
-						"social-intrigue"
-					],
-					"mechanic": [
-						"narrative-driven",
-						"collaborative-worldbuilding",
-						"character-customization"
-					]
+					"genre": ["fantasy"],
+					"theme": ["political", "social-intrigue"],
+					"mechanic": ["narrative-driven", "collaborative-worldbuilding", "character-customization"]
 				}
 			},
 			{
@@ -4204,20 +3787,10 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"fantasy",
-						"dark-fantasy"
-					],
-					"theme": [
-						"bleak"
-					],
-					"mechanic": [
-						"exploration-driven",
-						"rules-lite"
-					],
-					"system": [
-						"new-school-revolution"
-					]
+					"genre": ["fantasy", "dark-fantasy"],
+					"theme": ["bleak"],
+					"mechanic": ["exploration-driven", "rules-lite"],
+					"system": ["new-school-revolution"]
 				}
 			},
 			{
@@ -4273,18 +3846,9 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"fantasy",
-						"comedy"
-					],
-					"mechanic": [
-						"universal",
-						"rules-lite",
-						"collaborative-worldbuilding"
-					],
-					"decision_tag": [
-						"quick-play"
-					]
+					"genre": ["fantasy", "comedy"],
+					"mechanic": ["universal", "rules-lite", "collaborative-worldbuilding"],
+					"decision_tag": ["quick-play"]
 				}
 			},
 			{
@@ -4340,12 +3904,8 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"cyberpunk"
-					],
-					"theme": [
-						"dark"
-					],
+					"genre": ["cyberpunk"],
+					"theme": ["dark"],
 					"mechanic": [
 						"narrative-driven",
 						"character-customization",
@@ -4407,12 +3967,8 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"dark-fantasy"
-					],
-					"theme": [
-						"bleak"
-					],
+					"genre": ["dark-fantasy"],
+					"theme": ["bleak"],
 					"mechanic": [
 						"exploration-driven",
 						"resource-management",
@@ -4475,13 +4031,8 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"fantasy",
-						"dark-fantasy"
-					],
-					"theme": [
-						"bleak"
-					],
+					"genre": ["fantasy", "dark-fantasy"],
+					"theme": ["bleak"],
 					"mechanic": [
 						"solo-play",
 						"collaborative-worldbuilding",
@@ -4543,19 +4094,9 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"fantasy",
-						"dark-fantasy"
-					],
-					"mechanic": [
-						"exploration-driven",
-						"solo-play",
-						"resource-management",
-						"rules-lite"
-					],
-					"decision_tag": [
-						"quick-play"
-					]
+					"genre": ["fantasy", "dark-fantasy"],
+					"mechanic": ["exploration-driven", "solo-play", "resource-management", "rules-lite"],
+					"decision_tag": ["quick-play"]
 				}
 			},
 			{
@@ -4611,13 +4152,8 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"horror",
-						"cosmic-horror"
-					],
-					"theme": [
-						"dark"
-					],
+					"genre": ["horror", "cosmic-horror"],
+					"theme": ["dark"],
 					"mechanic": [
 						"narrative-driven",
 						"investigation",
@@ -4679,13 +4215,8 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"fantasy",
-						"mythology"
-					],
-					"theme": [
-						"dark"
-					],
+					"genre": ["fantasy", "mythology"],
+					"theme": ["dark"],
 					"mechanic": [
 						"exploration-driven",
 						"resource-management",
@@ -4747,10 +4278,7 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"fantasy",
-						"dark-fantasy"
-					],
+					"genre": ["fantasy", "dark-fantasy"],
 					"mechanic": [
 						"solo-play",
 						"streamlined",
@@ -4813,21 +4341,10 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"science-fiction",
-						"space-opera"
-					],
-					"theme": [
-						"dark"
-					],
-					"mechanic": [
-						"exploration-driven",
-						"solo-play",
-						"narrative-driven"
-					],
-					"system": [
-						"forged-in-the-dark-fitd"
-					]
+					"genre": ["science-fiction", "space-opera"],
+					"theme": ["dark"],
+					"mechanic": ["exploration-driven", "solo-play", "narrative-driven"],
+					"system": ["forged-in-the-dark-fitd"]
 				}
 			},
 			{
@@ -4883,12 +4400,8 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"post-apocalyptic"
-					],
-					"theme": [
-						"environmental"
-					],
+					"genre": ["post-apocalyptic"],
+					"theme": ["environmental"],
 					"mechanic": [
 						"narrative-driven",
 						"collaborative-worldbuilding",
@@ -4959,9 +4472,7 @@
 						"survival",
 						"resource-management"
 					],
-					"genre": [
-						"mystery"
-					]
+					"genre": ["mystery"]
 				}
 			},
 			{
@@ -5017,18 +4528,9 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"science-fiction"
-					],
-					"mechanic": [
-						"tactical",
-						"character-customization",
-						"team-based"
-					],
-					"theme": [
-						"political",
-						"dark"
-					]
+					"genre": ["science-fiction"],
+					"mechanic": ["tactical", "character-customization", "team-based"],
+					"theme": ["political", "dark"]
 				}
 			},
 			{
@@ -5084,12 +4586,8 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"post-apocalyptic"
-					],
-					"theme": [
-						"dark"
-					],
+					"genre": ["post-apocalyptic"],
+					"theme": ["dark"],
 					"mechanic": [
 						"resource-management",
 						"exploration-driven",
@@ -5152,15 +4650,9 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"fantasy"
-					],
-					"theme": [
-						"dark"
-					],
-					"system": [
-						"new-school-revolution"
-					],
+					"genre": ["fantasy"],
+					"theme": ["dark"],
+					"system": ["new-school-revolution"],
 					"mechanic": [
 						"exploration-driven",
 						"rules-lite",
@@ -5222,21 +4714,10 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"dark-fantasy"
-					],
-					"theme": [
-						"bleak"
-					],
-					"system": [
-						"new-school-revolution"
-					],
-					"mechanic": [
-						"exploration-driven",
-						"low-magic",
-						"character-customization",
-						"survival"
-					]
+					"genre": ["dark-fantasy"],
+					"theme": ["bleak"],
+					"system": ["new-school-revolution"],
+					"mechanic": ["exploration-driven", "low-magic", "character-customization", "survival"]
 				}
 			},
 			{
@@ -5292,18 +4773,9 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"fantasy",
-						"dark-fantasy"
-					],
-					"mechanic": [
-						"rules-lite",
-						"collaborative-worldbuilding",
-						"streamlined"
-					],
-					"system": [
-						"old-school-renaissance-osr"
-					]
+					"genre": ["fantasy", "dark-fantasy"],
+					"mechanic": ["rules-lite", "collaborative-worldbuilding", "streamlined"],
+					"system": ["old-school-renaissance-osr"]
 				}
 			},
 			{
@@ -5359,22 +4831,15 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"fantasy",
-						"dark-fantasy"
-					],
-					"system": [
-						"old-school-renaissance-osr"
-					],
+					"genre": ["fantasy", "dark-fantasy"],
+					"system": ["old-school-renaissance-osr"],
 					"mechanic": [
 						"exploration-driven",
 						"resource-management",
 						"low-magic",
 						"collaborative-worldbuilding"
 					],
-					"compatibility": [
-						"5e-compatible"
-					]
+					"compatibility": ["5e-compatible"]
 				}
 			},
 			{
@@ -5430,22 +4895,15 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"fantasy",
-						"sword-and-sorcery"
-					],
+					"genre": ["fantasy", "sword-and-sorcery"],
 					"mechanic": [
 						"class-based",
 						"exploration-driven",
 						"tactical-combat",
 						"collaborative-worldbuilding"
 					],
-					"system": [
-						"old-school-renaissance-osr"
-					],
-					"compatibility": [
-						"5e-compatible"
-					]
+					"system": ["old-school-renaissance-osr"],
+					"compatibility": ["5e-compatible"]
 				}
 			},
 			{
@@ -5501,18 +4959,9 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"fantasy",
-						"dark-fantasy"
-					],
-					"system": [
-						"old-school-renaissance-osr"
-					],
-					"mechanic": [
-						"classless",
-						"collaborative-worldbuilding",
-						"rules-lite"
-					]
+					"genre": ["fantasy", "dark-fantasy"],
+					"system": ["old-school-renaissance-osr"],
+					"mechanic": ["classless", "collaborative-worldbuilding", "rules-lite"]
 				}
 			},
 			{
@@ -5568,21 +5017,10 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"sword-and-sorcery",
-						"dark-fantasy"
-					],
-					"theme": [
-						"bleak"
-					],
-					"system": [
-						"old-school-renaissance-osr"
-					],
-					"mechanic": [
-						"exploration-driven",
-						"tactical-combat",
-						"resource-management"
-					]
+					"genre": ["sword-and-sorcery", "dark-fantasy"],
+					"theme": ["bleak"],
+					"system": ["old-school-renaissance-osr"],
+					"mechanic": ["exploration-driven", "tactical-combat", "resource-management"]
 				}
 			},
 			{
@@ -5638,15 +5076,9 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"dark-fantasy"
-					],
-					"theme": [
-						"bleak"
-					],
-					"system": [
-						"old-school-renaissance-osr"
-					],
+					"genre": ["dark-fantasy"],
+					"theme": ["bleak"],
+					"system": ["old-school-renaissance-osr"],
 					"mechanic": [
 						"tactical-combat",
 						"character-customization",
@@ -5708,21 +5140,10 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"fantasy",
-						"sword-and-sorcery"
-					],
-					"theme": [
-						"bleak"
-					],
-					"system": [
-						"old-school-renaissance-osr"
-					],
-					"mechanic": [
-						"low-magic",
-						"survival",
-						"exploration-driven"
-					]
+					"genre": ["fantasy", "sword-and-sorcery"],
+					"theme": ["bleak"],
+					"system": ["old-school-renaissance-osr"],
+					"mechanic": ["low-magic", "survival", "exploration-driven"]
 				}
 			},
 			{
@@ -5778,21 +5199,10 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"fantasy",
-						"space-opera"
-					],
-					"theme": [
-						"political",
-						"social-intrigue"
-					],
-					"mechanic": [
-						"narrative-driven",
-						"gm-less"
-					],
-					"decision_tag": [
-						"quick-play"
-					]
+					"genre": ["fantasy", "space-opera"],
+					"theme": ["political", "social-intrigue"],
+					"mechanic": ["narrative-driven", "gm-less"],
+					"decision_tag": ["quick-play"]
 				}
 			},
 			{
@@ -5848,21 +5258,10 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"modern"
-					],
-					"theme": [
-						"dark",
-						"psychological",
-						"social-intrigue"
-					],
-					"mechanic": [
-						"narrative-driven",
-						"gm-less"
-					],
-					"decision_tag": [
-						"quick-play"
-					]
+					"genre": ["modern"],
+					"theme": ["dark", "psychological", "social-intrigue"],
+					"mechanic": ["narrative-driven", "gm-less"],
+					"decision_tag": ["quick-play"]
 				}
 			},
 			{
@@ -5918,12 +5317,8 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"dark-fantasy"
-					],
-					"theme": [
-						"bleak"
-					],
+					"genre": ["dark-fantasy"],
+					"theme": ["bleak"],
 					"mechanic": [
 						"exploration-driven",
 						"resource-management",
@@ -5986,18 +5381,9 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"dark-fantasy",
-						"gothic"
-					],
-					"theme": [
-						"dark"
-					],
-					"mechanic": [
-						"narrative-driven",
-						"collaborative-worldbuilding",
-						"investigation"
-					]
+					"genre": ["dark-fantasy", "gothic"],
+					"theme": ["dark"],
+					"mechanic": ["narrative-driven", "collaborative-worldbuilding", "investigation"]
 				}
 			},
 			{
@@ -6053,18 +5439,9 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"dark-fantasy"
-					],
-					"theme": [
-						"mature",
-						"psychological"
-					],
-					"mechanic": [
-						"exploration-driven",
-						"narrative-driven",
-						"character-customization"
-					]
+					"genre": ["dark-fantasy"],
+					"theme": ["mature", "psychological"],
+					"mechanic": ["exploration-driven", "narrative-driven", "character-customization"]
 				}
 			},
 			{
@@ -6120,13 +5497,8 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"space-western",
-						"science-fiction"
-					],
-					"theme": [
-						"bleak"
-					],
+					"genre": ["space-western", "science-fiction"],
+					"theme": ["bleak"],
 					"mechanic": [
 						"narrative-driven",
 						"resource-management",
@@ -6188,19 +5560,9 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"post-apocalyptic",
-						"horror"
-					],
-					"mechanic": [
-						"survival",
-						"narrative-driven",
-						"character-customization",
-						"team-based"
-					],
-					"theme": [
-						"bleak"
-					]
+					"genre": ["post-apocalyptic", "horror"],
+					"mechanic": ["survival", "narrative-driven", "character-customization", "team-based"],
+					"theme": ["bleak"]
 				}
 			},
 			{
@@ -6256,18 +5618,9 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"dark-fantasy"
-					],
-					"theme": [
-						"bleak",
-						"psychological"
-					],
-					"mechanic": [
-						"narrative-driven",
-						"survival",
-						"collaborative-worldbuilding"
-					]
+					"genre": ["dark-fantasy"],
+					"theme": ["bleak", "psychological"],
+					"mechanic": ["narrative-driven", "survival", "collaborative-worldbuilding"]
 				}
 			},
 			{
@@ -6323,19 +5676,9 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"horror"
-					],
-					"theme": [
-						"dark",
-						"psychological"
-					],
-					"mechanic": [
-						"narrative-driven",
-						"survival",
-						"investigation",
-						"rules-lite"
-					]
+					"genre": ["horror"],
+					"theme": ["dark", "psychological"],
+					"mechanic": ["narrative-driven", "survival", "investigation", "rules-lite"]
 				}
 			},
 			{
@@ -6391,18 +5734,9 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"fantasy",
-						"science-fiction"
-					],
-					"theme": [
-						"psychological"
-					],
-					"mechanic": [
-						"narrative-driven",
-						"collaborative-worldbuilding",
-						"exploration-driven"
-					]
+					"genre": ["fantasy", "science-fiction"],
+					"theme": ["psychological"],
+					"mechanic": ["narrative-driven", "collaborative-worldbuilding", "exploration-driven"]
 				}
 			},
 			{
@@ -6458,20 +5792,10 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"superheroes"
-					],
-					"theme": [
-						"psychological"
-					],
-					"system": [
-						"powered-by-the-apocalypse-pbta"
-					],
-					"mechanic": [
-						"character-customization",
-						"narrative-driven",
-						"team-based"
-					]
+					"genre": ["superheroes"],
+					"theme": ["psychological"],
+					"system": ["powered-by-the-apocalypse-pbta"],
+					"mechanic": ["character-customization", "narrative-driven", "team-based"]
 				}
 			},
 			{
@@ -6527,21 +5851,10 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"urban-fantasy"
-					],
-					"theme": [
-						"dark",
-						"political",
-						"social-intrigue"
-					],
-					"system": [
-						"powered-by-the-apocalypse-pbta"
-					],
-					"mechanic": [
-						"narrative-driven",
-						"character-customization"
-					]
+					"genre": ["urban-fantasy"],
+					"theme": ["dark", "political", "social-intrigue"],
+					"system": ["powered-by-the-apocalypse-pbta"],
+					"mechanic": ["narrative-driven", "character-customization"]
 				}
 			},
 			{
@@ -6597,21 +5910,10 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"urban-fantasy"
-					],
-					"theme": [
-						"dark",
-						"psychological"
-					],
-					"system": [
-						"powered-by-the-apocalypse-pbta"
-					],
-					"mechanic": [
-						"narrative-driven",
-						"character-customization",
-						"collaborative-worldbuilding"
-					]
+					"genre": ["urban-fantasy"],
+					"theme": ["dark", "psychological"],
+					"system": ["powered-by-the-apocalypse-pbta"],
+					"mechanic": ["narrative-driven", "character-customization", "collaborative-worldbuilding"]
 				}
 			},
 			{
@@ -6667,20 +5969,10 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"cyberpunk"
-					],
-					"theme": [
-						"bleak"
-					],
-					"system": [
-						"powered-by-the-apocalypse-pbta"
-					],
-					"mechanic": [
-						"heist",
-						"team-based",
-						"character-customization"
-					]
+					"genre": ["cyberpunk"],
+					"theme": ["bleak"],
+					"system": ["powered-by-the-apocalypse-pbta"],
+					"mechanic": ["heist", "team-based", "character-customization"]
 				}
 			},
 			{
@@ -6736,13 +6028,8 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"high-fantasy"
-					],
-					"theme": [
-						"political",
-						"social-intrigue"
-					],
+					"genre": ["high-fantasy"],
+					"theme": ["political", "social-intrigue"],
 					"mechanic": [
 						"narrative-driven",
 						"collaborative-worldbuilding",
@@ -6805,18 +6092,9 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"horror",
-						"cosmic-horror"
-					],
-					"theme": [
-						"dark"
-					],
-					"mechanic": [
-						"investigation",
-						"team-based",
-						"resource-management"
-					]
+					"genre": ["horror", "cosmic-horror"],
+					"theme": ["dark"],
+					"mechanic": ["investigation", "team-based", "resource-management"]
 				}
 			},
 			{
@@ -6872,18 +6150,9 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"science-fiction",
-						"space-opera"
-					],
-					"mechanic": [
-						"collaborative-worldbuilding",
-						"investigation",
-						"narrative-driven"
-					],
-					"theme": [
-						"mature"
-					]
+					"genre": ["science-fiction", "space-opera"],
+					"mechanic": ["collaborative-worldbuilding", "investigation", "narrative-driven"],
+					"theme": ["mature"]
 				}
 			},
 			{
@@ -6939,21 +6208,10 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"fantasy",
-						"non-western"
-					],
-					"theme": [
-						"dark"
-					],
-					"mechanic": [
-						"narrative-driven",
-						"innovative-mechanics",
-						"collaborative-worldbuilding"
-					],
-					"decision_tag": [
-						"quick-play"
-					]
+					"genre": ["fantasy", "non-western"],
+					"theme": ["dark"],
+					"mechanic": ["narrative-driven", "innovative-mechanics", "collaborative-worldbuilding"],
+					"decision_tag": ["quick-play"]
 				}
 			},
 			{
@@ -7009,18 +6267,9 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"fantasy"
-					],
-					"theme": [
-						"dark",
-						"psychological"
-					],
-					"mechanic": [
-						"narrative-driven",
-						"survival",
-						"exploration-driven"
-					]
+					"genre": ["fantasy"],
+					"theme": ["dark", "psychological"],
+					"mechanic": ["narrative-driven", "survival", "exploration-driven"]
 				}
 			},
 			{
@@ -7076,18 +6325,9 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"science-fiction",
-						"cyberpunk"
-					],
-					"theme": [
-						"bleak"
-					],
-					"mechanic": [
-						"character-customization",
-						"resource-management",
-						"exploration-driven"
-					]
+					"genre": ["science-fiction", "cyberpunk"],
+					"theme": ["bleak"],
+					"mechanic": ["character-customization", "resource-management", "exploration-driven"]
 				}
 			},
 			{
@@ -7143,13 +6383,8 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"fantasy",
-						"high-fantasy"
-					],
-					"theme": [
-						"dark"
-					],
+					"genre": ["fantasy", "high-fantasy"],
+					"theme": ["dark"],
 					"mechanic": [
 						"narrative-driven",
 						"class-based",
@@ -7211,18 +6446,9 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"romance"
-					],
-					"theme": [
-						"psychological",
-						"social-intrigue"
-					],
-					"mechanic": [
-						"narrative-driven",
-						"gm-less",
-						"innovative-mechanics"
-					]
+					"genre": ["romance"],
+					"theme": ["psychological", "social-intrigue"],
+					"mechanic": ["narrative-driven", "gm-less", "innovative-mechanics"]
 				}
 			},
 			{
@@ -7278,17 +6504,9 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"cosmic-horror",
-						"mystery"
-					],
-					"theme": [
-						"psychological"
-					],
-					"mechanic": [
-						"narrative-driven",
-						"solo-play"
-					]
+					"genre": ["cosmic-horror", "mystery"],
+					"theme": ["psychological"],
+					"mechanic": ["narrative-driven", "solo-play"]
 				}
 			},
 			{
@@ -7344,13 +6562,8 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"dark-fantasy"
-					],
-					"theme": [
-						"mature",
-						"bleak"
-					],
+					"genre": ["dark-fantasy"],
+					"theme": ["mature", "bleak"],
 					"mechanic": [
 						"narrative-driven",
 						"resource-management",
@@ -7412,12 +6625,8 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"science-fiction"
-					],
-					"theme": [
-						"environmental"
-					],
+					"genre": ["science-fiction"],
+					"theme": ["environmental"],
 					"mechanic": [
 						"narrative-driven",
 						"exploration-driven",
@@ -7480,19 +6689,9 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"science-fiction",
-						"space-opera"
-					],
-					"theme": [
-						"dark"
-					],
-					"mechanic": [
-						"exploration-driven",
-						"tactical",
-						"resource-management",
-						"solo-play"
-					]
+					"genre": ["science-fiction", "space-opera"],
+					"theme": ["dark"],
+					"mechanic": ["exploration-driven", "tactical", "resource-management", "solo-play"]
 				}
 			},
 			{
@@ -7548,13 +6747,8 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"fantasy",
-						"high-fantasy"
-					],
-					"theme": [
-						"dark"
-					],
+					"genre": ["fantasy", "high-fantasy"],
+					"theme": ["dark"],
 					"mechanic": [
 						"narrative-driven",
 						"innovative-mechanics",
@@ -7616,17 +6810,9 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"mechanic": [
-						"collaborative-worldbuilding",
-						"narrative-driven",
-						"gm-less"
-					],
-					"genre": [
-						"science-fiction"
-					],
-					"theme": [
-						"political"
-					]
+					"mechanic": ["collaborative-worldbuilding", "narrative-driven", "gm-less"],
+					"genre": ["science-fiction"],
+					"theme": ["political"]
 				}
 			},
 			{
@@ -7682,13 +6868,8 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"urban-fantasy"
-					],
-					"theme": [
-						"mature",
-						"psychological"
-					],
+					"genre": ["urban-fantasy"],
+					"theme": ["mature", "psychological"],
 					"mechanic": [
 						"narrative-driven",
 						"character-customization",
@@ -7750,13 +6931,8 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"urban-fantasy",
-						"supernatural"
-					],
-					"theme": [
-						"dark"
-					],
+					"genre": ["urban-fantasy", "supernatural"],
+					"theme": ["dark"],
 					"mechanic": [
 						"narrative-driven",
 						"character-customization",
@@ -7818,18 +6994,9 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"fantasy",
-						"historical",
-						"mythology"
-					],
-					"mechanic": [
-						"character-customization",
-						"tactical-combat"
-					],
-					"theme": [
-						"political"
-					]
+					"genre": ["fantasy", "historical", "mythology"],
+					"mechanic": ["character-customization", "tactical-combat"],
+					"theme": ["political"]
 				}
 			},
 			{
@@ -7885,19 +7052,9 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"cyberpunk"
-					],
-					"theme": [
-						"dark",
-						"political"
-					],
-					"mechanic": [
-						"tactical-combat",
-						"team-based",
-						"character-customization",
-						"heist"
-					]
+					"genre": ["cyberpunk"],
+					"theme": ["dark", "political"],
+					"mechanic": ["tactical-combat", "team-based", "character-customization", "heist"]
 				}
 			},
 			{
@@ -7953,21 +7110,10 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"fantasy",
-						"dark-fantasy"
-					],
-					"theme": [
-						"bleak"
-					],
-					"system": [
-						"old-school-renaissance-osr"
-					],
-					"mechanic": [
-						"exploration-driven",
-						"collaborative-worldbuilding",
-						"low-magic"
-					]
+					"genre": ["fantasy", "dark-fantasy"],
+					"theme": ["bleak"],
+					"system": ["old-school-renaissance-osr"],
+					"mechanic": ["exploration-driven", "collaborative-worldbuilding", "low-magic"]
 				}
 			},
 			{
@@ -8062,13 +7208,8 @@
 					"why_it_fits": "Daggerheart works best for groups who want emotionally legible fantasy adventure and a campaign engine that keeps characters central to the table's decisions. It is easier to approach than heavy crunchy fantasy games, but it still expects the GM and players to engage actively with the fiction and make judgment calls in play."
 				},
 				"taxonomies": {
-					"genre": [
-						"fantasy",
-						"dark-fantasy"
-					],
-					"theme": [
-						"dark"
-					],
+					"genre": ["fantasy", "dark-fantasy"],
+					"theme": ["dark"],
 					"mechanic": [
 						"narrative-driven",
 						"character-customization",
@@ -8130,13 +7271,8 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"fantasy",
-						"dark-fantasy"
-					],
-					"theme": [
-						"psychological"
-					],
+					"genre": ["fantasy", "dark-fantasy"],
+					"theme": ["psychological"],
 					"mechanic": [
 						"innovative-mechanics",
 						"tactical-combat",
@@ -8198,19 +7334,9 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"dark-fantasy"
-					],
-					"theme": [
-						"bleak",
-						"psychological"
-					],
-					"mechanic": [
-						"narrative-driven",
-						"resource-management",
-						"survival",
-						"exploration-driven"
-					]
+					"genre": ["dark-fantasy"],
+					"theme": ["bleak", "psychological"],
+					"mechanic": ["narrative-driven", "resource-management", "survival", "exploration-driven"]
 				}
 			},
 			{
@@ -8266,18 +7392,9 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"fantasy",
-						"comedy"
-					],
-					"theme": [
-						"social-intrigue"
-					],
-					"mechanic": [
-						"narrative-driven",
-						"character-customization",
-						"sandbox"
-					]
+					"genre": ["fantasy", "comedy"],
+					"theme": ["social-intrigue"],
+					"mechanic": ["narrative-driven", "character-customization", "sandbox"]
 				}
 			},
 			{
@@ -8333,18 +7450,9 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"military"
-					],
-					"theme": [
-						"dark"
-					],
-					"mechanic": [
-						"tactical-combat",
-						"streamlined",
-						"survival",
-						"character-customization"
-					]
+					"genre": ["military"],
+					"theme": ["dark"],
+					"mechanic": ["tactical-combat", "streamlined", "survival", "character-customization"]
 				}
 			},
 			{
@@ -8381,14 +7489,8 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"mechanic": [
-						"narrative-driven",
-						"universal",
-						"sandbox"
-					],
-					"decision_tag": [
-						"cooperative"
-					]
+					"mechanic": ["narrative-driven", "universal", "sandbox"],
+					"decision_tag": ["cooperative"]
 				}
 			},
 			{
@@ -8444,21 +7546,10 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"fantasy"
-					],
-					"system": [
-						"old-school-renaissance-osr"
-					],
-					"mechanic": [
-						"classless",
-						"exploration-driven",
-						"rules-lite"
-					],
-					"decision_tag": [
-						"low-prep",
-						"quick-play"
-					]
+					"genre": ["fantasy"],
+					"system": ["old-school-renaissance-osr"],
+					"mechanic": ["classless", "exploration-driven", "rules-lite"],
+					"decision_tag": ["low-prep", "quick-play"]
 				}
 			},
 			{
@@ -8514,17 +7605,9 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"fantasy"
-					],
-					"mechanic": [
-						"rules-lite",
-						"classless"
-					],
-					"decision_tag": [
-						"quick-play",
-						"low-prep"
-					]
+					"genre": ["fantasy"],
+					"mechanic": ["rules-lite", "classless"],
+					"decision_tag": ["quick-play", "low-prep"]
 				}
 			},
 			{
@@ -8580,17 +7663,9 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"fantasy"
-					],
-					"mechanic": [
-						"rules-lite",
-						"narrative-driven"
-					],
-					"decision_tag": [
-						"quick-play",
-						"low-prep"
-					]
+					"genre": ["fantasy"],
+					"mechanic": ["rules-lite", "narrative-driven"],
+					"decision_tag": ["quick-play", "low-prep"]
 				}
 			},
 			{
@@ -8646,19 +7721,10 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"fantasy"
-					],
-					"mechanic": [
-						"rules-lite"
-					],
-					"system": [
-						"old-school-renaissance-osr"
-					],
-					"decision_tag": [
-						"quick-play",
-						"low-prep"
-					]
+					"genre": ["fantasy"],
+					"mechanic": ["rules-lite"],
+					"system": ["old-school-renaissance-osr"],
+					"decision_tag": ["quick-play", "low-prep"]
 				}
 			},
 			{
@@ -8714,19 +7780,10 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"fantasy"
-					],
-					"mechanic": [
-						"rules-lite"
-					],
-					"system": [
-						"old-school-renaissance-osr"
-					],
-					"decision_tag": [
-						"quick-play",
-						"low-prep"
-					]
+					"genre": ["fantasy"],
+					"mechanic": ["rules-lite"],
+					"system": ["old-school-renaissance-osr"],
+					"decision_tag": ["quick-play", "low-prep"]
 				}
 			},
 			{
@@ -8782,19 +7839,10 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"fantasy"
-					],
-					"mechanic": [
-						"rules-lite"
-					],
-					"system": [
-						"old-school-renaissance-osr"
-					],
-					"decision_tag": [
-						"quick-play",
-						"low-prep"
-					]
+					"genre": ["fantasy"],
+					"mechanic": ["rules-lite"],
+					"system": ["old-school-renaissance-osr"],
+					"decision_tag": ["quick-play", "low-prep"]
 				}
 			},
 			{
@@ -8850,17 +7898,9 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"science-fiction"
-					],
-					"mechanic": [
-						"rules-lite",
-						"classless"
-					],
-					"decision_tag": [
-						"quick-play",
-						"low-prep"
-					]
+					"genre": ["science-fiction"],
+					"mechanic": ["rules-lite", "classless"],
+					"decision_tag": ["quick-play", "low-prep"]
 				}
 			},
 			{
@@ -8916,18 +7956,9 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"science-fiction"
-					],
-					"mechanic": [
-						"rules-lite",
-						"classless",
-						"streamlined"
-					],
-					"decision_tag": [
-						"low-prep",
-						"quick-play"
-					]
+					"genre": ["science-fiction"],
+					"mechanic": ["rules-lite", "classless", "streamlined"],
+					"decision_tag": ["low-prep", "quick-play"]
 				}
 			},
 			{
@@ -8983,20 +8014,9 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"mechanic": [
-						"rules-lite",
-						"classless",
-						"streamlined",
-						"narrative-driven"
-					],
-					"genre": [
-						"horror",
-						"cosmic-horror"
-					],
-					"decision_tag": [
-						"low-prep",
-						"quick-play"
-					]
+					"mechanic": ["rules-lite", "classless", "streamlined", "narrative-driven"],
+					"genre": ["horror", "cosmic-horror"],
+					"decision_tag": ["low-prep", "quick-play"]
 				}
 			},
 			{
@@ -9052,19 +8072,9 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"horror",
-						"cosmic-horror"
-					],
-					"mechanic": [
-						"narrative-driven",
-						"investigation",
-						"rules-lite"
-					],
-					"decision_tag": [
-						"quick-play",
-						"low-prep"
-					]
+					"genre": ["horror", "cosmic-horror"],
+					"mechanic": ["narrative-driven", "investigation", "rules-lite"],
+					"decision_tag": ["quick-play", "low-prep"]
 				}
 			},
 			{
@@ -9120,16 +8130,8 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"mechanic": [
-						"universal",
-						"narrative-driven",
-						"classless",
-						"rules-lite"
-					],
-					"decision_tag": [
-						"quick-play",
-						"low-prep"
-					]
+					"mechanic": ["universal", "narrative-driven", "classless", "rules-lite"],
+					"decision_tag": ["quick-play", "low-prep"]
 				}
 			},
 			{
@@ -9185,19 +8187,9 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"science-fiction",
-						"space-opera"
-					],
-					"mechanic": [
-						"rules-lite",
-						"narrative-driven",
-						"classless"
-					],
-					"decision_tag": [
-						"quick-play",
-						"low-prep"
-					]
+					"genre": ["science-fiction", "space-opera"],
+					"mechanic": ["rules-lite", "narrative-driven", "classless"],
+					"decision_tag": ["quick-play", "low-prep"]
 				}
 			},
 			{
@@ -9253,17 +8245,9 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"comedy"
-					],
-					"mechanic": [
-						"rules-lite",
-						"narrative-driven"
-					],
-					"decision_tag": [
-						"quick-play",
-						"low-prep"
-					]
+					"genre": ["comedy"],
+					"mechanic": ["rules-lite", "narrative-driven"],
+					"decision_tag": ["quick-play", "low-prep"]
 				}
 			},
 			{
@@ -9319,17 +8303,9 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"romance"
-					],
-					"mechanic": [
-						"narrative-driven",
-						"gm-less",
-						"rules-lite"
-					],
-					"decision_tag": [
-						"low-prep"
-					]
+					"genre": ["romance"],
+					"mechanic": ["narrative-driven", "gm-less", "rules-lite"],
+					"decision_tag": ["low-prep"]
 				}
 			},
 			{
@@ -9385,21 +8361,10 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"mechanic": [
-						"narrative-driven",
-						"gm-less",
-						"rules-lite"
-					],
-					"decision_tag": [
-						"quick-play",
-						"low-prep"
-					],
-					"theme": [
-						"social-intrigue"
-					],
-					"genre": [
-						"romance"
-					]
+					"mechanic": ["narrative-driven", "gm-less", "rules-lite"],
+					"decision_tag": ["quick-play", "low-prep"],
+					"theme": ["social-intrigue"],
+					"genre": ["romance"]
 				}
 			},
 			{
@@ -9455,23 +8420,11 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"fantasy"
-					],
-					"system": [
-						"old-school-renaissance-osr"
-					],
-					"mechanic": [
-						"rules-lite",
-						"exploration-driven",
-						"resource-management"
-					],
-					"decision_tag": [
-						"low-prep"
-					],
-					"compatibility": [
-						"5e-compatible"
-					]
+					"genre": ["fantasy"],
+					"system": ["old-school-renaissance-osr"],
+					"mechanic": ["rules-lite", "exploration-driven", "resource-management"],
+					"decision_tag": ["low-prep"],
+					"compatibility": ["5e-compatible"]
 				}
 			},
 			{
@@ -9527,17 +8480,9 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"system": [
-						"old-school-renaissance-osr"
-					],
-					"mechanic": [
-						"classless",
-						"rules-lite"
-					],
-					"decision_tag": [
-						"low-prep",
-						"quick-play"
-					]
+					"system": ["old-school-renaissance-osr"],
+					"mechanic": ["classless", "rules-lite"],
+					"decision_tag": ["low-prep", "quick-play"]
 				}
 			},
 			{
@@ -9593,20 +8538,9 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"fantasy",
-						"comedy"
-					],
-					"mechanic": [
-						"narrative-driven",
-						"streamlined",
-						"rules-lite",
-						"classless"
-					],
-					"decision_tag": [
-						"low-prep",
-						"quick-play"
-					]
+					"genre": ["fantasy", "comedy"],
+					"mechanic": ["narrative-driven", "streamlined", "rules-lite", "classless"],
+					"decision_tag": ["low-prep", "quick-play"]
 				}
 			},
 			{
@@ -9662,17 +8596,9 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"mechanic": [
-						"rules-lite",
-						"classless"
-					],
-					"genre": [
-						"modern",
-						"military"
-					],
-					"decision_tag": [
-						"low-prep"
-					]
+					"mechanic": ["rules-lite", "classless"],
+					"genre": ["modern", "military"],
+					"decision_tag": ["low-prep"]
 				}
 			},
 			{
@@ -9728,21 +8654,10 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"fantasy"
-					],
-					"system": [
-						"old-school-renaissance-osr"
-					],
-					"mechanic": [
-						"classless",
-						"exploration-driven",
-						"rules-lite"
-					],
-					"decision_tag": [
-						"low-prep",
-						"quick-play"
-					]
+					"genre": ["fantasy"],
+					"system": ["old-school-renaissance-osr"],
+					"mechanic": ["classless", "exploration-driven", "rules-lite"],
+					"decision_tag": ["low-prep", "quick-play"]
 				}
 			},
 			{
@@ -9798,18 +8713,9 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"fantasy"
-					],
-					"mechanic": [
-						"narrative-driven",
-						"gm-less",
-						"rules-lite"
-					],
-					"decision_tag": [
-						"quick-play",
-						"low-prep"
-					]
+					"genre": ["fantasy"],
+					"mechanic": ["narrative-driven", "gm-less", "rules-lite"],
+					"decision_tag": ["quick-play", "low-prep"]
 				}
 			},
 			{
@@ -9865,16 +8771,8 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"mechanic": [
-						"rules-lite",
-						"universal",
-						"narrative-driven",
-						"classless",
-						"gm-less"
-					],
-					"decision_tag": [
-						"quick-play"
-					]
+					"mechanic": ["rules-lite", "universal", "narrative-driven", "classless", "gm-less"],
+					"decision_tag": ["quick-play"]
 				}
 			},
 			{
@@ -9930,22 +8828,10 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"fantasy"
-					],
-					"system": [
-						"old-school-renaissance-osr"
-					],
-					"mechanic": [
-						"classless",
-						"streamlined",
-						"exploration-driven",
-						"rules-lite"
-					],
-					"decision_tag": [
-						"low-prep",
-						"quick-play"
-					]
+					"genre": ["fantasy"],
+					"system": ["old-school-renaissance-osr"],
+					"mechanic": ["classless", "streamlined", "exploration-driven", "rules-lite"],
+					"decision_tag": ["low-prep", "quick-play"]
 				}
 			},
 			{
@@ -10001,23 +8887,10 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"fantasy"
-					],
-					"system": [
-						"old-school-renaissance-osr",
-						"new-school-revolution"
-					],
-					"mechanic": [
-						"classless",
-						"sandbox",
-						"exploration-driven",
-						"rules-lite"
-					],
-					"decision_tag": [
-						"low-prep",
-						"quick-play"
-					]
+					"genre": ["fantasy"],
+					"system": ["old-school-renaissance-osr", "new-school-revolution"],
+					"mechanic": ["classless", "sandbox", "exploration-driven", "rules-lite"],
+					"decision_tag": ["low-prep", "quick-play"]
 				}
 			},
 			{
@@ -10073,20 +8946,9 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"mechanic": [
-						"rules-lite",
-						"classless",
-						"exploration-driven",
-						"streamlined"
-					],
-					"genre": [
-						"science-fiction",
-						"space-western"
-					],
-					"decision_tag": [
-						"low-prep",
-						"quick-play"
-					]
+					"mechanic": ["rules-lite", "classless", "exploration-driven", "streamlined"],
+					"genre": ["science-fiction", "space-western"],
+					"decision_tag": ["low-prep", "quick-play"]
 				}
 			},
 			{
@@ -10149,16 +9011,9 @@
 						"exploration-driven",
 						"resource-management"
 					],
-					"genre": [
-						"fantasy"
-					],
-					"system": [
-						"old-school-renaissance-osr"
-					],
-					"decision_tag": [
-						"low-prep",
-						"quick-play"
-					]
+					"genre": ["fantasy"],
+					"system": ["old-school-renaissance-osr"],
+					"decision_tag": ["low-prep", "quick-play"]
 				}
 			},
 			{
@@ -10214,23 +9069,11 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"fantasy"
-					],
-					"mechanic": [
-						"rules-lite",
-						"classless"
-					],
-					"system": [
-						"old-school-renaissance-osr"
-					],
-					"decision_tag": [
-						"quick-play",
-						"low-prep"
-					],
-					"compatibility": [
-						"5e-compatible"
-					]
+					"genre": ["fantasy"],
+					"mechanic": ["rules-lite", "classless"],
+					"system": ["old-school-renaissance-osr"],
+					"decision_tag": ["quick-play", "low-prep"],
+					"compatibility": ["5e-compatible"]
 				}
 			},
 			{
@@ -10286,19 +9129,9 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"fantasy",
-						"romance"
-					],
-					"mechanic": [
-						"narrative-driven",
-						"classless",
-						"rules-lite"
-					],
-					"decision_tag": [
-						"quick-play",
-						"low-prep"
-					]
+					"genre": ["fantasy", "romance"],
+					"mechanic": ["narrative-driven", "classless", "rules-lite"],
+					"decision_tag": ["quick-play", "low-prep"]
 				}
 			},
 			{
@@ -10354,20 +9187,10 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"fantasy"
-					],
-					"system": [
-						"old-school-renaissance-osr"
-					],
-					"mechanic": [
-						"classless",
-						"rules-lite"
-					],
-					"decision_tag": [
-						"low-prep",
-						"quick-play"
-					]
+					"genre": ["fantasy"],
+					"system": ["old-school-renaissance-osr"],
+					"mechanic": ["classless", "rules-lite"],
+					"decision_tag": ["low-prep", "quick-play"]
 				}
 			},
 			{
@@ -10423,24 +9246,11 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"horror"
-					],
-					"system": [
-						"old-school-renaissance-osr",
-						"new-school-revolution"
-					],
-					"mechanic": [
-						"investigation",
-						"rules-lite"
-					],
-					"theme": [
-						"psychological"
-					],
-					"decision_tag": [
-						"low-prep",
-						"quick-play"
-					]
+					"genre": ["horror"],
+					"system": ["old-school-renaissance-osr", "new-school-revolution"],
+					"mechanic": ["investigation", "rules-lite"],
+					"theme": ["psychological"],
+					"decision_tag": ["low-prep", "quick-play"]
 				}
 			},
 			{
@@ -10496,22 +9306,10 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"fantasy"
-					],
-					"system": [
-						"old-school-renaissance-osr"
-					],
-					"mechanic": [
-						"classless",
-						"rules-lite",
-						"sandbox",
-						"streamlined"
-					],
-					"decision_tag": [
-						"low-prep",
-						"quick-play"
-					]
+					"genre": ["fantasy"],
+					"system": ["old-school-renaissance-osr"],
+					"mechanic": ["classless", "rules-lite", "sandbox", "streamlined"],
+					"decision_tag": ["low-prep", "quick-play"]
 				}
 			},
 			{
@@ -10567,21 +9365,10 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"fantasy"
-					],
-					"mechanic": [
-						"rules-lite",
-						"classless",
-						"exploration-driven"
-					],
-					"system": [
-						"old-school-renaissance-osr"
-					],
-					"decision_tag": [
-						"quick-play",
-						"low-prep"
-					]
+					"genre": ["fantasy"],
+					"mechanic": ["rules-lite", "classless", "exploration-driven"],
+					"system": ["old-school-renaissance-osr"],
+					"decision_tag": ["quick-play", "low-prep"]
 				}
 			},
 			{
@@ -10637,19 +9424,9 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"fantasy"
-					],
-					"mechanic": [
-						"universal",
-						"streamlined",
-						"classless",
-						"rules-lite"
-					],
-					"decision_tag": [
-						"quick-play",
-						"low-prep"
-					]
+					"genre": ["fantasy"],
+					"mechanic": ["universal", "streamlined", "classless", "rules-lite"],
+					"decision_tag": ["quick-play", "low-prep"]
 				}
 			},
 			{
@@ -10705,17 +9482,9 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"system": [
-						"old-school-renaissance-osr"
-					],
-					"mechanic": [
-						"rules-lite",
-						"classless"
-					],
-					"decision_tag": [
-						"low-prep",
-						"quick-play"
-					]
+					"system": ["old-school-renaissance-osr"],
+					"mechanic": ["rules-lite", "classless"],
+					"decision_tag": ["low-prep", "quick-play"]
 				}
 			},
 			{
@@ -10771,19 +9540,9 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"fantasy",
-						"sword-and-sorcery"
-					],
-					"mechanic": [
-						"streamlined",
-						"rules-lite",
-						"class-based"
-					],
-					"decision_tag": [
-						"low-prep",
-						"quick-play"
-					]
+					"genre": ["fantasy", "sword-and-sorcery"],
+					"mechanic": ["streamlined", "rules-lite", "class-based"],
+					"decision_tag": ["low-prep", "quick-play"]
 				}
 			},
 			{
@@ -10839,18 +9598,9 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"fantasy"
-					],
-					"mechanic": [
-						"rules-lite",
-						"classless",
-						"streamlined"
-					],
-					"decision_tag": [
-						"quick-play",
-						"low-prep"
-					]
+					"genre": ["fantasy"],
+					"mechanic": ["rules-lite", "classless", "streamlined"],
+					"decision_tag": ["quick-play", "low-prep"]
 				}
 			},
 			{
@@ -10906,14 +9656,8 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"fantasy",
-						"sword-and-sorcery"
-					],
-					"system": [
-						"old-school-renaissance-osr",
-						"new-school-revolution"
-					],
+					"genre": ["fantasy", "sword-and-sorcery"],
+					"system": ["old-school-renaissance-osr", "new-school-revolution"],
 					"mechanic": [
 						"classless",
 						"streamlined",
@@ -10923,10 +9667,7 @@
 						"sandbox",
 						"rules-lite"
 					],
-					"decision_tag": [
-						"low-prep",
-						"quick-play"
-					]
+					"decision_tag": ["low-prep", "quick-play"]
 				}
 			},
 			{
@@ -10982,9 +9723,7 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"science-fiction"
-					],
+					"genre": ["science-fiction"],
 					"mechanic": [
 						"survival",
 						"resource-management",
@@ -10992,14 +9731,8 @@
 						"rules-lite",
 						"team-based"
 					],
-					"decision_tag": [
-						"low-prep",
-						"quick-play"
-					],
-					"theme": [
-						"dark",
-						"bleak"
-					]
+					"decision_tag": ["low-prep", "quick-play"],
+					"theme": ["dark", "bleak"]
 				}
 			},
 			{
@@ -11009,7 +9742,7 @@
 				"data": {
 					"title": "Outbreak: Undead (2nd Edition)",
 					"website_url": "https://www.drivethrurpg.com/en/product/223734/outbreak-undead-2nd-edition-survivors-guide",
-					"image_url": "https://res.cloudinary.com/dfy7duoia/image/upload/v1772641553/games/placeholder.jpg",
+					"image_url": "https://static.wixstatic.com/media/85013f_0786f1fdbcea4bafbe7a35a8181c7eb4~mv2_d_2550_3300_s_4_2.jpg/v1/fill/w_490%2Ch_634%2Cal_c%2Cq_80%2Cusm_0.66_1.00_0.01%2Cenc_avif%2Cquality_auto/85013f_0786f1fdbcea4bafbe7a35a8181c7eb4~mv2_d_2550_3300_s_4_2.jpg",
 					"reviews_url": "https://www.drivethrurpg.com/en/product/627/all-flesh-must-be-eaten-revised",
 					"review_summary": "A gritty survival-horror RPG where scarcity, stress, and smart planning matter. Reviews praise the tone and modular Deadworlds while noting a steeper learning curve and crunchy survival procedures compared to lighter zombie titles.",
 					"blurb": "Outbreak: Undead (2e) is a survival-horror tabletop RPG focused on realism, resource scarcity, and tough choices. Classless and modular, it supports gritty campaigns about planning, panicking, and pushing through the worst days. Ideal for fans of grounded, rules-forward apocalypse play.",
@@ -11055,17 +9788,9 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"post-apocalyptic",
-						"horror"
-					],
-					"mechanic": [
-						"survival",
-						"campaign"
-					],
-					"decision_tag": [
-						"low-prep"
-					]
+					"genre": ["post-apocalyptic", "horror"],
+					"mechanic": ["survival", "campaign"],
+					"decision_tag": ["low-prep"]
 				}
 			},
 			{
@@ -11121,17 +9846,9 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"horror"
-					],
-					"mechanic": [
-						"survival",
-						"rules-lite",
-						"classless"
-					],
-					"decision_tag": [
-						"low-prep"
-					]
+					"genre": ["horror"],
+					"mechanic": ["survival", "rules-lite", "classless"],
+					"decision_tag": ["low-prep"]
 				}
 			},
 			{
@@ -11187,22 +9904,10 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"western"
-					],
-					"system": [
-						"old-school-renaissance-osr"
-					],
-					"mechanic": [
-						"classless",
-						"sandbox",
-						"survival",
-						"rules-lite"
-					],
-					"decision_tag": [
-						"low-prep",
-						"quick-play"
-					]
+					"genre": ["western"],
+					"system": ["old-school-renaissance-osr"],
+					"mechanic": ["classless", "sandbox", "survival", "rules-lite"],
+					"decision_tag": ["low-prep", "quick-play"]
 				}
 			},
 			{
@@ -11258,20 +9963,9 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"horror",
-						"modern"
-					],
-					"mechanic": [
-						"survival",
-						"exploration-driven",
-						"rules-lite",
-						"narrative-driven"
-					],
-					"decision_tag": [
-						"quick-play",
-						"low-prep"
-					]
+					"genre": ["horror", "modern"],
+					"mechanic": ["survival", "exploration-driven", "rules-lite", "narrative-driven"],
+					"decision_tag": ["quick-play", "low-prep"]
 				}
 			},
 			{
@@ -11327,18 +10021,9 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"science-fiction",
-						"horror"
-					],
-					"mechanic": [
-						"survival",
-						"rules-lite"
-					],
-					"decision_tag": [
-						"low-prep",
-						"quick-play"
-					]
+					"genre": ["science-fiction", "horror"],
+					"mechanic": ["survival", "rules-lite"],
+					"decision_tag": ["low-prep", "quick-play"]
 				}
 			},
 			{
@@ -11394,10 +10079,7 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"fantasy",
-						"sword-and-sorcery"
-					],
+					"genre": ["fantasy", "sword-and-sorcery"],
 					"mechanic": [
 						"survival",
 						"exploration-driven",
@@ -11405,9 +10087,7 @@
 						"sandbox",
 						"rules-lite"
 					],
-					"decision_tag": [
-						"low-prep"
-					]
+					"decision_tag": ["low-prep"]
 				}
 			},
 			{
@@ -11463,27 +10143,11 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"science-fiction",
-						"horror",
-						"dystopian",
-						"space-western"
-					],
-					"mechanic": [
-						"survival",
-						"rules-lite"
-					],
-					"system": [
-						"old-school-renaissance-osr"
-					],
-					"decision_tag": [
-						"low-prep",
-						"quick-play"
-					],
-					"theme": [
-						"bleak",
-						"metal"
-					]
+					"genre": ["science-fiction", "horror", "dystopian", "space-western"],
+					"mechanic": ["survival", "rules-lite"],
+					"system": ["old-school-renaissance-osr"],
+					"decision_tag": ["low-prep", "quick-play"],
+					"theme": ["bleak", "metal"]
 				}
 			},
 			{
@@ -11539,12 +10203,8 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"post-apocalyptic"
-					],
-					"system": [
-						"old-school-renaissance-osr"
-					],
+					"genre": ["post-apocalyptic"],
+					"system": ["old-school-renaissance-osr"],
 					"mechanic": [
 						"class-based",
 						"exploration-driven",
@@ -11552,9 +10212,7 @@
 						"sandbox",
 						"tactical-combat"
 					],
-					"decision_tag": [
-						"low-prep"
-					]
+					"decision_tag": ["low-prep"]
 				}
 			},
 			{
@@ -11610,17 +10268,9 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"science-fiction"
-					],
-					"mechanic": [
-						"solo-play",
-						"survival",
-						"rules-lite"
-					],
-					"decision_tag": [
-						"quick-play"
-					]
+					"genre": ["science-fiction"],
+					"mechanic": ["solo-play", "survival", "rules-lite"],
+					"decision_tag": ["quick-play"]
 				}
 			},
 			{
@@ -11676,20 +10326,10 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"mechanic": [
-						"rules-lite",
-						"survival",
-						"exploration-driven"
-					],
-					"genre": [
-						"horror"
-					],
-					"system": [
-						"old-school-renaissance-osr"
-					],
-					"decision_tag": [
-						"low-prep"
-					]
+					"mechanic": ["rules-lite", "survival", "exploration-driven"],
+					"genre": ["horror"],
+					"system": ["old-school-renaissance-osr"],
+					"decision_tag": ["low-prep"]
 				}
 			},
 			{
@@ -11745,15 +10385,8 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"fantasy",
-						"high-fantasy"
-					],
-					"mechanic": [
-						"exploration-driven",
-						"survival",
-						"campaign"
-					]
+					"genre": ["fantasy", "high-fantasy"],
+					"mechanic": ["exploration-driven", "survival", "campaign"]
 				}
 			},
 			{
@@ -11809,26 +10442,11 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"horror"
-					],
-					"mechanic": [
-						"survival",
-						"resource-management",
-						"classless",
-						"rules-lite"
-					],
-					"system": [
-						"forged-in-the-dark-fitd"
-					],
-					"decision_tag": [
-						"quick-play",
-						"low-prep"
-					],
-					"theme": [
-						"cinematic",
-						"psychological"
-					]
+					"genre": ["horror"],
+					"mechanic": ["survival", "resource-management", "classless", "rules-lite"],
+					"system": ["forged-in-the-dark-fitd"],
+					"decision_tag": ["quick-play", "low-prep"],
+					"theme": ["cinematic", "psychological"]
 				}
 			},
 			{
@@ -11892,10 +10510,7 @@
 						"exploration-driven",
 						"rules-lite"
 					],
-					"genre": [
-						"post-apocalyptic",
-						"military"
-					]
+					"genre": ["post-apocalyptic", "military"]
 				}
 			},
 			{
@@ -11951,10 +10566,7 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"mechanic": [
-						"rules-lite",
-						"survival"
-					]
+					"mechanic": ["rules-lite", "survival"]
 				}
 			},
 			{
@@ -12010,9 +10622,7 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"science-fiction"
-					],
+					"genre": ["science-fiction"],
 					"mechanic": [
 						"survival",
 						"solo-play",
@@ -12020,10 +10630,7 @@
 						"resource-management",
 						"rules-lite"
 					],
-					"decision_tag": [
-						"low-prep",
-						"quick-play"
-					]
+					"decision_tag": ["low-prep", "quick-play"]
 				}
 			},
 			{
@@ -12079,18 +10686,9 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"mechanic": [
-						"rules-lite",
-						"survival",
-						"sandbox",
-						"classless"
-					],
-					"decision_tag": [
-						"low-prep"
-					],
-					"system": [
-						"new-school-revolution"
-					]
+					"mechanic": ["rules-lite", "survival", "sandbox", "classless"],
+					"decision_tag": ["low-prep"],
+					"system": ["new-school-revolution"]
 				}
 			},
 			{
@@ -12146,15 +10744,8 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"mechanic": [
-						"survival",
-						"narrative-driven",
-						"rules-lite"
-					],
-					"decision_tag": [
-						"low-prep",
-						"quick-play"
-					]
+					"mechanic": ["survival", "narrative-driven", "rules-lite"],
+					"decision_tag": ["low-prep", "quick-play"]
 				}
 			},
 			{
@@ -12210,17 +10801,9 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"horror",
-						"modern"
-					],
-					"mechanic": [
-						"survival",
-						"rules-lite"
-					],
-					"decision_tag": [
-						"quick-play"
-					]
+					"genre": ["horror", "modern"],
+					"mechanic": ["survival", "rules-lite"],
+					"decision_tag": ["quick-play"]
 				}
 			},
 			{
@@ -12276,20 +10859,10 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"horror"
-					],
-					"theme": [
-						"psychological"
-					],
-					"mechanic": [
-						"survival",
-						"rules-lite"
-					],
-					"decision_tag": [
-						"low-prep",
-						"quick-play"
-					]
+					"genre": ["horror"],
+					"theme": ["psychological"],
+					"mechanic": ["survival", "rules-lite"],
+					"decision_tag": ["low-prep", "quick-play"]
 				}
 			},
 			{
@@ -12345,10 +10918,7 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"fantasy",
-						"post-apocalyptic"
-					],
+					"genre": ["fantasy", "post-apocalyptic"],
 					"mechanic": [
 						"exploration-driven",
 						"survival",
@@ -12356,9 +10926,7 @@
 						"sandbox",
 						"team-based"
 					],
-					"decision_tag": [
-						"low-prep"
-					]
+					"decision_tag": ["low-prep"]
 				}
 			},
 			{
@@ -12414,18 +10982,9 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"post-apocalyptic",
-						"sword-and-sorcery"
-					],
-					"mechanic": [
-						"survival",
-						"rules-lite",
-						"sandbox"
-					],
-					"decision_tag": [
-						"low-prep"
-					]
+					"genre": ["post-apocalyptic", "sword-and-sorcery"],
+					"mechanic": ["survival", "rules-lite", "sandbox"],
+					"decision_tag": ["low-prep"]
 				}
 			},
 			{
@@ -12481,17 +11040,9 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"science-fiction",
-						"horror"
-					],
-					"mechanic": [
-						"survival",
-						"resource-management"
-					],
-					"decision_tag": [
-						"low-prep"
-					]
+					"genre": ["science-fiction", "horror"],
+					"mechanic": ["survival", "resource-management"],
+					"decision_tag": ["low-prep"]
 				}
 			},
 			{
@@ -12547,20 +11098,9 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"horror",
-						"historical",
-						"military"
-					],
-					"mechanic": [
-						"survival",
-						"narrative-driven",
-						"rules-lite"
-					],
-					"decision_tag": [
-						"low-prep",
-						"quick-play"
-					]
+					"genre": ["horror", "historical", "military"],
+					"mechanic": ["survival", "narrative-driven", "rules-lite"],
+					"decision_tag": ["low-prep", "quick-play"]
 				}
 			},
 			{
@@ -12616,18 +11156,9 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"horror"
-					],
-					"mechanic": [
-						"survival",
-						"rules-lite",
-						"narrative-driven"
-					],
-					"decision_tag": [
-						"quick-play",
-						"low-prep"
-					]
+					"genre": ["horror"],
+					"mechanic": ["survival", "rules-lite", "narrative-driven"],
+					"decision_tag": ["quick-play", "low-prep"]
 				}
 			},
 			{
@@ -12683,21 +11214,9 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"horror",
-						"modern"
-					],
-					"mechanic": [
-						"survival",
-						"card-based",
-						"narrative-driven",
-						"rules-lite",
-						"team-based"
-					],
-					"decision_tag": [
-						"low-prep",
-						"quick-play"
-					]
+					"genre": ["horror", "modern"],
+					"mechanic": ["survival", "card-based", "narrative-driven", "rules-lite", "team-based"],
+					"decision_tag": ["low-prep", "quick-play"]
 				}
 			},
 			{
@@ -12807,14 +11326,8 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"mechanic": [
-						"survival",
-						"rules-lite"
-					],
-					"genre": [
-						"horror",
-						"modern"
-					]
+					"mechanic": ["survival", "rules-lite"],
+					"genre": ["horror", "modern"]
 				}
 			},
 			{
@@ -12870,21 +11383,10 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"horror",
-						"modern"
-					],
-					"mechanic": [
-						"survival",
-						"rules-lite"
-					],
-					"system": [
-						"old-school-renaissance-osr"
-					],
-					"decision_tag": [
-						"low-prep",
-						"quick-play"
-					]
+					"genre": ["horror", "modern"],
+					"mechanic": ["survival", "rules-lite"],
+					"system": ["old-school-renaissance-osr"],
+					"decision_tag": ["low-prep", "quick-play"]
 				}
 			},
 			{
@@ -12940,18 +11442,9 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"horror",
-						"post-apocalyptic",
-						"modern"
-					],
-					"mechanic": [
-						"survival",
-						"campaign"
-					],
-					"decision_tag": [
-						"low-prep"
-					]
+					"genre": ["horror", "post-apocalyptic", "modern"],
+					"mechanic": ["survival", "campaign"],
+					"decision_tag": ["low-prep"]
 				}
 			},
 			{
@@ -13007,18 +11500,9 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"mechanic": [
-						"rules-lite",
-						"survival",
-						"exploration-driven",
-						"narrative-driven"
-					],
-					"genre": [
-						"fantasy"
-					],
-					"decision_tag": [
-						"low-prep"
-					]
+					"mechanic": ["rules-lite", "survival", "exploration-driven", "narrative-driven"],
+					"genre": ["fantasy"],
+					"decision_tag": ["low-prep"]
 				}
 			},
 			{
@@ -13074,19 +11558,10 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"mechanic": [
-						"survival",
-						"resource-management"
-					],
-					"genre": [
-						"fantasy"
-					],
-					"decision_tag": [
-						"rules-medium"
-					],
-					"system": [
-						"old-school-renaissance-osr"
-					]
+					"mechanic": ["survival", "resource-management"],
+					"genre": ["fantasy"],
+					"decision_tag": ["rules-medium"],
+					"system": ["old-school-renaissance-osr"]
 				}
 			},
 			{
@@ -13142,17 +11617,9 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"mechanic": [
-						"survival",
-						"rules-lite",
-						"resource-management"
-					],
-					"theme": [
-						"environmental"
-					],
-					"decision_tag": [
-						"low-prep"
-					]
+					"mechanic": ["survival", "rules-lite", "resource-management"],
+					"theme": ["environmental"],
+					"decision_tag": ["low-prep"]
 				}
 			},
 			{
@@ -13208,16 +11675,9 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"mechanic": [
-						"survival"
-					],
-					"genre": [
-						"science-fiction"
-					],
-					"decision_tag": [
-						"low-prep",
-						"collaborative"
-					]
+					"mechanic": ["survival"],
+					"genre": ["science-fiction"],
+					"decision_tag": ["low-prep", "collaborative"]
 				}
 			},
 			{
@@ -13273,17 +11733,9 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"mechanic": [
-						"survival",
-						"resource-management"
-					],
-					"genre": [
-						"military",
-						"post-apocalyptic"
-					],
-					"decision_tag": [
-						"low-prep"
-					]
+					"mechanic": ["survival", "resource-management"],
+					"genre": ["military", "post-apocalyptic"],
+					"decision_tag": ["low-prep"]
 				}
 			},
 			{
@@ -13339,19 +11791,9 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"mechanic": [
-						"survival",
-						"narrative-driven",
-						"character-customization"
-					],
-					"genre": [
-						"post-apocalyptic",
-						"science-fiction",
-						"horror"
-					],
-					"theme": [
-						"political"
-					]
+					"mechanic": ["survival", "narrative-driven", "character-customization"],
+					"genre": ["post-apocalyptic", "science-fiction", "horror"],
+					"theme": ["political"]
 				}
 			},
 			{
@@ -13407,16 +11849,8 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"mechanic": [
-						"survival",
-						"narrative-driven",
-						"gm-less",
-						"rules-lite"
-					],
-					"decision_tag": [
-						"quick-play",
-						"low-prep"
-					]
+					"mechanic": ["survival", "narrative-driven", "gm-less", "rules-lite"],
+					"decision_tag": ["quick-play", "low-prep"]
 				}
 			},
 			{
@@ -13472,17 +11906,9 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"mechanic": [
-						"survival",
-						"resource-management",
-						"exploration-driven"
-					],
-					"genre": [
-						"post-apocalyptic"
-					],
-					"system": [
-						"year-zero-engine"
-					]
+					"mechanic": ["survival", "resource-management", "exploration-driven"],
+					"genre": ["post-apocalyptic"],
+					"system": ["year-zero-engine"]
 				}
 			},
 			{
@@ -13532,16 +11958,8 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"mechanic": [
-						"survival",
-						"exploration-driven",
-						"sandbox",
-						"resource-management"
-					],
-					"genre": [
-						"fantasy",
-						"dark-fantasy"
-					]
+					"mechanic": ["survival", "exploration-driven", "sandbox", "resource-management"],
+					"genre": ["fantasy", "dark-fantasy"]
 				}
 			},
 			{
@@ -13597,16 +12015,9 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"horror"
-					],
-					"mechanic": [
-						"survival",
-						"rules-lite"
-					],
-					"decision_tag": [
-						"quick-play"
-					]
+					"genre": ["horror"],
+					"mechanic": ["survival", "rules-lite"],
+					"decision_tag": ["quick-play"]
 				}
 			},
 			{
@@ -13662,15 +12073,8 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"mechanic": [
-						"solo-play",
-						"survival",
-						"rules-lite",
-						"narrative-driven"
-					],
-					"genre": [
-						"post-apocalyptic"
-					]
+					"mechanic": ["solo-play", "survival", "rules-lite", "narrative-driven"],
+					"genre": ["post-apocalyptic"]
 				}
 			},
 			{
@@ -13726,19 +12130,9 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"fantasy",
-						"high-fantasy"
-					],
-					"mechanic": [
-						"survival",
-						"resource-management",
-						"exploration-driven",
-						"narrative-driven"
-					],
-					"decision_tag": [
-						"quick-play"
-					]
+					"genre": ["fantasy", "high-fantasy"],
+					"mechanic": ["survival", "resource-management", "exploration-driven", "narrative-driven"],
+					"decision_tag": ["quick-play"]
 				}
 			},
 			{
@@ -13794,18 +12188,9 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"mechanic": [
-						"survival",
-						"rules-lite",
-						"narrative-driven",
-						"exploration-driven"
-					],
-					"system": [
-						"powered-by-the-apocalypse-pbta"
-					],
-					"decision_tag": [
-						"quick-play"
-					]
+					"mechanic": ["survival", "rules-lite", "narrative-driven", "exploration-driven"],
+					"system": ["powered-by-the-apocalypse-pbta"],
+					"decision_tag": ["quick-play"]
 				}
 			},
 			{
@@ -13861,21 +12246,10 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"mechanic": [
-						"survival",
-						"rules-lite",
-						"solo-play"
-					],
-					"system": [
-						"forged-in-the-dark"
-					],
-					"decision_tag": [
-						"low-prep",
-						"quick-play"
-					],
-					"genre": [
-						"horror"
-					]
+					"mechanic": ["survival", "rules-lite", "solo-play"],
+					"system": ["forged-in-the-dark"],
+					"decision_tag": ["low-prep", "quick-play"],
+					"genre": ["horror"]
 				}
 			},
 			{
@@ -13931,19 +12305,9 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"dark-fantasy",
-						"post-apocalyptic"
-					],
-					"mechanic": [
-						"survival",
-						"rules-lite",
-						"exploration-driven",
-						"classless"
-					],
-					"system": [
-						"old-school-renaissance-osr"
-					]
+					"genre": ["dark-fantasy", "post-apocalyptic"],
+					"mechanic": ["survival", "rules-lite", "exploration-driven", "classless"],
+					"system": ["old-school-renaissance-osr"]
 				}
 			},
 			{
@@ -13999,17 +12363,9 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"mechanic": [
-						"survival",
-						"rules-lite"
-					],
-					"genre": [
-						"horror"
-					],
-					"decision_tag": [
-						"low-prep",
-						"quick-play"
-					]
+					"mechanic": ["survival", "rules-lite"],
+					"genre": ["horror"],
+					"decision_tag": ["low-prep", "quick-play"]
 				}
 			},
 			{
@@ -14065,17 +12421,9 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"mechanic": [
-						"survival",
-						"rules-lite",
-						"narrative-driven"
-					],
-					"system": [
-						"powered-by-the-apocalypse-pbta"
-					],
-					"decision_tag": [
-						"low-prep"
-					]
+					"mechanic": ["survival", "rules-lite", "narrative-driven"],
+					"system": ["powered-by-the-apocalypse-pbta"],
+					"decision_tag": ["low-prep"]
 				}
 			},
 			{
@@ -14138,9 +12486,7 @@
 						"classless",
 						"resource-management"
 					],
-					"theme": [
-						"environmental"
-					]
+					"theme": ["environmental"]
 				}
 			},
 			{
@@ -14196,14 +12542,8 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"horror"
-					],
-					"mechanic": [
-						"survival",
-						"narrative-driven",
-						"rules-lite"
-					]
+					"genre": ["horror"],
+					"mechanic": ["survival", "narrative-driven", "rules-lite"]
 				}
 			},
 			{
@@ -14259,17 +12599,9 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"post-apocalyptic"
-					],
-					"mechanic": [
-						"survival",
-						"rules-lite",
-						"exploration-driven"
-					],
-					"decision_tag": [
-						"quick-play"
-					]
+					"genre": ["post-apocalyptic"],
+					"mechanic": ["survival", "rules-lite", "exploration-driven"],
+					"decision_tag": ["quick-play"]
 				}
 			},
 			{
@@ -14325,19 +12657,9 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"horror",
-						"historical"
-					],
-					"mechanic": [
-						"survival",
-						"rules-lite",
-						"narrative-driven",
-						"gm-less"
-					],
-					"decision_tag": [
-						"quick-play"
-					]
+					"genre": ["horror", "historical"],
+					"mechanic": ["survival", "rules-lite", "narrative-driven", "gm-less"],
+					"decision_tag": ["quick-play"]
 				}
 			},
 			{
@@ -14393,21 +12715,10 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"mechanic": [
-						"survival",
-						"rules-lite",
-						"resource-management",
-						"exploration-driven"
-					],
-					"genre": [
-						"horror"
-					],
-					"system": [
-						"old-school-renaissance-osr"
-					],
-					"theme": [
-						"dark"
-					]
+					"mechanic": ["survival", "rules-lite", "resource-management", "exploration-driven"],
+					"genre": ["horror"],
+					"system": ["old-school-renaissance-osr"],
+					"theme": ["dark"]
 				}
 			},
 			{
@@ -14463,18 +12774,9 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"dark-fantasy",
-						"horror"
-					],
-					"mechanic": [
-						"survival",
-						"rules-lite",
-						"exploration-driven"
-					],
-					"decision_tag": [
-						"quick-play"
-					]
+					"genre": ["dark-fantasy", "horror"],
+					"mechanic": ["survival", "rules-lite", "exploration-driven"],
+					"decision_tag": ["quick-play"]
 				}
 			},
 			{
@@ -14530,16 +12832,8 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"mechanic": [
-						"survival",
-						"resource-management",
-						"exploration-driven",
-						"rules-lite"
-					],
-					"genre": [
-						"science-fiction",
-						"post-apocalyptic"
-					]
+					"mechanic": ["survival", "resource-management", "exploration-driven", "rules-lite"],
+					"genre": ["science-fiction", "post-apocalyptic"]
 				}
 			},
 			{
@@ -14595,14 +12889,8 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"mechanic": [
-						"survival",
-						"rules-lite"
-					],
-					"genre": [
-						"horror",
-						"science-fiction"
-					]
+					"mechanic": ["survival", "rules-lite"],
+					"genre": ["horror", "science-fiction"]
 				}
 			},
 			{
@@ -14658,14 +12946,8 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"mechanic": [
-						"survival",
-						"rules-lite"
-					],
-					"genre": [
-						"post-apocalyptic",
-						"science-fiction"
-					]
+					"mechanic": ["survival", "rules-lite"],
+					"genre": ["post-apocalyptic", "science-fiction"]
 				}
 			},
 			{
@@ -14728,12 +13010,8 @@
 						"rules-lite",
 						"collaborative-worldbuilding"
 					],
-					"decision_tag": [
-						"quick-play"
-					],
-					"theme": [
-						"dark"
-					]
+					"decision_tag": ["quick-play"],
+					"theme": ["dark"]
 				}
 			},
 			{
@@ -14789,22 +13067,10 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"historical",
-						"military"
-					],
-					"mechanic": [
-						"survival",
-						"narrative-driven",
-						"team-based",
-						"rules-lite"
-					],
-					"system": [
-						"powered-by-the-apocalypse-pbta"
-					],
-					"theme": [
-						"dark"
-					]
+					"genre": ["historical", "military"],
+					"mechanic": ["survival", "narrative-driven", "team-based", "rules-lite"],
+					"system": ["powered-by-the-apocalypse-pbta"],
+					"theme": ["dark"]
 				}
 			},
 			{
@@ -14867,9 +13133,7 @@
 						"exploration-driven",
 						"resource-management"
 					],
-					"genre": [
-						"science-fiction"
-					]
+					"genre": ["science-fiction"]
 				}
 			},
 			{
@@ -14988,17 +13252,9 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"science-fiction"
-					],
-					"mechanic": [
-						"survival",
-						"exploration-driven",
-						"rules-lite"
-					],
-					"system": [
-						"new-school-revolution"
-					]
+					"genre": ["science-fiction"],
+					"mechanic": ["survival", "exploration-driven", "rules-lite"],
+					"system": ["new-school-revolution"]
 				}
 			},
 			{
@@ -15054,9 +13310,7 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"historical"
-					],
+					"genre": ["historical"],
 					"mechanic": [
 						"survival",
 						"exploration-driven",
@@ -15065,9 +13319,7 @@
 						"sandbox",
 						"class-based"
 					],
-					"system": [
-						"old-school-renaissance-osr"
-					]
+					"system": ["old-school-renaissance-osr"]
 				}
 			},
 			{
@@ -15177,14 +13429,8 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"mechanic": [
-						"survival",
-						"rules-lite"
-					],
-					"genre": [
-						"science-fiction",
-						"horror"
-					]
+					"mechanic": ["survival", "rules-lite"],
+					"genre": ["science-fiction", "horror"]
 				}
 			},
 			{
@@ -15240,17 +13486,9 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"mechanic": [
-						"survival",
-						"rules-lite"
-					],
-					"decision_tag": [
-						"quick-play",
-						"low-prep"
-					],
-					"theme": [
-						"environmental"
-					]
+					"mechanic": ["survival", "rules-lite"],
+					"decision_tag": ["quick-play", "low-prep"],
+					"theme": ["environmental"]
 				}
 			},
 			{
@@ -15306,17 +13544,9 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"mechanic": [
-						"survival",
-						"rules-lite"
-					],
-					"genre": [
-						"post-apocalyptic",
-						"science-fiction"
-					],
-					"system": [
-						"old-school-renaissance-osr"
-					]
+					"mechanic": ["survival", "rules-lite"],
+					"genre": ["post-apocalyptic", "science-fiction"],
+					"system": ["old-school-renaissance-osr"]
 				}
 			},
 			{
@@ -15372,15 +13602,8 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"mechanic": [
-						"survival",
-						"solo-play",
-						"rules-lite"
-					],
-					"genre": [
-						"science-fiction",
-						"horror"
-					]
+					"mechanic": ["survival", "solo-play", "rules-lite"],
+					"genre": ["science-fiction", "horror"]
 				}
 			},
 			{
@@ -15436,16 +13659,8 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"mechanic": [
-						"rules-lite",
-						"survival",
-						"solo-play",
-						"narrative-driven"
-					],
-					"genre": [
-						"horror",
-						"historical"
-					]
+					"mechanic": ["rules-lite", "survival", "solo-play", "narrative-driven"],
+					"genre": ["horror", "historical"]
 				}
 			},
 			{
@@ -15501,18 +13716,10 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"fantasy"
-					],
-					"system": [
-						"old-school-renaissance-osr"
-					],
-					"mechanic": [
-						"rules-lite"
-					],
-					"compatibility": [
-						"5e-compatible"
-					]
+					"genre": ["fantasy"],
+					"system": ["old-school-renaissance-osr"],
+					"mechanic": ["rules-lite"],
+					"compatibility": ["5e-compatible"]
 				}
 			},
 			{
@@ -15549,12 +13756,8 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"system": [
-						"old-school-renaissance-osr"
-					],
-					"genre": [
-						"science-fiction"
-					],
+					"system": ["old-school-renaissance-osr"],
+					"genre": ["science-fiction"],
 					"mechanic": [
 						"exploration-driven",
 						"rules-lite",
@@ -15617,18 +13820,10 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"mechanic": [
-						"rules-lite"
-					],
-					"system": [
-						"old-school-renaissance-osr"
-					],
-					"genre": [
-						"fantasy"
-					],
-					"compatibility": [
-						"5e-compatible"
-					]
+					"mechanic": ["rules-lite"],
+					"system": ["old-school-renaissance-osr"],
+					"genre": ["fantasy"],
+					"compatibility": ["5e-compatible"]
 				}
 			},
 			{
@@ -15684,21 +13879,10 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"mechanic": [
-						"rules-lite",
-						"low-magic",
-						"class-based",
-						"exploration-driven"
-					],
-					"system": [
-						"old-school-renaissance-osr"
-					],
-					"genre": [
-						"horror"
-					],
-					"theme": [
-						"dark"
-					]
+					"mechanic": ["rules-lite", "low-magic", "class-based", "exploration-driven"],
+					"system": ["old-school-renaissance-osr"],
+					"genre": ["horror"],
+					"theme": ["dark"]
 				}
 			},
 			{
@@ -15754,16 +13938,9 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"mechanic": [
-						"rules-lite",
-						"sandbox"
-					],
-					"system": [
-						"old-school-renaissance-osr"
-					],
-					"genre": [
-						"fantasy"
-					]
+					"mechanic": ["rules-lite", "sandbox"],
+					"system": ["old-school-renaissance-osr"],
+					"genre": ["fantasy"]
 				}
 			},
 			{
@@ -15819,19 +13996,10 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"mechanic": [
-						"rules-lite",
-						"classless"
-					],
-					"system": [
-						"old-school-renaissance-osr"
-					],
-					"genre": [
-						"fantasy"
-					],
-					"compatibility": [
-						"5e-compatible"
-					]
+					"mechanic": ["rules-lite", "classless"],
+					"system": ["old-school-renaissance-osr"],
+					"genre": ["fantasy"],
+					"compatibility": ["5e-compatible"]
 				}
 			},
 			{
@@ -15887,18 +14055,10 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"mechanic": [
-						"rules-lite"
-					],
-					"system": [
-						"old-school-renaissance-osr"
-					],
-					"genre": [
-						"fantasy"
-					],
-					"compatibility": [
-						"5e-compatible"
-					]
+					"mechanic": ["rules-lite"],
+					"system": ["old-school-renaissance-osr"],
+					"genre": ["fantasy"],
+					"compatibility": ["5e-compatible"]
 				}
 			},
 			{
@@ -15954,18 +14114,10 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"mechanic": [
-						"rules-lite"
-					],
-					"system": [
-						"old-school-renaissance-osr"
-					],
-					"genre": [
-						"fantasy"
-					],
-					"compatibility": [
-						"5e-compatible"
-					]
+					"mechanic": ["rules-lite"],
+					"system": ["old-school-renaissance-osr"],
+					"genre": ["fantasy"],
+					"compatibility": ["5e-compatible"]
 				}
 			},
 			{
@@ -16021,22 +14173,11 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"mechanic": [
-						"rules-lite",
-						"class-based"
-					],
-					"system": [
-						"old-school-renaissance-osr"
-					],
-					"genre": [
-						"fantasy"
-					],
-					"decision_tag": [
-						"low-prep"
-					],
-					"compatibility": [
-						"5e-compatible"
-					]
+					"mechanic": ["rules-lite", "class-based"],
+					"system": ["old-school-renaissance-osr"],
+					"genre": ["fantasy"],
+					"decision_tag": ["low-prep"],
+					"compatibility": ["5e-compatible"]
 				}
 			},
 			{
@@ -16073,18 +14214,10 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"mechanic": [
-						"rules-lite"
-					],
-					"system": [
-						"old-school-renaissance-osr"
-					],
-					"genre": [
-						"fantasy"
-					],
-					"compatibility": [
-						"5e-compatible"
-					]
+					"mechanic": ["rules-lite"],
+					"system": ["old-school-renaissance-osr"],
+					"genre": ["fantasy"],
+					"compatibility": ["5e-compatible"]
 				}
 			},
 			{
@@ -16140,18 +14273,10 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"mechanic": [
-						"rules-lite"
-					],
-					"system": [
-						"old-school-renaissance-osr"
-					],
-					"genre": [
-						"fantasy"
-					],
-					"compatibility": [
-						"5e-compatible"
-					]
+					"mechanic": ["rules-lite"],
+					"system": ["old-school-renaissance-osr"],
+					"genre": ["fantasy"],
+					"compatibility": ["5e-compatible"]
 				}
 			},
 			{
@@ -16188,19 +14313,10 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"mechanic": [
-						"rules-lite",
-						"exploration-driven"
-					],
-					"system": [
-						"old-school-renaissance-osr"
-					],
-					"genre": [
-						"horror"
-					],
-					"theme": [
-						"dark"
-					]
+					"mechanic": ["rules-lite", "exploration-driven"],
+					"system": ["old-school-renaissance-osr"],
+					"genre": ["horror"],
+					"theme": ["dark"]
 				}
 			},
 			{
@@ -16256,14 +14372,8 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"science-fiction",
-						"cyberpunk"
-					],
-					"mechanic": [
-						"tactical-combat",
-						"character-customization"
-					]
+					"genre": ["science-fiction", "cyberpunk"],
+					"mechanic": ["tactical-combat", "character-customization"]
 				}
 			},
 			{
@@ -16319,15 +14429,9 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"horror"
-					],
-					"system": [
-						"powered-by-the-apocalypse-pbta"
-					],
-					"decision_tag": [
-						"one-shot-friendly"
-					]
+					"genre": ["horror"],
+					"system": ["powered-by-the-apocalypse-pbta"],
+					"decision_tag": ["one-shot-friendly"]
 				}
 			},
 			{
@@ -16383,12 +14487,8 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"fantasy"
-					],
-					"system": [
-						"powered-by-the-apocalypse-pbta"
-					]
+					"genre": ["fantasy"],
+					"system": ["powered-by-the-apocalypse-pbta"]
 				}
 			},
 			{
@@ -16444,17 +14544,9 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"dark-fantasy",
-						"urban-fantasy",
-						"horror"
-					],
-					"theme": [
-						"political"
-					],
-					"decision_tag": [
-						"award-winning"
-					]
+					"genre": ["dark-fantasy", "urban-fantasy", "horror"],
+					"theme": ["political"],
+					"decision_tag": ["award-winning"]
 				}
 			},
 			{
@@ -16510,15 +14602,9 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"science-fiction"
-					],
-					"decision_tag": [
-						"award-winning"
-					],
-					"mechanic": [
-						"character-customization"
-					]
+					"genre": ["science-fiction"],
+					"decision_tag": ["award-winning"],
+					"mechanic": ["character-customization"]
 				}
 			},
 			{
@@ -16574,20 +14660,10 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"dark-fantasy",
-						"horror",
-						"sword-and-sorcery"
-					],
-					"mechanic": [
-						"character-customization"
-					],
-					"system": [
-						"d20-system"
-					],
-					"compatibility": [
-						"5e-compatible"
-					]
+					"genre": ["dark-fantasy", "horror", "sword-and-sorcery"],
+					"mechanic": ["character-customization"],
+					"system": ["d20-system"],
+					"compatibility": ["5e-compatible"]
 				}
 			},
 			{
@@ -16643,17 +14719,9 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"mechanic": [
-						"rules-lite",
-						"sandbox",
-						"exploration-driven"
-					],
-					"system": [
-						"old-school-renaissance-osr"
-					],
-					"genre": [
-						"fantasy"
-					]
+					"mechanic": ["rules-lite", "sandbox", "exploration-driven"],
+					"system": ["old-school-renaissance-osr"],
+					"genre": ["fantasy"]
 				}
 			},
 			{
@@ -16709,16 +14777,8 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"decision_tag": [
-						"fan-made",
-						"licensed-ip-unofficial",
-						"free"
-					],
-					"mechanic": [
-						"tactical-combat",
-						"class-based",
-						"character-customization"
-					]
+					"decision_tag": ["fan-made", "licensed-ip-unofficial", "free"],
+					"mechanic": ["tactical-combat", "class-based", "character-customization"]
 				}
 			},
 			{
@@ -16774,16 +14834,9 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"mechanic": [
-						"rules-lite",
-						"sandbox"
-					],
-					"system": [
-						"old-school-renaissance-osr"
-					],
-					"genre": [
-						"fantasy"
-					]
+					"mechanic": ["rules-lite", "sandbox"],
+					"system": ["old-school-renaissance-osr"],
+					"genre": ["fantasy"]
 				}
 			},
 			{
@@ -16839,13 +14892,8 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"mechanic": [
-						"rules-lite"
-					],
-					"genre": [
-						"dark-fantasy",
-						"sword-and-sorcery"
-					]
+					"mechanic": ["rules-lite"],
+					"genre": ["dark-fantasy", "sword-and-sorcery"]
 				}
 			},
 			{
@@ -16901,17 +14949,9 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"system": [
-						"old-school-renaissance-osr"
-					],
-					"genre": [
-						"fantasy"
-					],
-					"mechanic": [
-						"class-based",
-						"exploration-driven",
-						"rules-lite"
-					]
+					"system": ["old-school-renaissance-osr"],
+					"genre": ["fantasy"],
+					"mechanic": ["class-based", "exploration-driven", "rules-lite"]
 				}
 			},
 			{
@@ -16967,16 +15007,9 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"mechanic": [
-						"rules-lite",
-						"class-based"
-					],
-					"genre": [
-						"fantasy"
-					],
-					"system": [
-						"old-school-renaissance-osr"
-					]
+					"mechanic": ["rules-lite", "class-based"],
+					"genre": ["fantasy"],
+					"system": ["old-school-renaissance-osr"]
 				}
 			},
 			{
@@ -17032,16 +15065,9 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"system": [
-						"old-school-renaissance-osr"
-					],
-					"mechanic": [
-						"rules-lite",
-						"exploration-driven"
-					],
-					"genre": [
-						"dark-fantasy"
-					]
+					"system": ["old-school-renaissance-osr"],
+					"mechanic": ["rules-lite", "exploration-driven"],
+					"genre": ["dark-fantasy"]
 				}
 			},
 			{
@@ -17097,15 +15123,9 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"system": [
-						"old-school-renaissance-osr"
-					],
-					"mechanic": [
-						"rules-lite"
-					],
-					"genre": [
-						"fantasy"
-					]
+					"system": ["old-school-renaissance-osr"],
+					"mechanic": ["rules-lite"],
+					"genre": ["fantasy"]
 				}
 			},
 			{
@@ -17161,13 +15181,8 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"fantasy",
-						"historical"
-					],
-					"system": [
-						"old-school-renaissance-osr"
-					]
+					"genre": ["fantasy", "historical"],
+					"system": ["old-school-renaissance-osr"]
 				}
 			},
 			{
@@ -17223,17 +15238,9 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"system": [
-						"old-school-renaissance-osr"
-					],
-					"genre": [
-						"sword-and-sorcery",
-						"dark-fantasy"
-					],
-					"mechanic": [
-						"rules-lite",
-						"low-magic"
-					]
+					"system": ["old-school-renaissance-osr"],
+					"genre": ["sword-and-sorcery", "dark-fantasy"],
+					"mechanic": ["rules-lite", "low-magic"]
 				}
 			},
 			{
@@ -17289,17 +15296,9 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"system": [
-						"old-school-renaissance-osr"
-					],
-					"genre": [
-						"fantasy",
-						"high-fantasy"
-					],
-					"mechanic": [
-						"class-based",
-						"rules-lite"
-					]
+					"system": ["old-school-renaissance-osr"],
+					"genre": ["fantasy", "high-fantasy"],
+					"mechanic": ["class-based", "rules-lite"]
 				}
 			},
 			{
@@ -17349,16 +15348,9 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"fantasy",
-						"high-fantasy"
-					],
-					"compatibility": [
-						"5e-compatible"
-					],
-					"decision_tag": [
-						"rules-medium"
-					]
+					"genre": ["fantasy", "high-fantasy"],
+					"compatibility": ["5e-compatible"],
+					"decision_tag": ["rules-medium"]
 				}
 			},
 			{
@@ -17395,13 +15387,8 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"urban-fantasy",
-						"modern"
-					],
-					"decision_tag": [
-						"rules-medium"
-					]
+					"genre": ["urban-fantasy", "modern"],
+					"decision_tag": ["rules-medium"]
 				}
 			},
 			{
@@ -17457,17 +15444,9 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"fantasy"
-					],
-					"decision_tag": [
-						"licensed"
-					],
-					"mechanic": [
-						"character-customization",
-						"narrative-driven",
-						"skill-based"
-					]
+					"genre": ["fantasy"],
+					"decision_tag": ["licensed"],
+					"mechanic": ["character-customization", "narrative-driven", "skill-based"]
 				}
 			},
 			{
@@ -17523,16 +15502,8 @@
 					"beginner_friendly": false
 				},
 				"taxonomies": {
-					"genre": [
-						"modern",
-						"horror"
-					],
-					"mechanic": [
-						"investigation",
-						"narrative-driven",
-						"team-based",
-						"character-customization"
-					]
+					"genre": ["modern", "horror"],
+					"mechanic": ["investigation", "narrative-driven", "team-based", "character-customization"]
 				}
 			}
 		],

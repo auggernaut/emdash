@@ -21,12 +21,11 @@ export const GET: APIRoute = async ({ params, url }) => {
 		return Response.json({ error: "Game not found." }, { status: 404 });
 	}
 
-	const [genres, systems, mechanics, themes, compatibilities, decisionTags] = await Promise.all([
+	const [genres, systems, mechanics, themes, decisionTags] = await Promise.all([
 		getEntryTerms("games", game.data.id, "genre"),
 		getEntryTerms("games", game.data.id, "system"),
 		getEntryTerms("games", game.data.id, "mechanic"),
 		getEntryTerms("games", game.data.id, "theme"),
-		getEntryTerms("games", game.data.id, "compatibility"),
 		getEntryTerms("games", game.data.id, "decision_tag"),
 	]);
 
@@ -39,7 +38,6 @@ export const GET: APIRoute = async ({ params, url }) => {
 				systems,
 				mechanics,
 				themes,
-				compatibilities,
 				decisionTags,
 			},
 			origin: url.origin,

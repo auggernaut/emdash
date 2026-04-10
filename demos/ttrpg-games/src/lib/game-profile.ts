@@ -10,7 +10,6 @@ export interface GameFacetGroups {
 	systems: TermSummary[];
 	mechanics: TermSummary[];
 	themes: TermSummary[];
-	compatibilities: TermSummary[];
 	decisionTags: TermSummary[];
 }
 
@@ -64,7 +63,6 @@ export interface GameAgentProfile {
 		systems: string[];
 		mechanics: string[];
 		themes: string[];
-		compatibilities: string[];
 		decisionTags: string[];
 	};
 	links: {
@@ -216,7 +214,6 @@ export function buildGameAgentProfile({
 			systems: facets.systems.map((term) => term.label),
 			mechanics: facets.mechanics.map((term) => term.label),
 			themes: facets.themes.map((term) => term.label),
-			compatibilities: facets.compatibilities.map((term) => term.label),
 			decisionTags: facets.decisionTags.map((term) => term.label),
 		},
 		links: {

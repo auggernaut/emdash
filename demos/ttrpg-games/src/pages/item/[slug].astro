@@ -43,12 +43,11 @@ if (!rawGame) {
 Astro.cache.set(cacheHint);
 
 const game = rawGame as unknown as GameEntry;
-const [genres, systems, mechanics, themes, compatibilities, decisionTags] = await Promise.all([
+const [genres, systems, mechanics, themes, decisionTags] = await Promise.all([
 	getEntryTerms("games", game.data.id, "genre"),
 	getEntryTerms("games", game.data.id, "system"),
 	getEntryTerms("games", game.data.id, "mechanic"),
 	getEntryTerms("games", game.data.id, "theme"),
-	getEntryTerms("games", game.data.id, "compatibility"),
 	getEntryTerms("games", game.data.id, "decision_tag"),
 ]);
 
@@ -168,24 +167,22 @@ const atAGlanceMarkup = atAGlance
 	: null;
 const bodyHtml = atAGlance ? stripLeadingAtAGlance(game.data.body_html) : game.data.body_html;
 const facetGroups = [
-	{ label: "Genres", terms: genres },
-	{ label: "Systems", terms: systems },
-	{ label: "Mechanics", terms: mechanics },
-	{ label: "Themes", terms: themes },
-	{ label: "Compatibility", terms: compatibilities },
-	{ label: "Decision Tags", terms: decisionTags },
+	{ label: "Genres", terms: genres, linkToCategory: true },
+	{ label: "Systems", terms: systems, linkToCategory: true },
+	{ label: "Mechanics", terms: mechanics, linkToCategory: true },
+	{ label: "Themes", terms: themes, linkToCategory: true },
+	{ label: "Decision Tags", terms: decisionTags, linkToCategory: false },
 ].filter((group) => group.terms.length > 0);
 const agentProfile = buildGameAgentProfile({
 	slug,
 	game,
-	facets: {
-		genres,
-		systems,
-		mechanics,
-		themes,
-		compatibilities,
-		decisionTags,
-	},
+		facets: {
+			genres,
+			systems,
+			mechanics,
+			themes,
+			decisionTags,
+		},
 	origin: Astro.url.origin,
 });
 const structuredData = [buildGameStructuredData({ game, agentProfile })];
@@ -226,6 +223,14 @@ const fitFlags = [
 		value: game.data.solo_friendly === true ? "Yes" : game.data.solo_friendly === false ? "No" : null,
 	},
 ].filter((item) => item.value);
+const hasDecisionGuideContent =
+	profileFacts.length > 0 ||
+	agentProfile.scores.length > 0 ||
+	playProfile.length > 0 ||
+	agentProfile.recommendations.bestFor.length > 0 ||
+	agentProfile.recommendations.avoidIf.length > 0 ||
+	Boolean(game.data.why_it_fits) ||
+	Boolean(agentProfile.agentUrl);
 ---
 
 <Base
@@ -273,36 +278,28 @@ const fitFlags = [
 									</span>
 								))}
 							</div>
-							<div class="term-list">
-								{genres.map((term) => (
-									<a class="term-pill" href={`/category/${term.slug}`}>
-										{term.label}
-									</a>
-								))}
-								{systems.map((term) => (
-									<a class="term-pill" href={`/category/${term.slug}`}>
-										{term.label}
-									</a>
-								))}
-								{mechanics.map((term) => (
-									<a class="term-pill" href={`/category/${term.slug}`}>
-										{term.label}
-									</a>
-								))}
-								{themes.map((term) => (
-									<a class="term-pill" href={`/category/${term.slug}`}>
-										{term.label}
-									</a>
-								))}
-								{compatibilities.map((term) => (
-									<a class="term-pill" href={`/category/${term.slug}`}>
-										{term.label}
-									</a>
-								))}
-								{decisionTags.map((term) => (
-									<span class="term-pill">{term.label}</span>
-								))}
-							</div>
+							{
+								facetGroups.length > 0 && (
+									<div class="facet-stream" aria-label="Game facets">
+										{facetGroups.map((group) => (
+											<div class="facet-stream-group">
+												<span class="facet-stream-label">{group.label}:</span>
+												<div class="term-list">
+													{group.terms.map((term) =>
+														group.linkToCategory ? (
+															<a class="term-pill" href={`/category/${term.slug}`}>
+																{term.label}
+															</a>
+														) : (
+															<span class="term-pill">{term.label}</span>
+														)
+													)}
+												</div>
+											</div>
+										))}
+									</div>
+								)
+							}
 						</div>
 
 						<div class="hero-actions" style="display: flex; gap: 12px; margin-top: 8px;">
@@ -339,101 +336,119 @@ const fitFlags = [
 
 		<div class="detail-layout">
 			<section class="stack" style="gap: 24px;">
-				{
-					(profileFacts.length > 0 || agentProfile.scores.length > 0 || playProfile.length > 0) && (
-						<section class="glass-panel">
-							<div class="kicker" style="color: var(--gold-accent);">Decision profile</div>
-							<h2>How this game fits a table</h2>
-							<div class="fact-grid" style="margin-top: 18px;">
-								{profileFacts.map((fact) => (
-									<div class="fact-card">
-										<div class="fact-label">{fact.label}</div>
-										<div class="fact-value">{fact.value}</div>
-									</div>
-								))}
-							</div>
-							{
-								agentProfile.scores.length > 0 && (
-									<div class="stack" style="gap: 12px; margin-top: 22px;">
-										<div class="meta-note" style="margin: 0; font-weight: 700;">Play profile</div>
-										<div class="score-grid">
-											{agentProfile.scores.map((score) => (
-												<div class="score-card">
-													<div class="score-label">{score.label}</div>
-													<div class="score-bar"><span style={`width: ${(score.value / 5) * 100}%`}></span></div>
-													<div class="score-value">{score.value}/5</div>
-												</div>
-											))}
-										</div>
-									</div>
-								)
-							}
-							{
-								playProfile.length > 0 && (
-									<div class="term-list" style="margin-top: 20px;">
-										{playProfile.map((item) => (
-											<span class="term-pill">
-												<strong>{item.label}:</strong>&nbsp;{item.value}
-											</span>
-										))}
-									</div>
-								)
-							}
-						</section>
-					)
-				}
-
-				{
-					(agentProfile.recommendations.bestFor.length > 0 ||
-						agentProfile.recommendations.avoidIf.length > 0 ||
-						game.data.why_it_fits) && (
-						<section class="glass-panel">
-							<div class="kicker" style="color: var(--gold-accent);">Recommendation guidance</div>
-							<h2>Who this is for</h2>
-							<div class="stack" style="gap: 18px; margin-top: 18px;">
-								{
-									agentProfile.recommendations.bestFor.length > 0 && (
-										<div class="stack" style="gap: 10px;">
-											<div class="meta-note" style="margin: 0; font-weight: 700;">Best for</div>
-											<div class="term-list">
-												{agentProfile.recommendations.bestFor.map((item) => (
-													<span class="term-pill">{item}</span>
-												))}
-											</div>
-										</div>
-									)
-								}
-								{
-									agentProfile.recommendations.avoidIf.length > 0 && (
-										<div class="stack" style="gap: 10px;">
-											<div class="meta-note" style="margin: 0; font-weight: 700;">Avoid if</div>
-											<div class="term-list">
-												{agentProfile.recommendations.avoidIf.map((item) => (
-													<span class="term-pill term-pill-warning">{item}</span>
-												))}
-											</div>
-										</div>
-									)
-								}
-								{
-									game.data.why_it_fits && (
-										<p class="panel-copy" style="margin: 0;">{game.data.why_it_fits}</p>
-									)
-								}
-							</div>
-						</section>
-					)
-				}
-
 				<section class="panel prose">
+					{
+						bodyHtml ? (
+							<div set:html={bodyHtml} />
+						) : (
+							<p>{game.data.review_summary || game.data.blurb}</p>
+						)
+					}
+				</section>
+
 				{
-					bodyHtml ? (
-						<div set:html={bodyHtml} />
-					) : (
-						<p>{game.data.review_summary || game.data.blurb}</p>
+					hasDecisionGuideContent && (
+						<section class="glass-panel">
+							<div class="kicker" style="color: var(--gold-accent);">Decision guide</div>
+							<h2>What this game is about</h2>
+							<div class="stack" style="gap: 22px; margin-top: 18px;">
+								{
+									profileFacts.length > 0 && (
+										<div class="stack" style="gap: 12px;">
+											<div class="meta-note" style="margin: 0; font-weight: 700;">Key facts</div>
+											<div class="fact-grid">
+												{profileFacts.map((fact) => (
+													<div class="fact-card">
+														<div class="fact-label">{fact.label}</div>
+														<div class="fact-value">{fact.value}</div>
+													</div>
+												))}
+											</div>
+										</div>
+									)
+								}
+								{
+									agentProfile.scores.length > 0 && (
+										<div class="stack" style="gap: 12px;">
+											<div class="meta-note" style="margin: 0; font-weight: 700;">Play profile</div>
+											<div class="score-grid">
+												{agentProfile.scores.map((score) => (
+													<div class="score-card">
+														<div class="score-label">{score.label}</div>
+														<div class="score-bar"><span style={`width: ${(score.value / 5) * 100}%`}></span></div>
+														<div class="score-value">{score.value}/5</div>
+													</div>
+												))}
+											</div>
+										</div>
+									)
+								}
+								{
+									playProfile.length > 0 && (
+										<div class="stack" style="gap: 10px;">
+											<div class="meta-note" style="margin: 0; font-weight: 700;">Play style</div>
+											<div class="term-list">
+												{playProfile.map((item) => (
+													<span class="term-pill">
+														<strong>{item.label}:</strong>&nbsp;{item.value}
+													</span>
+												))}
+											</div>
+										</div>
+									)
+								}
+								{
+									(agentProfile.recommendations.bestFor.length > 0 ||
+										agentProfile.recommendations.avoidIf.length > 0 ||
+										game.data.why_it_fits) && (
+										<div class="stack" style="gap: 18px;">
+											<div class="meta-note" style="margin: 0; font-weight: 700;">Who it suits</div>
+											{
+												agentProfile.recommendations.bestFor.length > 0 && (
+													<div class="stack" style="gap: 10px;">
+														<div class="meta-note" style="margin: 0;">Best for</div>
+														<div class="term-list">
+															{agentProfile.recommendations.bestFor.map((item) => (
+																<span class="term-pill">{item}</span>
+															))}
+														</div>
+													</div>
+												)
+											}
+											{
+												agentProfile.recommendations.avoidIf.length > 0 && (
+													<div class="stack" style="gap: 10px;">
+														<div class="meta-note" style="margin: 0;">Avoid if</div>
+														<div class="term-list">
+															{agentProfile.recommendations.avoidIf.map((item) => (
+																<span class="term-pill term-pill-warning">{item}</span>
+															))}
+														</div>
+													</div>
+												)
+											}
+											{
+												game.data.why_it_fits && (
+													<p class="panel-copy" style="margin: 0;">{game.data.why_it_fits}</p>
+												)
+											}
+										</div>
+									)
+								}
+								<div class="stack" style="gap: 8px;">
+									<div class="meta-note" style="margin: 0; font-weight: 700;">Agent data</div>
+									<p class="panel-copy" style="margin: 0;">
+										Structured data and an explicit decision profile JSON document are available for
+										remote agents.
+									</p>
+									<p class="meta-note">
+										<a href={agentProfile.agentUrl}>Open agent JSON</a>
+									</p>
+								</div>
+							</div>
+						</section>
 					)
 				}
-				</section>
 			</section>
 
 			<aside class="stack" style="gap: 20px;">
@@ -487,41 +502,6 @@ const fitFlags = [
 										</div>
 									)
 								}
-							</div>
-						</section>
-					)
-				}
-
-				<section class="glass-panel">
-					<div class="kicker" style="color: var(--gold-accent);">Agent surface</div>
-					<h2>Machine-readable profile</h2>
-					<div class="panel-content">
-						<p class="panel-copy">
-							This page now includes structured data plus an explicit decision profile JSON document for
-							remote agents.
-						</p>
-						<p class="meta-note">
-							<a href={agentProfile.agentUrl}>Open agent JSON</a>
-						</p>
-					</div>
-				</section>
-
-				{
-					facetGroups.length > 0 && (
-						<section class="glass-panel">
-							<div class="kicker" style="color: var(--gold-accent);">Facets</div>
-							<h2>How this game is classified</h2>
-							<div class="stack" style="gap: 14px; margin-top: 16px;">
-								{facetGroups.map((group) => (
-									<div class="stack" style="gap: 8px;">
-										<div class="meta-note" style="font-weight: 700;">{group.label}</div>
-										<div class="term-list">
-											{group.terms.map((term) => (
-												<span class="term-pill">{term.label}</span>
-											))}
-										</div>
-									</div>
-								))}
 							</div>
 						</section>
 					)
@@ -722,6 +702,33 @@ const fitFlags = [
 		font-size: 0.85rem;
 		font-weight: 600;
 		transition: all 0.3s ease;
+	}
+
+	.facet-stream {
+		display: grid;
+		gap: 10px;
+	}
+
+	.facet-stream-group {
+		display: flex;
+		align-items: flex-start;
+		gap: 12px;
+	}
+
+	.facet-stream-label {
+		display: inline-flex;
+		align-items: center;
+		flex: 0 0 108px;
+		font-size: 0.82rem;
+		font-weight: 700;
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+		color: var(--accent);
+	}
+
+	.facet-stream-group .term-list {
+		flex: 1 1 auto;
+		min-width: 0;
 	}
 
 	.term-pill:hover {

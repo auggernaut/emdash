@@ -38,11 +38,6 @@ export const FACET_TAXONOMIES = [
 		labelSingular: "Theme",
 	},
 	{
-		name: "compatibility",
-		label: "Compatibility",
-		labelSingular: "Compatibility Signal",
-	},
-	{
 		name: "decision_tag",
 		label: "Decision Tags",
 		labelSingular: "Decision Tag",
@@ -53,7 +48,6 @@ const TYPE_TO_TAXONOMY = new Map([
 	["Genres", "genre"],
 	["Mechanics", "mechanic"],
 	["Themes", "theme"],
-	["category", "compatibility"],
 ]);
 
 const SYSTEM_SLUGS = new Set([
@@ -75,7 +69,6 @@ const SYSTEM_SLUGS = new Set([
 ]);
 
 const TERM_OVERRIDES = new Map([
-	["5e-compatible", { taxonomy: "compatibility", slug: "5e-compatible", label: "5e Compatible" }],
 	["award-winning", { taxonomy: "decision_tag", slug: "award-winning", label: "Award Winning" }],
 	[
 		"beginner-friendly",
@@ -123,10 +116,7 @@ const TERM_OVERRIDES = new Map([
 	["quick-play", { taxonomy: "decision_tag", slug: "quick-play", label: "Quick-Play" }],
 	["rules-medium", { taxonomy: "decision_tag", slug: "rules-medium", label: "Rules Medium" }],
 	["sci-fi", { taxonomy: "genre", slug: "science-fiction", label: "Science Fiction" }],
-	[
-		"year-zero-engine",
-		{ taxonomy: "system", slug: "year-zero-engine", label: "Year Zero Engine" },
-	],
+	["year-zero-engine", { taxonomy: "system", slug: "year-zero-engine", label: "Year Zero Engine" }],
 ]);
 
 const TRUE_CATEGORY_SLUGS = {

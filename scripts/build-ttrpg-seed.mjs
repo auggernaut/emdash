@@ -189,6 +189,9 @@ const categoryPageEntries = categoryRows
 			label: title,
 			type: clean(row.type) || "",
 		});
+		if ((clean(row.type) || "").toLowerCase() === "category" && !source) {
+			return null;
+		}
 		const sourceMeta = source ? taxonomyMetaByName.get(source.taxonomy) : null;
 
 		return {
@@ -207,7 +210,8 @@ const categoryPageEntries = categoryRows
 				related_categories: [],
 			},
 		};
-	});
+	})
+	.filter((entry) => entry !== null);
 
 const taxonomyTerms = new Map();
 
@@ -338,7 +342,9 @@ const seedTaxonomies = FACET_TAXONOMIES.map((taxonomy) => {
 		labelSingular: taxonomy.labelSingular,
 		hierarchical: false,
 		collections: ["games"],
-		terms: terms ? [...terms.values()].toSorted((left, right) => left.label.localeCompare(right.label)) : [],
+		terms: terms
+			? [...terms.values()].toSorted((left, right) => left.label.localeCompare(right.label))
+			: [],
 	};
 }).filter((taxonomy) => taxonomy.terms.length > 0);
 
