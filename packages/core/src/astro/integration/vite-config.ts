@@ -241,6 +241,8 @@ const NODE_NATIVE_EXTERNALS = [
 	"pg",
 ];
 
+const ADMIN_LOCALES_ALIAS_RE = /^@emdash-cms\/admin\/locales\/(.+)$/;
+
 /**
  * Detect whether the Cloudflare adapter is being used.
  */
@@ -264,7 +266,9 @@ export function createViteConfig(
 	// Vite plugin has native deps that don't bundle well. Run `pnpm dev` in packages/admin
 	// alongside the demo server to get CSS watch-rebuilds too.
 	const adminSourcePath = isDev ? resolveAdminSource() : undefined;
-	const useSource = adminSourcePath !== undefined;
+	// Temporarily prefer the built admin bundle even in dev. The current admin
+	// source-mode alias leaves Lingui macro imports in the client runtime.
+	const useSource = false;
 
 	return {
 		resolve: {
@@ -276,8 +280,8 @@ export function createViteConfig(
 			alias: [
 				{ find: "@emdash-cms/admin/styles.css", replacement: resolve(adminDistPath, "styles.css") },
 				{
-					find: "@emdash-cms/admin/locales/*",
-					replacement: resolve(adminDistPath, "locales", "*"),
+					find: ADMIN_LOCALES_ALIAS_RE,
+					replacement: `${resolve(adminDistPath, "locales")}/$1`,
 				},
 				{ find: "@emdash-cms/admin", replacement: useSource ? adminSourcePath : adminDistPath },
 			],

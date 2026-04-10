@@ -79,33 +79,33 @@ function RelatedGamesEditor({ value, onChange, label, id, required, minimal }: F
 				</label>
 			)}
 
-			<div className="rounded-xl border border-dashed border-kumo-border p-3 text-sm text-kumo-subtle">
+			<div className="rounded-xl border border-dashed border-kumo-line bg-kumo-base p-3 text-sm text-kumo-subtle">
 				Edit the related game cards shown on the item detail page. Description accepts HTML.
 			</div>
 
 			{items.length === 0 ? (
-				<div className="rounded-xl border border-kumo-border bg-kumo-surface p-4 text-sm text-kumo-subtle">
+				<div className="rounded-xl border border-kumo-line bg-kumo-base p-4 text-sm text-kumo-subtle">
 					No related games added yet.
 				</div>
 			) : (
 				items.map((item, index) => (
 					<div
 						key={`${item.slug || "related"}-${index}`}
-						className="grid gap-3 rounded-2xl border border-kumo-border bg-kumo-surface p-4"
+						className="grid gap-3 rounded-2xl border border-kumo-line bg-kumo-base p-4"
 					>
 						<div className="flex items-start justify-between gap-3">
 							<div className="text-sm font-medium">Related game {index + 1}</div>
 							<button
 								type="button"
 								onClick={() => removeItem(index)}
-								className="rounded-md border border-kumo-border px-2 py-1 text-xs text-kumo-subtle transition-colors hover:bg-kumo-hover"
+								className="rounded-md border border-kumo-line px-2 py-1 text-xs text-kumo-subtle transition-colors hover:bg-kumo-tint"
 							>
 								Remove
 							</button>
 						</div>
 
 						<div className="grid gap-4 lg:grid-cols-[240px_minmax(0,1fr)] lg:items-start">
-							<div className="overflow-hidden rounded-xl border border-kumo-border bg-white lg:sticky lg:top-4">
+							<div className="overflow-hidden rounded-xl border border-kumo-line bg-kumo-base lg:sticky lg:top-4">
 								{item.image_url ? (
 									<img
 										src={item.image_url}
@@ -129,7 +129,7 @@ function RelatedGamesEditor({ value, onChange, label, id, required, minimal }: F
 											type="text"
 											value={item.title}
 											onChange={(event) => updateItem(index, { title: event.target.value })}
-											className="h-10 rounded-md border border-kumo-border bg-transparent px-3 text-sm"
+											className="h-10 rounded-md border border-kumo-line bg-kumo-base px-3 text-sm"
 										/>
 									</div>
 									<div className="grid gap-1.5">
@@ -140,7 +140,7 @@ function RelatedGamesEditor({ value, onChange, label, id, required, minimal }: F
 											type="text"
 											value={item.slug}
 											onChange={(event) => updateItem(index, { slug: event.target.value })}
-											className="h-10 rounded-md border border-kumo-border bg-transparent px-3 text-sm"
+											className="h-10 rounded-md border border-kumo-line bg-kumo-base px-3 text-sm"
 										/>
 									</div>
 								</div>
@@ -153,7 +153,7 @@ function RelatedGamesEditor({ value, onChange, label, id, required, minimal }: F
 										type="url"
 										value={item.image_url ?? ""}
 										onChange={(event) => updateItem(index, { image_url: event.target.value })}
-										className="h-10 rounded-md border border-kumo-border bg-transparent px-3 text-sm"
+										className="h-10 rounded-md border border-kumo-line bg-kumo-base px-3 text-sm"
 									/>
 								</div>
 
@@ -165,7 +165,7 @@ function RelatedGamesEditor({ value, onChange, label, id, required, minimal }: F
 										value={item.description ?? ""}
 										onChange={(event) => updateItem(index, { description: event.target.value })}
 										rows={6}
-										className="min-h-28 rounded-md border border-kumo-border bg-transparent px-3 py-2 text-sm"
+										className="min-h-28 rounded-md border border-kumo-line bg-kumo-base px-3 py-2 text-sm"
 									/>
 								</div>
 							</div>
@@ -178,7 +178,7 @@ function RelatedGamesEditor({ value, onChange, label, id, required, minimal }: F
 				<button
 					type="button"
 					onClick={addItem}
-					className="rounded-md border border-kumo-border px-3 py-2 text-sm font-medium transition-colors hover:bg-kumo-hover"
+					className="rounded-md border border-kumo-line px-3 py-2 text-sm font-medium transition-colors hover:bg-kumo-tint"
 				>
 					Add related game
 				</button>

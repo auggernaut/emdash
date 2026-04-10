@@ -17,7 +17,7 @@ export interface CategoryPage {
   game_notes?: unknown;
   faqs?: unknown;
   related_categories?: unknown;
-  source_taxonomy?: "genre" | "mechanic" | "theme" | "compatibility" | "decision_tag";
+  source_taxonomy?: "genre" | "system" | "mechanic" | "theme" | "compatibility" | "decision_tag";
   source_term_slug?: string;
   createdAt: Date;
   updatedAt: Date;

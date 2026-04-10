@@ -165,6 +165,15 @@ function htmlFromText(value) {
 	return `<p>${text}</p>`;
 }
 
+function toRepeaterTextItems(values) {
+	if (!Array.isArray(values)) return [];
+
+	return values
+		.map((value) => clean(typeof value === "string" ? value : null))
+		.filter(Boolean)
+		.map((text) => ({ text }));
+}
+
 const directoryRows = rowsToObjects(parseCsv(fs.readFileSync(directoryCsvPath, "utf8")));
 const categoryRows = rowsToObjects(parseCsv(fs.readFileSync(categoriesCsvPath, "utf8")));
 const categorySourceBySlug = buildCategorySourceIndex(categoryRows);
@@ -275,6 +284,13 @@ const gameEntries = directoryRows
 			bodyHtml,
 		});
 		const profileOverrides = GAME_PROFILE_OVERRIDES[slug] || {};
+		const normalizedProfileOverrides = { ...profileOverrides };
+		if (Array.isArray(profileOverrides.best_for)) {
+			normalizedProfileOverrides.best_for = toRepeaterTextItems(profileOverrides.best_for);
+		}
+		if (Array.isArray(profileOverrides.avoid_if)) {
+			normalizedProfileOverrides.avoid_if = toRepeaterTextItems(profileOverrides.avoid_if);
+		}
 
 		return {
 			id: slug,
@@ -301,7 +317,7 @@ const gameEntries = directoryRows
 				paid: parseBool(row.Paid),
 				related,
 				...derivedFields,
-				...profileOverrides,
+				...normalizedProfileOverrides,
 			},
 			taxonomies: {
 				...facetAssignments,
@@ -428,8 +444,22 @@ const seed = {
 				{ slug: "campaign_friendly", label: "Campaign Friendly", type: "boolean" },
 				{ slug: "solo_friendly", label: "Solo Friendly", type: "boolean" },
 				{ slug: "beginner_friendly", label: "Beginner Friendly", type: "boolean" },
-				{ slug: "best_for", label: "Best For", type: "json" },
-				{ slug: "avoid_if", label: "Avoid If", type: "json" },
+				{
+					slug: "best_for",
+					label: "Best For",
+					type: "repeater",
+					validation: {
+						subFields: [{ slug: "text", type: "string", label: "Text", required: true }],
+					},
+				},
+				{
+					slug: "avoid_if",
+					label: "Avoid If",
+					type: "repeater",
+					validation: {
+						subFields: [{ slug: "text", type: "string", label: "Text", required: true }],
+					},
+				},
 				{ slug: "why_it_fits", label: "Why It Fits", type: "text" },
 				{
 					slug: "related",
@@ -462,12 +492,27 @@ const seed = {
 					type: "json",
 					widget: "category-page:gameNotes",
 				},
-				{ slug: "faqs", label: "FAQs", type: "json", widget: "category-page:faqEditor" },
+				{
+					slug: "faqs",
+					label: "FAQs",
+					type: "repeater",
+					validation: {
+						subFields: [
+							{ slug: "question", type: "string", label: "Question", required: true },
+							{ slug: "answer", type: "text", label: "Answer", required: true },
+						],
+					},
+				},
 				{
 					slug: "related_categories",
 					label: "Related Categories",
-					type: "json",
-					widget: "category-page:relatedCategories",
+					type: "repeater",
+					validation: {
+						subFields: [
+							{ slug: "slug", type: "string", label: "Category Slug", required: true },
+							{ slug: "reason", type: "text", label: "Reason" },
+						],
+					},
 				},
 			],
 		},

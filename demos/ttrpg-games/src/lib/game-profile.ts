@@ -73,8 +73,24 @@ export interface GameAgentProfile {
 	};
 }
 
-function isStringArray(value: unknown): value is string[] {
-	return Array.isArray(value) && value.every((item) => typeof item === "string");
+function normalizeTextList(value: unknown): string[] {
+	if (!Array.isArray(value)) return [];
+
+	return value
+		.map((item) => {
+			if (typeof item === "string") return item;
+			if (
+				typeof item === "object" &&
+				item !== null &&
+				"text" in item &&
+				typeof item.text === "string"
+			) {
+				return item.text;
+			}
+			return null;
+		})
+		.filter((item): item is string => Boolean(item && item.trim()))
+		.map((item) => item.trim());
 }
 
 function humanizeToken(value: string | null | undefined): string | null {
@@ -150,8 +166,8 @@ export function buildGameAgentProfile({
 	facets: GameFacetGroups;
 	origin: string;
 }): GameAgentProfile {
-	const bestFor = isStringArray(game.data.best_for) ? game.data.best_for : [];
-	const avoidIf = isStringArray(game.data.avoid_if) ? game.data.avoid_if : [];
+	const bestFor = normalizeTextList(game.data.best_for);
+	const avoidIf = normalizeTextList(game.data.avoid_if);
 
 	return {
 		slug,

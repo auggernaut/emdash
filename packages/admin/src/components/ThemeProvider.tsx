@@ -29,11 +29,11 @@ function getStoredTheme(): Theme {
 
 export interface ThemeProviderProps {
 	children: React.ReactNode;
-	/** Default theme if none stored. Defaults to "system" */
+	/** Default theme if none stored. Defaults to "light" for the classic admin theme. */
 	defaultTheme?: Theme;
 }
 
-export function ThemeProvider({ children, defaultTheme = "system" }: ThemeProviderProps) {
+export function ThemeProvider({ children, defaultTheme = "light" }: ThemeProviderProps) {
 	const [theme, setThemeState] = React.useState<Theme>(() => {
 		const stored = getStoredTheme();
 		return stored === "system" ? defaultTheme : stored;

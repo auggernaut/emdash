@@ -276,18 +276,18 @@ function CategoryGameNotesEditor({
 				</label>
 			)}
 
-			<div className="rounded-xl border border-dashed border-kumo-border p-3 text-sm text-kumo-subtle">
+			<div className="rounded-xl border border-dashed border-kumo-line bg-kumo-base p-3 text-sm text-kumo-subtle">
 				Write the category-specific card copy shown on this archive page. Describe each game through
 				the lens of this category, and use featured picks to populate the Top Picks section.
 			</div>
 
 			{!categorySlug ? (
-				<div className="rounded-xl border border-kumo-border bg-kumo-surface p-4 text-sm text-kumo-subtle">
+				<div className="rounded-xl border border-kumo-line bg-kumo-base p-4 text-sm text-kumo-subtle">
 					Save this category page with a slug first, then reload to edit category-specific game
 					notes.
 				</div>
 			) : loading ? (
-				<div className="rounded-xl border border-kumo-border bg-kumo-surface p-4 text-sm text-kumo-subtle">
+				<div className="rounded-xl border border-kumo-line bg-kumo-base p-4 text-sm text-kumo-subtle">
 					Loading assigned games...
 				</div>
 			) : error ? (
@@ -295,7 +295,7 @@ function CategoryGameNotesEditor({
 					{error}
 				</div>
 			) : games.length === 0 ? (
-				<div className="rounded-xl border border-kumo-border bg-kumo-surface p-4 text-sm text-kumo-subtle">
+				<div className="rounded-xl border border-kumo-line bg-kumo-base p-4 text-sm text-kumo-subtle">
 					No games are currently assigned to this category.
 				</div>
 			) : (
@@ -304,9 +304,9 @@ function CategoryGameNotesEditor({
 					return (
 						<div
 							key={game.slug}
-							className="grid gap-4 rounded-2xl border border-kumo-border bg-kumo-surface p-4 lg:grid-cols-[180px_minmax(0,1fr)]"
+							className="grid gap-4 rounded-2xl border border-kumo-line bg-kumo-base p-4 lg:grid-cols-[180px_minmax(0,1fr)]"
 						>
-							<div className="overflow-hidden rounded-xl border border-kumo-border bg-white">
+							<div className="overflow-hidden rounded-xl border border-kumo-line bg-kumo-base">
 								{game.image_url ? (
 									<img
 										src={game.image_url}
@@ -331,14 +331,14 @@ function CategoryGameNotesEditor({
 									<button
 										type="button"
 										onClick={() => clearNote(game.slug)}
-										className="rounded-md border border-kumo-border px-2 py-1 text-xs text-kumo-subtle transition-colors hover:bg-kumo-hover"
+										className="rounded-md border border-kumo-line px-2 py-1 text-xs text-kumo-subtle transition-colors hover:bg-kumo-tint"
 									>
 										Clear custom copy
 									</button>
 								</div>
 
 								{game.blurb && (
-									<div className="rounded-xl border border-dashed border-kumo-border px-3 py-2 text-sm text-kumo-subtle">
+									<div className="rounded-xl border border-dashed border-kumo-line bg-kumo-base px-3 py-2 text-sm text-kumo-subtle">
 										<strong className="block text-kumo-default">Default blurb</strong>
 										<span>{game.blurb}</span>
 									</div>
@@ -353,12 +353,12 @@ function CategoryGameNotesEditor({
 											value={note?.fit_blurb ?? ""}
 											onChange={(event) => updateNote(game.slug, { fit_blurb: event.target.value })}
 											rows={4}
-											className="min-h-24 rounded-md border border-kumo-border bg-transparent px-3 py-2 text-sm"
+											className="min-h-24 rounded-md border border-kumo-line bg-kumo-base px-3 py-2 text-sm"
 										/>
 									</div>
 
 									<div className="grid gap-3">
-										<label className="flex items-center gap-2 rounded-md border border-kumo-border px-3 py-2 text-sm">
+										<label className="flex items-center gap-2 rounded-md border border-kumo-line bg-kumo-base px-3 py-2 text-sm">
 											<input
 												type="checkbox"
 												checked={Boolean(note?.featured)}
@@ -381,7 +381,7 @@ function CategoryGameNotesEditor({
 														sort_order: event.target.value ? Number(event.target.value) : null,
 													})
 												}
-												className="h-10 rounded-md border border-kumo-border bg-transparent px-3 text-sm"
+												className="h-10 rounded-md border border-kumo-line bg-kumo-base px-3 text-sm"
 											/>
 										</div>
 									</div>
@@ -397,7 +397,7 @@ function CategoryGameNotesEditor({
 											updateNote(game.slug, { featured_reason: event.target.value })
 										}
 										rows={2}
-										className="min-h-20 rounded-md border border-kumo-border bg-transparent px-3 py-2 text-sm"
+										className="min-h-20 rounded-md border border-kumo-line bg-kumo-base px-3 py-2 text-sm"
 									/>
 								</div>
 							</div>
@@ -428,26 +428,26 @@ function CategoryFaqEditor({ value, onChange, label, id, required, minimal }: Fi
 				</label>
 			)}
 
-			<div className="rounded-xl border border-dashed border-kumo-border p-3 text-sm text-kumo-subtle">
+			<div className="rounded-xl border border-dashed border-kumo-line bg-kumo-base p-3 text-sm text-kumo-subtle">
 				Add the specific questions searchers actually ask on this category page.
 			</div>
 
 			{items.length === 0 ? (
-				<div className="rounded-xl border border-kumo-border bg-kumo-surface p-4 text-sm text-kumo-subtle">
+				<div className="rounded-xl border border-kumo-line bg-kumo-base p-4 text-sm text-kumo-subtle">
 					No FAQs added yet.
 				</div>
 			) : (
 				items.map((item, index) => (
 					<div
 						key={`faq-${index}`}
-						className="grid gap-3 rounded-2xl border border-kumo-border bg-kumo-surface p-4"
+						className="grid gap-3 rounded-2xl border border-kumo-line bg-kumo-base p-4"
 					>
 						<div className="flex items-center justify-between gap-3">
 							<div className="text-sm font-medium">FAQ {index + 1}</div>
 							<button
 								type="button"
 								onClick={() => updateItems(items.filter((_, itemIndex) => itemIndex !== index))}
-								className="rounded-md border border-kumo-border px-2 py-1 text-xs text-kumo-subtle transition-colors hover:bg-kumo-hover"
+								className="rounded-md border border-kumo-line px-2 py-1 text-xs text-kumo-subtle transition-colors hover:bg-kumo-tint"
 							>
 								Remove
 							</button>
@@ -461,7 +461,7 @@ function CategoryFaqEditor({ value, onChange, label, id, required, minimal }: Fi
 								type="text"
 								value={item.question}
 								onChange={(event) => updateItem(index, { question: event.target.value })}
-								className="h-10 rounded-md border border-kumo-border bg-transparent px-3 text-sm"
+								className="h-10 rounded-md border border-kumo-line bg-kumo-base px-3 text-sm"
 							/>
 						</div>
 
@@ -473,7 +473,7 @@ function CategoryFaqEditor({ value, onChange, label, id, required, minimal }: Fi
 								value={item.answer}
 								onChange={(event) => updateItem(index, { answer: event.target.value })}
 								rows={4}
-								className="min-h-24 rounded-md border border-kumo-border bg-transparent px-3 py-2 text-sm"
+								className="min-h-24 rounded-md border border-kumo-line bg-kumo-base px-3 py-2 text-sm"
 							/>
 						</div>
 					</div>
@@ -484,7 +484,7 @@ function CategoryFaqEditor({ value, onChange, label, id, required, minimal }: Fi
 				<button
 					type="button"
 					onClick={() => updateItems([...items, { question: "", answer: "" }])}
-					className="rounded-md border border-kumo-border px-3 py-2 text-sm font-medium transition-colors hover:bg-kumo-hover"
+					className="rounded-md border border-kumo-line px-3 py-2 text-sm font-medium transition-colors hover:bg-kumo-tint"
 				>
 					Add FAQ
 				</button>
@@ -531,26 +531,26 @@ function RelatedCategoriesEditor({
 				</label>
 			)}
 
-			<div className="rounded-xl border border-dashed border-kumo-border p-3 text-sm text-kumo-subtle">
+			<div className="rounded-xl border border-dashed border-kumo-line bg-kumo-base p-3 text-sm text-kumo-subtle">
 				Add nearby categories that users should browse next from this page.
 			</div>
 
 			{items.length === 0 ? (
-				<div className="rounded-xl border border-kumo-border bg-kumo-surface p-4 text-sm text-kumo-subtle">
+				<div className="rounded-xl border border-kumo-line bg-kumo-base p-4 text-sm text-kumo-subtle">
 					No related categories added yet.
 				</div>
 			) : (
 				items.map((item, index) => (
 					<div
 						key={`${item.slug}-${index}`}
-						className="grid gap-3 rounded-2xl border border-kumo-border bg-kumo-surface p-4"
+						className="grid gap-3 rounded-2xl border border-kumo-line bg-kumo-base p-4"
 					>
 						<div className="flex items-center justify-between gap-3">
 							<div className="text-sm font-medium">Related category {index + 1}</div>
 							<button
 								type="button"
 								onClick={() => updateItems(items.filter((_, itemIndex) => itemIndex !== index))}
-								className="rounded-md border border-kumo-border px-2 py-1 text-xs text-kumo-subtle transition-colors hover:bg-kumo-hover"
+								className="rounded-md border border-kumo-line px-2 py-1 text-xs text-kumo-subtle transition-colors hover:bg-kumo-tint"
 							>
 								Remove
 							</button>
@@ -563,7 +563,7 @@ function RelatedCategoriesEditor({
 							<select
 								value={item.slug}
 								onChange={(event) => updateItem(index, { slug: event.target.value })}
-								className="h-10 rounded-md border border-kumo-border bg-transparent px-3 text-sm"
+								className="h-10 rounded-md border border-kumo-line bg-kumo-base px-3 text-sm"
 							>
 								<option value="">Select a category</option>
 								{options.map((option) => (
@@ -583,7 +583,7 @@ function RelatedCategoriesEditor({
 								value={item.reason ?? ""}
 								onChange={(event) => updateItem(index, { reason: event.target.value })}
 								rows={3}
-								className="min-h-20 rounded-md border border-kumo-border bg-transparent px-3 py-2 text-sm"
+								className="min-h-20 rounded-md border border-kumo-line bg-kumo-base px-3 py-2 text-sm"
 							/>
 						</div>
 					</div>
@@ -594,7 +594,7 @@ function RelatedCategoriesEditor({
 				<button
 					type="button"
 					onClick={() => updateItems([...items, { slug: "", reason: "" }])}
-					className="rounded-md border border-kumo-border px-3 py-2 text-sm font-medium transition-colors hover:bg-kumo-hover"
+					className="rounded-md border border-kumo-line px-3 py-2 text-sm font-medium transition-colors hover:bg-kumo-tint"
 				>
 					Add related category
 				</button>

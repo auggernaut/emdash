@@ -23,6 +23,10 @@ export interface RelatedCategoryLink {
 	reason?: string | null;
 }
 
+export interface TextListItem {
+	text: string;
+}
+
 export interface GameData {
 	id: string;
 	title: string;
@@ -71,8 +75,8 @@ export interface GameData {
 	campaign_friendly?: boolean | null;
 	solo_friendly?: boolean | null;
 	beginner_friendly?: boolean | null;
-	best_for?: string[] | null;
-	avoid_if?: string[] | null;
+	best_for?: TextListItem[] | null;
+	avoid_if?: TextListItem[] | null;
 	why_it_fits?: string | null;
 	related?: RelatedGame[] | null;
 }

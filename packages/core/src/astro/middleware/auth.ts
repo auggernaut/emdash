@@ -30,6 +30,7 @@ import { hasScope } from "../../auth/api-tokens.js";
 import { getAuthMode, type ExternalAuthMode } from "../../auth/mode.js";
 import type { ExternalAuthConfig } from "../../auth/types.js";
 import type { EmDashHandlers, EmDashManifest } from "../types.js";
+import { isPublicEmDashRoute } from "./public-routes.js";
 
 declare global {
 	namespace App {
@@ -79,44 +80,6 @@ function buildEmDashCsp(marketplaceUrl?: string): string {
 	].join("; ");
 }
 
-/**
- * API routes that skip auth — each handles its own access control.
- *
- * Prefix entries match any path starting with that prefix.
- * Exact entries (no trailing slash or wildcard) match that path only.
- */
-const PUBLIC_API_PREFIXES = [
-	"/_emdash/api/setup",
-	"/_emdash/api/auth/login",
-	"/_emdash/api/auth/register",
-	"/_emdash/api/auth/dev-bypass",
-	"/_emdash/api/auth/signup/",
-	"/_emdash/api/auth/magic-link/",
-	"/_emdash/api/auth/invite/accept",
-	"/_emdash/api/auth/invite/complete",
-	"/_emdash/api/auth/oauth/",
-	"/_emdash/api/oauth/device/token",
-	"/_emdash/api/oauth/device/code",
-	"/_emdash/api/oauth/token",
-	"/_emdash/api/comments/",
-	"/_emdash/api/media/file/",
-	"/_emdash/.well-known/",
-];
-
-const PUBLIC_API_EXACT = new Set([
-	"/_emdash/api/auth/passkey/options",
-	"/_emdash/api/auth/passkey/verify",
-	"/_emdash/api/oauth/token",
-	"/_emdash/api/snapshot",
-]);
-
-function isPublicEmDashRoute(pathname: string): boolean {
-	if (PUBLIC_API_EXACT.has(pathname)) return true;
-	if (PUBLIC_API_PREFIXES.some((p) => pathname.startsWith(p))) return true;
-	if (import.meta.env.DEV && pathname === "/_emdash/api/typegen") return true;
-	return false;
-}
-
 export const onRequest = defineMiddleware(async (context, next) => {
 	const { url } = context;
 
@@ -124,7 +87,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
 	const isAdminRoute = url.pathname.startsWith("/_emdash/admin");
 	const isSetupRoute = url.pathname.startsWith("/_emdash/admin/setup");
 	const isApiRoute = url.pathname.startsWith("/_emdash/api");
-	const isPublicApiRoute = isPublicEmDashRoute(url.pathname);
+	const isPublicApiRoute = isPublicEmDashRoute(url.pathname, import.meta.env.DEV);
 
 	const isPublicRoute = !isAdminRoute && !isApiRoute;
 

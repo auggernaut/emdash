@@ -298,12 +298,32 @@
 				{
 					"slug": "best_for",
 					"label": "Best For",
-					"type": "json"
+					"type": "repeater",
+					"validation": {
+						"subFields": [
+							{
+								"slug": "text",
+								"type": "string",
+								"label": "Text",
+								"required": true
+							}
+						]
+					}
 				},
 				{
 					"slug": "avoid_if",
 					"label": "Avoid If",
-					"type": "json"
+					"type": "repeater",
+					"validation": {
+						"subFields": [
+							{
+								"slug": "text",
+								"type": "string",
+								"label": "Text",
+								"required": true
+							}
+						]
+					}
 				},
 				{
 					"slug": "why_it_fits",
@@ -383,14 +403,43 @@
 				{
 					"slug": "faqs",
 					"label": "FAQs",
-					"type": "json",
-					"widget": "category-page:faqEditor"
+					"type": "repeater",
+					"validation": {
+						"subFields": [
+							{
+								"slug": "question",
+								"type": "string",
+								"label": "Question",
+								"required": true
+							},
+							{
+								"slug": "answer",
+								"type": "text",
+								"label": "Answer",
+								"required": true
+							}
+						]
+					}
 				},
 				{
 					"slug": "related_categories",
 					"label": "Related Categories",
-					"type": "json",
-					"widget": "category-page:relatedCategories"
+					"type": "repeater",
+					"validation": {
+						"subFields": [
+							{
+								"slug": "slug",
+								"type": "string",
+								"label": "Category Slug",
+								"required": true
+							},
+							{
+								"slug": "reason",
+								"type": "text",
+								"label": "Reason"
+							}
+						]
+					}
 				}
 			]
 		}
@@ -7989,14 +8038,26 @@
 					"vtt_ready": true,
 					"content_intensity": "medium",
 					"best_for": [
-						"Groups who want heroic fantasy with strong character arcs",
-						"Campaign tables that like collaborative worldbuilding",
-						"Players who want narrative play without giving up tactical texture"
+						{
+							"text": "Groups who want heroic fantasy with strong character arcs"
+						},
+						{
+							"text": "Campaign tables that like collaborative worldbuilding"
+						},
+						{
+							"text": "Players who want narrative play without giving up tactical texture"
+						}
 					],
 					"avoid_if": [
-						"You want ultra-light rules with almost no subsystem overhead",
-						"You want highly rigid combat procedure and strict initiative structure",
-						"You need a low-improv GM experience"
+						{
+							"text": "You want ultra-light rules with almost no subsystem overhead"
+						},
+						{
+							"text": "You want highly rigid combat procedure and strict initiative structure"
+						},
+						{
+							"text": "You need a low-improv GM experience"
+						}
 					],
 					"why_it_fits": "Daggerheart works best for groups who want emotionally legible fantasy adventure and a campaign engine that keeps characters central to the table's decisions. It is easier to approach than heavy crunchy fantasy games, but it still expects the GM and players to engage actively with the fiction and make judgment calls in play."
 				},

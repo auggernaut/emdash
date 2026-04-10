@@ -26,7 +26,8 @@
 		"new": "create-emdash",
 		"screenshots": "node scripts/screenshot-all-templates.mjs",
 		"sync:upstream": "git fetch upstream && git checkout main && git rebase upstream/main && git push origin main",
-		"dev:ttrpg": "pnpm --filter @emdash-cms/demo-ttrpg-games dev"
+		"dev:ttrpg": "node scripts/dev-ttrpg.mjs",
+		"dev:ttrpg:site": "pnpm --filter @emdash-cms/demo-ttrpg-games dev"
 	},
 	"keywords": [],
 	"author": "Matt Kane",
