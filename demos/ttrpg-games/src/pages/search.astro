@@ -3,6 +3,9 @@ import { getEmDashEntry, search } from "emdash";
 import Base from "../layouts/Base.astro";
 import type { CategoryPageEntry, GameEntry } from "../lib/types";
 
+const HTML_TAG_PATTERN = /<[^>]+>/g;
+const COLLAPSE_WHITESPACE_PATTERN = /\s+/g;
+
 const query = Astro.url.searchParams.get("q")?.trim() ?? "";
 const hasQuery = query.length > 0;
 const results = hasQuery
@@ -20,8 +23,8 @@ function cleanSnippet(snippet?: string): string {
 		.replaceAll("</mark>", "")
 		.replaceAll("&lt;", "<")
 		.replaceAll("&gt;", ">")
-		.replaceAll(/<[^>]+>/g, " ")
-		.replaceAll(/\s+/g, " ")
+		.replace(HTML_TAG_PATTERN, " ")
+		.replace(COLLAPSE_WHITESPACE_PATTERN, " ")
 		.trim();
 }
 

@@ -9,6 +9,7 @@
     "preview": "astro preview",
     "start": "node ./dist/server/entry.mjs",
     "generate:seed": "node ../../scripts/build-ttrpg-seed.mjs",
+    "backfill:schema": "node ../../scripts/backfill-ttrpg-schema.mjs --database ./data.db",
     "bootstrap": "node ../../scripts/build-ttrpg-seed.mjs && node ../../packages/core/dist/cli/index.mjs init && node ../../packages/core/dist/cli/index.mjs seed seed/seed.json",
     "typecheck": "astro check"
   },

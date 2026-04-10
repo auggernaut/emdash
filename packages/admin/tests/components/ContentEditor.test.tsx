@@ -143,6 +143,26 @@ describe("ContentEditor", () => {
 			const input = screen.getByLabelText("Order");
 			await expect.element(input).toHaveAttribute("type", "number");
 		});
+
+		it("renders json fields with serialized array values", async () => {
+			const item = makeItem({
+				data: {
+					title: "My Post",
+					best_for: ["New players", "One-shots", "Zero prep"],
+				},
+			});
+			const screen = await renderEditor({
+				isNew: false,
+				item,
+				fields: { best_for: { kind: "json", label: "Best For" } },
+			});
+			const input = screen.getByLabelText("Best For");
+			await expect.element(input).toHaveValue(`[
+  "New players",
+  "One-shots",
+  "Zero prep"
+]`);
+		});
 	});
 
 	describe("saving", () => {

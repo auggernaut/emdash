@@ -1,7 +1,15 @@
 import type { APIRoute } from "astro";
-import { getEmDashCollection, getTerm } from "emdash";
+import { getEmDashCollection, getEmDashEntry } from "emdash";
 
-import type { GameEntry } from "../../../lib/types";
+import type { CategoryPageEntry, GameEntry } from "../../../lib/types";
+
+function isGameEntryArray(value: unknown): value is GameEntry[] {
+	return Array.isArray(value);
+}
+
+function isCategoryPageEntry(value: unknown): value is CategoryPageEntry {
+	return value !== null && typeof value === "object" && "data" in value;
+}
 
 export const GET: APIRoute = async ({ params }) => {
 	const slug = params.slug;
@@ -9,17 +17,26 @@ export const GET: APIRoute = async ({ params }) => {
 		return Response.json({ error: "Missing category slug." }, { status: 400 });
 	}
 
-	const term = await getTerm("category", slug);
-	if (!term) {
+	const { entry } = await getEmDashEntry("category_pages", slug);
+	const categoryPage = isCategoryPageEntry(entry) ? entry : null;
+
+	if (!categoryPage) {
 		return Response.json({ error: "Category not found." }, { status: 404 });
 	}
 
-	const { entries } = await getEmDashCollection("games", {
-		where: { category: term.slug },
-	});
+	const sourceTaxonomy = categoryPage.data.source_taxonomy;
+	const sourceTermSlug = categoryPage.data.source_term_slug;
+	const where =
+		sourceTaxonomy && sourceTermSlug
+			? {
+					[sourceTaxonomy]: sourceTermSlug,
+				}
+			: undefined;
 
-	const games = (entries as unknown as GameEntry[])
-		.sort((left, right) => {
+	const { entries } = await getEmDashCollection("games", where ? { where } : undefined);
+
+	const games = (isGameEntryArray(entries) ? entries : [])
+		.toSorted((left, right) => {
 			const leftRank = left.data.rank ?? Number.MAX_SAFE_INTEGER;
 			const rightRank = right.data.rank ?? Number.MAX_SAFE_INTEGER;
 			if (leftRank !== rightRank) return leftRank - rightRank;

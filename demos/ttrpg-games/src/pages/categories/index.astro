@@ -9,7 +9,7 @@ Astro.cache.set(cacheHint);
 
 const categoryPages = rawCategoryPages as unknown as CategoryPageEntry[];
 
-const sortedCategories = [...categoryPages].sort((left, right) => {
+const sortedCategories = categoryPages.toSorted((left, right) => {
 	if (left.data.type !== right.data.type) {
 		return left.data.type.localeCompare(right.data.type);
 	}
@@ -19,7 +19,7 @@ const sortedCategories = [...categoryPages].sort((left, right) => {
 
 <Base
 	title="Browse TTRPG Categories"
-	description="Browse tabletop RPG categories by genre, mechanics, and tone to find games that match your group."
+	description="Browse tabletop RPG categories by genre, system, mechanics, and tone to find games that match your group."
 >
 	<div class="stack animate-up" style="gap: 56px;">
 		<section class="hero-section category-hero">
@@ -30,7 +30,7 @@ const sortedCategories = [...categoryPages].sort((left, right) => {
 			</nav>
 
 			<span class="eyebrow" style="margin-top: 24px; display: block;">Directory</span>
-			<h1 style="margin-top: 12px;">Find tabletop RPGs by genre, mechanics, and tone.</h1>
+			<h1 style="margin-top: 12px;">Find tabletop RPGs by genre, system, mechanics, and tone.</h1>
 
 			<p class="hero-description">
 				Start with the kind of play you want. Browse categories for fantasy,

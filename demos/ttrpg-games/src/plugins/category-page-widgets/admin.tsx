@@ -52,24 +52,29 @@ interface CategoryOption {
 	type?: string | null;
 }
 
-function parseJsonValue<T>(value: unknown): T[] {
+function isRecord(value: unknown): value is Record<string, unknown> {
+	return value !== null && typeof value === "object";
+}
+
+function parseObjectArray(value: unknown): Record<string, unknown>[] {
 	const parsed =
 		typeof value === "string"
 			? (() => {
 					try {
-						return JSON.parse(value) as unknown;
+						return JSON.parse(value);
 					} catch {
 						return [];
 					}
 				})()
 			: value;
 
-	return Array.isArray(parsed) ? (parsed as T[]) : [];
+	return Array.isArray(parsed)
+		? parsed.filter((item): item is Record<string, unknown> => isRecord(item))
+		: [];
 }
 
 function normalizeGameNotes(value: unknown): CategoryGameNote[] {
-	return parseJsonValue<Record<string, unknown>>(value)
-		.filter((item) => item && typeof item === "object")
+	return parseObjectArray(value)
 		.map((item) => ({
 			game_slug: typeof item.game_slug === "string" ? item.game_slug : "",
 			fit_blurb: typeof item.fit_blurb === "string" ? item.fit_blurb : "",
@@ -86,17 +91,14 @@ function normalizeGameNotes(value: unknown): CategoryGameNote[] {
 }
 
 function normalizeFaqs(value: unknown): CategoryFaq[] {
-	return parseJsonValue<Record<string, unknown>>(value)
-		.filter((item) => item && typeof item === "object")
-		.map((item) => ({
-			question: typeof item.question === "string" ? item.question : "",
-			answer: typeof item.answer === "string" ? item.answer : "",
-		}));
+	return parseObjectArray(value).map((item) => ({
+		question: typeof item.question === "string" ? item.question : "",
+		answer: typeof item.answer === "string" ? item.answer : "",
+	}));
 }
 
 function normalizeRelatedCategories(value: unknown): RelatedCategoryLink[] {
-	return parseJsonValue<Record<string, unknown>>(value)
-		.filter((item) => item && typeof item === "object")
+	return parseObjectArray(value)
 		.map((item) => ({
 			slug: typeof item.slug === "string" ? item.slug : "",
 			reason: typeof item.reason === "string" ? item.reason : "",
@@ -121,7 +123,7 @@ function sanitizeGameNotes(notes: CategoryGameNote[]): CategoryGameNote[] {
 				note.game_slug &&
 				(note.fit_blurb || note.featured || note.featured_reason || note.sort_order !== null),
 		)
-		.sort((left, right) => {
+		.toSorted((left, right) => {
 			const leftOrder = left.sort_order ?? Number.MAX_SAFE_INTEGER;
 			const rightOrder = right.sort_order ?? Number.MAX_SAFE_INTEGER;
 			if (leftOrder !== rightOrder) return leftOrder - rightOrder;
@@ -147,7 +149,46 @@ function sanitizeRelatedCategories(items: RelatedCategoryLink[]): RelatedCategor
 		.filter((item) => item.slug);
 }
 
-async function fetchJson<T>(url: string, signal?: AbortSignal): Promise<T> {
+function hasDataEnvelope(value: unknown): value is { data: unknown } {
+	return isRecord(value) && "data" in value;
+}
+
+function getItemsArray(value: unknown): unknown[] {
+	return isRecord(value) && "items" in value && Array.isArray(value.items) ? value.items : [];
+}
+
+function normalizeGameSummaries(value: unknown): CategoryGameSummary[] {
+	return parseObjectArray(value)
+		.map((item) => ({
+			id: typeof item.id === "string" ? item.id : "",
+			slug: typeof item.slug === "string" ? item.slug : "",
+			title: typeof item.title === "string" ? item.title : "",
+			image_url: typeof item.image_url === "string" ? item.image_url : null,
+			blurb: typeof item.blurb === "string" ? item.blurb : null,
+			rank: typeof item.rank === "number" ? item.rank : null,
+		}))
+		.filter((item) => item.id && item.slug && item.title);
+}
+
+function normalizeCategoryOptions(value: unknown): CategoryOption[] {
+	return parseObjectArray(value)
+		.filter((item) => typeof item.slug === "string" && item.slug)
+		.map((item) => ({
+			id: typeof item.id === "string" ? item.id : "",
+			slug: typeof item.slug === "string" ? item.slug : "",
+			title:
+				isRecord(item.data) && typeof item.data.title === "string" && item.data.title
+					? item.data.title
+					: typeof item.slug === "string"
+						? item.slug
+						: "",
+			type: isRecord(item.data) && typeof item.data.type === "string" ? item.data.type : "",
+		}))
+		.filter((item) => item.id && item.slug)
+		.toSorted((left, right) => left.title.localeCompare(right.title));
+}
+
+async function fetchJson(url: string, signal?: AbortSignal): Promise<unknown> {
 	const response = await fetch(url, {
 		signal,
 		headers: { "X-EmDash-Request": "1" },
@@ -156,12 +197,8 @@ async function fetchJson<T>(url: string, signal?: AbortSignal): Promise<T> {
 		throw new Error(`Request failed: ${response.status}`);
 	}
 
-	const body = (await response.json()) as { data?: T } | T;
-	if (body && typeof body === "object" && "data" in body) {
-		return body.data as T;
-	}
-
-	return body as T;
+	const body = await response.json();
+	return hasDataEnvelope(body) ? body.data : body;
 }
 
 function CategoryGameNotesEditor({
@@ -189,11 +226,8 @@ function CategoryGameNotesEditor({
 		setLoading(true);
 		setError("");
 
-		fetchJson<{ items: CategoryGameSummary[] }>(
-			`/api/category-games/${encodeURIComponent(categorySlug)}.json`,
-			controller.signal,
-		)
-			.then((result) => setGames(result.items))
+		fetchJson(`/api/category-games/${encodeURIComponent(categorySlug)}.json`, controller.signal)
+			.then((result) => setGames(normalizeGameSummaries(getItemsArray(result))))
 			.catch((reason: unknown) => {
 				if (controller.signal.aborted) return;
 				setError(reason instanceof Error ? reason.message : "Failed to load category games.");
@@ -473,26 +507,8 @@ function RelatedCategoriesEditor({
 
 	React.useEffect(() => {
 		const controller = new AbortController();
-		fetchJson<{ items: Array<{ id: string; slug: string | null; data: Record<string, unknown> }> }>(
-			"/_emdash/api/content/category_pages?limit=300",
-			controller.signal,
-		)
-			.then((result) =>
-				setCategories(
-					result.items
-						.filter((item) => item.slug)
-						.map((item) => ({
-							id: item.id,
-							slug: item.slug ?? "",
-							title:
-								typeof item.data.title === "string" && item.data.title
-									? item.data.title
-									: (item.slug ?? ""),
-							type: typeof item.data.type === "string" ? item.data.type : "",
-						}))
-						.sort((left, right) => left.title.localeCompare(right.title)),
-				),
-			)
+		fetchJson("/_emdash/api/content/category_pages?limit=300", controller.signal)
+			.then((result) => setCategories(normalizeCategoryOptions(getItemsArray(result))))
 			.catch(() => setCategories([]));
 		return () => controller.abort();
 	}, []);

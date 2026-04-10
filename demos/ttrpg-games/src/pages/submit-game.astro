@@ -237,7 +237,7 @@ const errorMessage = errorCode ? errorMessages[errorCode] ?? errorMessages.submi
 			const banner = document.createElement("section");
 			banner.className = "status-banner status-banner-error";
 			banner.id = "submission-error-runtime";
-			banner.innerHTML = `<div class=\"banner-content\"><strong>Submission not saved.</strong><p>${message}</p></div>`;
+			banner.innerHTML = `<div class="banner-content"><strong>Submission not saved.</strong><p>${message}</p></div>`;
 			form.closest('.submission-card')?.before(banner);
 			banner.scrollIntoView({ behavior: "smooth", block: "nearest" });
 		};

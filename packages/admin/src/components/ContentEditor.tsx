@@ -943,6 +943,95 @@ interface FieldRendererProps {
 	manifest?: import("../lib/api/client.js").AdminManifest | null;
 }
 
+function formatJsonFieldValue(value: unknown): string {
+	if (value == null || value === "") return "";
+
+	if (typeof value === "string") {
+		try {
+			return JSON.stringify(JSON.parse(value), null, 2);
+		} catch {
+			return value;
+		}
+	}
+
+	try {
+		return JSON.stringify(value, null, 2);
+	} catch {
+		return "";
+	}
+}
+
+interface JsonFieldRendererProps {
+	label: string;
+	id: string;
+	value: unknown;
+	onChange: (value: unknown) => void;
+	required?: boolean;
+}
+
+function JsonFieldRenderer({ label, id, value, onChange, required }: JsonFieldRendererProps) {
+	const serializedValue = React.useMemo(() => formatJsonFieldValue(value), [value]);
+	const [draft, setDraft] = React.useState(serializedValue);
+	const [error, setError] = React.useState<string | null>(null);
+
+	React.useEffect(() => {
+		setDraft(serializedValue);
+	}, [serializedValue]);
+
+	const handleDraftChange = React.useCallback(
+		(event: React.ChangeEvent<HTMLTextAreaElement>) => {
+			const nextDraft = event.target.value;
+			setDraft(nextDraft);
+
+			if (!nextDraft.trim()) {
+				setError(null);
+				onChange(undefined);
+				return;
+			}
+
+			try {
+				onChange(JSON.parse(nextDraft));
+				setError(null);
+			} catch {
+				setError("Enter valid JSON to save changes.");
+			}
+		},
+		[onChange],
+	);
+
+	const handleBlur = React.useCallback(() => {
+		if (!draft.trim()) {
+			setError(null);
+			setDraft("");
+			return;
+		}
+
+		try {
+			const parsed = JSON.parse(draft);
+			setDraft(JSON.stringify(parsed, null, 2));
+			setError(null);
+		} catch {
+			// Keep the user's draft intact so they can fix invalid JSON in place.
+		}
+	}, [draft]);
+
+	return (
+		<div>
+			<InputArea
+				label={label}
+				id={id}
+				value={draft}
+				onChange={handleDraftChange}
+				onBlur={handleBlur}
+				rows={8}
+				required={required}
+				placeholder="Enter valid JSON..."
+			/>
+			{error && <p className="text-sm text-kumo-danger mt-1">{error}</p>}
+		</div>
+	);
+}
+
 /**
  * Render field based on type
  */
@@ -1107,6 +1196,17 @@ function FieldRenderer({
 					onChange={(e) => handleChange(e.target.value)}
 					rows={10}
 					placeholder="Enter markdown content..."
+				/>
+			);
+
+		case "json":
+			return (
+				<JsonFieldRenderer
+					label={label}
+					id={id}
+					value={value}
+					onChange={handleChange}
+					required={field.required}
 				/>
 			);
 
