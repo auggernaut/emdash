@@ -113,7 +113,6 @@ const TERM_OVERRIDES = new Map([
 			label: "Powered by the Apocalypse (PbtA)",
 		},
 	],
-	["quick-play", { taxonomy: "decision_tag", slug: "quick-play", label: "Quick-Play" }],
 	["rules-medium", { taxonomy: "decision_tag", slug: "rules-medium", label: "Rules Medium" }],
 	["sci-fi", { taxonomy: "genre", slug: "science-fiction", label: "Science Fiction" }],
 	["year-zero-engine", { taxonomy: "system", slug: "year-zero-engine", label: "Year Zero Engine" }],
@@ -122,7 +121,7 @@ const TERM_OVERRIDES = new Map([
 const TRUE_CATEGORY_SLUGS = {
 	beginner: new Set(["beginner-friendly"]),
 	campaign: new Set(["campaign"]),
-	oneShot: new Set(["one-shot-friendly", "quick-play"]),
+	oneShot: new Set(["one-shot-friendly"]),
 	solo: new Set(["solo-play"]),
 	gmLess: new Set(["gm-less", "cooperative"]),
 };

@@ -1,3 +1,5 @@
+import type { MediaValue } from "emdash";
+
 export interface RelatedGame {
 	title: string;
 	slug: string;
@@ -83,6 +85,8 @@ export interface GameData {
 
 export interface GameEntry {
 	id: string;
+	createdAt?: Date | null;
+	publishedAt?: Date | null;
 	data: GameData;
 }
 
@@ -107,4 +111,20 @@ export interface CategoryPageEntry {
 export interface Badge {
 	label: string;
 	tone?: "strong" | "success";
+}
+
+export interface PostData {
+	id: string;
+	title: string;
+	excerpt?: string | null;
+	content?: unknown[] | null;
+	body_html?: string | null;
+	featured_image?: string | MediaValue | null;
+	publishedAt?: Date | null;
+	updatedAt?: Date | null;
+}
+
+export interface PostEntry {
+	id: string;
+	data: PostData;
 }

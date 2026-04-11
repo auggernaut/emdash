@@ -133,6 +133,11 @@ function formatPlayerRange(game: GameEntry["data"]): string | null {
 	return base;
 }
 
+function normalizeScore(value: number | null | undefined): number | null {
+	if (typeof value !== "number" || !Number.isFinite(value)) return null;
+	return Math.max(0, Math.min(5, value));
+}
+
 function collectScores(game: GameEntry["data"]): GameScore[] {
 	const pairs = [
 		["complexity", "Complexity", game.complexity_score],
@@ -146,8 +151,9 @@ function collectScores(game: GameEntry["data"]): GameScore[] {
 	const scores: GameScore[] = [];
 
 	for (const [key, label, value] of pairs) {
-		if (typeof value !== "number") continue;
-		scores.push({ key, label, value });
+		const normalized = normalizeScore(value);
+		if (normalized === null) continue;
+		scores.push({ key, label, value: normalized });
 	}
 
 	return scores;
@@ -265,7 +271,7 @@ export function buildGameStructuredData({
 			{
 				"@type": "PropertyValue",
 				name: "Complexity Score",
-				value: game.data.complexity_score ?? undefined,
+				value: normalizeScore(game.data.complexity_score) ?? undefined,
 			},
 			{
 				"@type": "PropertyValue",
@@ -275,7 +281,7 @@ export function buildGameStructuredData({
 			{
 				"@type": "PropertyValue",
 				name: "New GM Fit",
-				value: game.data.new_gm_friendly ?? undefined,
+				value: normalizeScore(game.data.new_gm_friendly) ?? undefined,
 			},
 			{
 				"@type": "PropertyValue",

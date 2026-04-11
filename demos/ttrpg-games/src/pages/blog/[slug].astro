@@ -1,0 +1,258 @@
+---
+import { getEmDashCollection, getEmDashEntry } from "emdash";
+import { Image, PortableText } from "emdash/ui";
+
+import Base from "../../layouts/Base.astro";
+import type { PostEntry } from "../../lib/types";
+
+export const prerender = false;
+
+const LEADING_H1_PATTERN = /^\s*<h1\b[^>]*>[\s\S]*?<\/h1>\s*/i;
+
+const slug = Astro.params.slug;
+if (!slug) {
+	return Astro.redirect("/404");
+}
+
+const { entry: rawPost, cacheHint } = await getEmDashEntry("posts", slug);
+if (!rawPost) {
+	return Astro.redirect("/404");
+}
+
+Astro.cache.set(cacheHint);
+
+const post = rawPost as unknown as PostEntry;
+const { entries: rawRecentPosts } = await getEmDashCollection("posts", {
+	orderBy: { published_at: "desc" },
+	limit: 4,
+});
+const recentPosts = (rawRecentPosts as unknown as PostEntry[]).filter((entry) => entry.id !== post.id);
+
+function formatDate(date: Date | null | undefined): string | null {
+	if (!date) return null;
+	return date.toLocaleDateString("en-US", {
+		year: "numeric",
+		month: "long",
+		day: "numeric",
+	});
+}
+
+function getImageUrl(image: unknown): string | null {
+	if (!image || typeof image !== "object") return null;
+	const media = image as {
+		src?: string;
+		id?: string;
+		meta?: { storageKey?: string };
+	};
+	if (media.src) return media.src;
+	if (media.meta?.storageKey) {
+		return `${Astro.url.origin}/_emdash/api/media/file/${media.meta.storageKey}`;
+	}
+	if (media.id) {
+		return `${Astro.url.origin}/_emdash/api/media/file/${media.id}`;
+	}
+	return null;
+}
+
+const publishedDate = formatDate(post.data.publishedAt);
+const updatedDate = formatDate(post.data.updatedAt);
+const image = getImageUrl(post.data.featured_image);
+const bodyHtml = post.data.body_html?.replace(LEADING_H1_PATTERN, "").trim() || null;
+---
+
+<Base
+	title={`${post.data.title} | TTRPG Games`}
+	description={post.data.excerpt || null}
+	image={image}
+	canonical={Astro.url.href}
+	content={{ collection: "posts", id: post.data.id, slug }}
+>
+	<div class="stack blog-page animate-up">
+		<nav class="breadcrumbs">
+			<a href="/">Home</a>
+			<span class="breadcrumb-separator">/</span>
+			<a href="/blog">Blog</a>
+			<span class="breadcrumb-separator">/</span>
+			<span>{post.data.title}</span>
+		</nav>
+
+		<section class="hero-card article-hero">
+			<div class="article-hero-copy">
+				<div class="badges" style="margin-bottom: 18px;">
+					{publishedDate && <span class="badge">{publishedDate}</span>}
+					{updatedDate && updatedDate !== publishedDate && (
+						<span class="badge">Updated {updatedDate}</span>
+					)}
+				</div>
+				<h1>{post.data.title}</h1>
+				{post.data.excerpt && <p>{post.data.excerpt}</p>}
+			</div>
+			{
+				post.data.featured_image && (
+					<div class="article-hero-image">
+						<Image image={post.data.featured_image} />
+					</div>
+				)
+			}
+		</section>
+
+		<section class="panel prose blog-article-body">
+			{bodyHtml ? <div set:html={bodyHtml} /> : <PortableText value={post.data.content ?? []} />}
+		</section>
+
+		{
+			recentPosts.length > 0 && (
+				<section class="panel">
+					<div class="section-title-group">
+						<div class="kicker">Continue reading</div>
+						<h2>Recent posts</h2>
+					</div>
+					<div class="related-links">
+						{recentPosts.map((related) => (
+							<a href={`/blog/${related.id}`} class="related-link">
+								<strong>{related.data.title}</strong>
+								<span>Read article</span>
+							</a>
+						))}
+					</div>
+				</section>
+			)
+		}
+
+		<div class="article-actions">
+			<a href="/blog" class="button-link">Back to blog</a>
+			<a href="/categories" class="button-link primary">Browse categories</a>
+		</div>
+	</div>
+</Base>
+
+<style>
+	.blog-page {
+		padding-top: 132px;
+	}
+
+	.article-hero {
+		display: grid;
+		grid-template-columns: minmax(0, 1.15fr) minmax(280px, 0.85fr);
+		gap: 28px;
+		align-items: start;
+	}
+
+	.article-hero-copy h1 {
+		max-width: 12ch;
+	}
+
+	.article-hero-image :global(img) {
+		width: 100%;
+		border-radius: 18px;
+		aspect-ratio: 16 / 10;
+		object-fit: cover;
+		background: linear-gradient(145deg, #e5d7bf, #f7efe3);
+	}
+
+	.blog-article-body {
+		padding: 30px 32px;
+	}
+
+	.blog-article-body :global(h2),
+	.blog-article-body :global(h3) {
+		text-wrap: pretty;
+	}
+
+	.blog-article-body :global(a) {
+		color: var(--accent-strong);
+		text-decoration: underline;
+		text-underline-offset: 0.16em;
+	}
+
+	.blog-article-body :global(img) {
+		max-width: 100%;
+		height: auto;
+		border-radius: 18px;
+	}
+
+	.blog-article-body :global(iframe) {
+		width: 100%;
+		max-width: 100%;
+		aspect-ratio: 16 / 9;
+		height: auto;
+		border: 0;
+		border-radius: 18px;
+		background: #111;
+	}
+
+	.blog-article-body :global(table) {
+		width: 100%;
+		border-collapse: collapse;
+		margin: 1.5rem 0;
+		font-size: 0.96rem;
+	}
+
+	.blog-article-body :global(th),
+	.blog-article-body :global(td) {
+		padding: 0.8rem 0.9rem;
+		border: 1px solid var(--line);
+		text-align: left;
+		vertical-align: top;
+	}
+
+	.blog-article-body :global(th) {
+		background: rgba(255, 248, 241, 0.9);
+		font-weight: 700;
+	}
+
+	.blog-article-body :global(blockquote) {
+		margin: 1.4rem 0;
+		padding: 1rem 1.2rem;
+		border-left: 3px solid var(--accent);
+		background: rgba(255, 248, 241, 0.9);
+		color: var(--muted);
+	}
+
+	.blog-article-body :global(.sb-banner) {
+		display: none !important;
+	}
+
+	.related-links {
+		display: grid;
+		gap: 12px;
+		margin-top: 18px;
+	}
+
+	.related-link {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: space-between;
+		gap: 12px;
+		padding: 14px 16px;
+		border: 1px solid var(--line);
+		border-radius: 16px;
+		background: rgba(255, 253, 248, 0.7);
+	}
+
+	.related-link span {
+		color: var(--muted);
+		font-size: 0.95rem;
+	}
+
+	.article-actions {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 12px;
+	}
+
+	@media (max-width: 860px) {
+		.blog-page {
+			padding-top: 112px;
+		}
+
+		.article-hero {
+			grid-template-columns: 1fr;
+		}
+
+		.article-hero-copy h1 {
+			max-width: none;
+		}
+	}
+</style>

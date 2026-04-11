@@ -12,6 +12,12 @@ Astro.cache.set(cacheHint);
 const games = rawGames as unknown as GameEntry[];
 const categoryPages = rawCategoryPages as unknown as CategoryPageEntry[];
 
+function timestampFor(value: string | null | undefined): number {
+	if (!value) return 0;
+	const parsed = Date.parse(value);
+	return Number.isNaN(parsed) ? 0 : parsed;
+}
+
 const rankedGames = games.toSorted((left, right) => {
 	const leftRank = left.data.rank ?? Number.MAX_SAFE_INTEGER;
 	const rightRank = right.data.rank ?? Number.MAX_SAFE_INTEGER;
@@ -52,7 +58,20 @@ const popularCategories = [
 	),
 ].slice(0, 9);
 
-const recentlyAddedGames = games.toReversed().slice(0, 12);
+const recentlyAddedGames = games
+	.toSorted((left, right) => {
+		const rightTime = Math.max(
+			timestampFor(right.createdAt?.toISOString()),
+			timestampFor(right.publishedAt?.toISOString()),
+		);
+		const leftTime = Math.max(
+			timestampFor(left.createdAt?.toISOString()),
+			timestampFor(left.publishedAt?.toISOString()),
+		);
+		if (leftTime !== rightTime) return rightTime - leftTime;
+		return right.data.id.localeCompare(left.data.id);
+	})
+	.slice(0, 12);
 
 const faqs = [
 	{

@@ -42,10 +42,7 @@ const REMOTE_SOURCE_OVERRIDES = new Map([
 		"black-sword-hack",
 		"https://www.themerrymushmen.com/wp-content/uploads/2023/01/BSH-COVER-600x851.jpg",
 	],
-	[
-		"delving-deeper",
-		"https://assets.lulu.com/cover_thumbs/1/k/1k9qngkk-front-shortedge-384.jpg",
-	],
+	["delving-deeper", "https://assets.lulu.com/cover_thumbs/1/k/1k9qngkk-front-shortedge-384.jpg"],
 	[
 		"sharp-swords-sinister-spells",
 		"https://img.itch.zone/aW1nLzg2NTIxNjYuanBn/original/oAZy%2BF.jpg",
@@ -53,6 +50,10 @@ const REMOTE_SOURCE_OVERRIDES = new Map([
 	[
 		"thousand-year-old-vampire",
 		"https://thousandyearoldvampire.com/cdn/shop/products/TYOVCover_1200x1200.jpg?v=1609637742",
+	],
+	[
+		"tinycthulhu",
+		"https://shop.gallantknightgames.com/cdn/shop/products/TinyCthulhuCover.png?v=1735506131&width=416",
 	],
 ]);
 
@@ -132,6 +133,29 @@ function loadEnvFile(envPath) {
 	}
 
 	return values;
+}
+
+function getConfigValue(env, prefixedKey, genericKey) {
+	return env[prefixedKey] || env[genericKey] || "";
+}
+
+function deriveCloudNameFromRows(rows) {
+	for (const row of rows) {
+		if (!row.image_url?.startsWith(cloudinaryPrefix)) continue;
+
+		try {
+			const url = new URL(row.image_url);
+			if (!url.hostname.endsWith(".cloudinary.com")) continue;
+			const segments = url.pathname.split("/").filter(Boolean);
+			if (segments.length < 3) continue;
+			if (segments[1] !== "image" || !segments.includes("upload")) continue;
+			return segments[0] || "";
+		} catch {
+			// Ignore invalid URLs and continue.
+		}
+	}
+
+	return "";
 }
 
 function createSignature({ publicId, timestamp, apiSecret }) {
@@ -307,7 +331,7 @@ function extensionFromContentType(contentType) {
 	return "jpg";
 }
 
-async function migrateRow(row, env) {
+async function migrateRow(row, cloudinary) {
 	const publicId = `games/${row.slug}`;
 	const localOverride = LOCAL_SOURCE_OVERRIDES.get(row.slug);
 	const remoteOverride = REMOTE_SOURCE_OVERRIDES.get(row.slug);
@@ -317,9 +341,7 @@ async function migrateRow(row, env) {
 			buffer: fs.readFileSync(localOverride),
 			filename: path.basename(localOverride),
 			publicId,
-			cloudName: env.EMDASH_CLOUDINARY_CLOUD_NAME,
-			apiKey: env.EMDASH_CLOUDINARY_API_KEY,
-			apiSecret: env.EMDASH_CLOUDINARY_API_SECRET,
+			...cloudinary,
 		});
 
 		return {
@@ -334,9 +356,7 @@ async function migrateRow(row, env) {
 			const upload = await uploadRemoteToCloudinary({
 				sourceUrl: remoteOverride,
 				publicId,
-				cloudName: env.EMDASH_CLOUDINARY_CLOUD_NAME,
-				apiKey: env.EMDASH_CLOUDINARY_API_KEY,
-				apiSecret: env.EMDASH_CLOUDINARY_API_SECRET,
+				...cloudinary,
 			});
 
 			return {
@@ -350,9 +370,7 @@ async function migrateRow(row, env) {
 				buffer: download.buffer,
 				filename: `${row.slug}.${extensionFromContentType(download.contentType)}`,
 				publicId,
-				cloudName: env.EMDASH_CLOUDINARY_CLOUD_NAME,
-				apiKey: env.EMDASH_CLOUDINARY_API_KEY,
-				apiSecret: env.EMDASH_CLOUDINARY_API_SECRET,
+				...cloudinary,
 			});
 
 			return {
@@ -375,9 +393,7 @@ async function migrateRow(row, env) {
 			buffer: fs.readFileSync(filePath),
 			filename,
 			publicId,
-			cloudName: env.EMDASH_CLOUDINARY_CLOUD_NAME,
-			apiKey: env.EMDASH_CLOUDINARY_API_KEY,
-			apiSecret: env.EMDASH_CLOUDINARY_API_SECRET,
+			...cloudinary,
 		});
 
 		return {
@@ -392,9 +408,7 @@ async function migrateRow(row, env) {
 			const upload = await uploadRemoteToCloudinary({
 				sourceUrl: row.image_url,
 				publicId,
-				cloudName: env.EMDASH_CLOUDINARY_CLOUD_NAME,
-				apiKey: env.EMDASH_CLOUDINARY_API_KEY,
-				apiSecret: env.EMDASH_CLOUDINARY_API_SECRET,
+				...cloudinary,
 			});
 
 			return {
@@ -409,9 +423,7 @@ async function migrateRow(row, env) {
 					buffer: download.buffer,
 					filename: `${row.slug}.${extensionFromContentType(download.contentType)}`,
 					publicId,
-					cloudName: env.EMDASH_CLOUDINARY_CLOUD_NAME,
-					apiKey: env.EMDASH_CLOUDINARY_API_KEY,
-					apiSecret: env.EMDASH_CLOUDINARY_API_SECRET,
+					...cloudinary,
 				});
 
 				return {
@@ -433,9 +445,7 @@ async function migrateRow(row, env) {
 	const upload = await uploadRemoteToCloudinary({
 		sourceUrl: fallbackUrl,
 		publicId,
-		cloudName: env.EMDASH_CLOUDINARY_CLOUD_NAME,
-		apiKey: env.EMDASH_CLOUDINARY_API_KEY,
-		apiSecret: env.EMDASH_CLOUDINARY_API_SECRET,
+		...cloudinary,
 	});
 
 	return {
@@ -479,17 +489,6 @@ if (!fs.existsSync(envPath)) {
 }
 
 const env = loadEnvFile(envPath);
-for (const key of [
-	"EMDASH_CLOUDINARY_CLOUD_NAME",
-	"EMDASH_CLOUDINARY_API_KEY",
-	"EMDASH_CLOUDINARY_API_SECRET",
-]) {
-	if (!env[key]) {
-		console.error(`Missing ${key} in ${envPath}`);
-		process.exit(1);
-	}
-}
-
 const rows = runJson(
 	databasePath,
 	[
@@ -501,6 +500,25 @@ const rows = runJson(
 		"ORDER BY slug ASC;",
 	].join(" "),
 );
+const cloudinary = {
+	cloudName:
+		getConfigValue(env, "EMDASH_CLOUDINARY_CLOUD_NAME", "CLOUDINARY_CLOUD_NAME") ||
+		deriveCloudNameFromRows(rows),
+	apiKey: getConfigValue(env, "EMDASH_CLOUDINARY_API_KEY", "CLOUDINARY_API_KEY"),
+	apiSecret: getConfigValue(env, "EMDASH_CLOUDINARY_API_SECRET", "CLOUDINARY_API_SECRET"),
+};
+
+for (const [label, value] of [
+	["Cloudinary cloud name", cloudinary.cloudName],
+	["Cloudinary API key", cloudinary.apiKey],
+	["Cloudinary API secret", cloudinary.apiSecret],
+]) {
+	if (!value) {
+		console.error(`Missing ${label} in ${envPath} or derivable config`);
+		process.exit(1);
+	}
+}
+
 const slugFilter = values.slugs
 	? new Set(
 			values.slugs
@@ -545,7 +563,7 @@ const updateStatements = [];
 
 for (const row of targetRows) {
 	try {
-		const result = await migrateRow(row, env);
+		const result = await migrateRow(row, cloudinary);
 		summary.updated.push({
 			slug: row.slug,
 			title: row.title,

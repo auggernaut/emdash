@@ -1,34 +1,317 @@
 ---
+import { getEmDashCollection } from "emdash";
+import { Image } from "emdash/ui";
+
 import Base from "../layouts/Base.astro";
+import type { PostEntry } from "../lib/types";
+
+export const prerender = false;
+
+const PAGE_SIZE = 24;
+const ALL_POSTS_LIMIT = 500;
+
+const { entries: rawPosts, cacheHint } = await getEmDashCollection("posts", {
+	orderBy: { published_at: "desc" },
+	limit: ALL_POSTS_LIMIT,
+});
+
+Astro.cache.set(cacheHint);
+
+const allPosts = rawPosts as unknown as PostEntry[];
+const posts = allPosts.slice(0, PAGE_SIZE);
+const nextOffset = allPosts.length > PAGE_SIZE ? PAGE_SIZE : null;
+
+function formatDate(date: Date | null | undefined): string | null {
+	if (!date) return null;
+	return date.toLocaleDateString("en-US", {
+		year: "numeric",
+		month: "long",
+		day: "numeric",
+	});
+}
 ---
 
 <Base
 	title="Blog | TTRPG Games"
-	description="Editorial notes, recommendations, and updates from TTRPG Games."
+	description="Editorial guides, recommendation roundups, and longer-form tabletop RPG writing from TTRPG Games."
 >
-	<div class="stack">
-		<section class="hero-card">
+	<div class="stack blog-shell animate-up">
+		<section class="hero-card blog-hero">
 			<span class="eyebrow">Editorial</span>
 			<h1>Blog</h1>
 			<p>
-				Longer-form recommendations, category roundups, and editorial updates will
-				live here.
+				Longer-form recommendations, category roundups, and editorial essays from
+				the TTRPG Games team.
 			</p>
 			<div class="badges" style="margin-top: 18px;">
-				<span class="badge">Editorial picks</span>
-				<span class="badge">Roundups and updates</span>
+				<span class="badge">Recommendation roundups</span>
+				<span class="badge">Buying guides</span>
+				<span class="badge">System notes</span>
 			</div>
 		</section>
 
-		<section class="panel prose">
-			<p>
-				The blog section is being prepared. For now, browse the directory through
-				the category guides and game pages, or submit a game recommendation for
-				editorial review.
-			</p>
-			<p>
-				<a href="/categories" class="button-link primary">Browse categories</a>
-			</p>
-		</section>
+		{
+			posts.length === 0 ? (
+				<section class="panel prose">
+					<p>
+						No imported blog posts yet. Run the SEObot sync endpoint to pull new
+						articles into EmDash, then they will appear here as native posts you
+						can edit in the admin.
+					</p>
+				</section>
+			) : (
+				<section>
+					<div class="section-header">
+						<div>
+							<div class="kicker">Latest writing</div>
+							<h2>Recent articles</h2>
+						</div>
+						<p>
+							These articles now live in EmDash as editable posts rather than
+							rendering directly from SEObot at request time.
+						</p>
+					</div>
+
+					<div class="grid blog-grid" id="blog-grid">
+						{posts.map((post) => (
+							<article class="blog-card">
+								<a href={`/blog/${post.id}`} class="blog-card-link">
+									{
+										post.data.featured_image && (
+											<div class="blog-card-image">
+												<Image image={post.data.featured_image} />
+											</div>
+										)
+									}
+									<div class="card-body">
+										<div class="blog-card-meta">
+											{formatDate(post.data.publishedAt) && (
+												<span class="muted">{formatDate(post.data.publishedAt)}</span>
+											)}
+										</div>
+										<h3>{post.data.title}</h3>
+										{post.data.excerpt && <p>{post.data.excerpt}</p>}
+									</div>
+								</a>
+							</article>
+						))}
+					</div>
+					{
+						nextOffset !== null && (
+							<div class="load-more-row">
+								<button
+									type="button"
+									id="blog-load-more"
+									class="button-link primary load-more-button"
+									data-offset={String(nextOffset)}
+								>
+									Load more
+								</button>
+								<p id="blog-load-more-status" class="load-more-status" aria-live="polite" />
+							</div>
+						)
+					}
+				</section>
+			)
+		}
 	</div>
 </Base>
+
+<script is:inline>
+	const button = document.querySelector("#blog-load-more");
+	const grid = document.querySelector("#blog-grid");
+	const status = document.querySelector("#blog-load-more-status");
+
+	function appendPostCard(item) {
+		if (!grid || !item?.slug || !item?.title) return;
+
+		const article = document.createElement("article");
+		article.className = "blog-card";
+
+		const link = document.createElement("a");
+		link.className = "blog-card-link";
+		link.href = `/blog/${item.slug}`;
+
+		if (item.image?.src) {
+			const imageWrap = document.createElement("div");
+			imageWrap.className = "blog-card-image";
+
+			const image = document.createElement("img");
+			image.src = item.image.src;
+			image.alt = item.image.alt || "";
+			image.loading = "lazy";
+			image.decoding = "async";
+
+			imageWrap.append(image);
+			link.append(imageWrap);
+		}
+
+		const body = document.createElement("div");
+		body.className = "card-body";
+
+		const meta = document.createElement("div");
+		meta.className = "blog-card-meta";
+
+		if (item.publishedLabel) {
+			const published = document.createElement("span");
+			published.className = "muted";
+			published.textContent = item.publishedLabel;
+			meta.append(published);
+		}
+
+		const heading = document.createElement("h3");
+		heading.textContent = item.title;
+
+		body.append(meta, heading);
+
+		if (item.excerpt) {
+			const excerpt = document.createElement("p");
+			excerpt.textContent = item.excerpt;
+			body.append(excerpt);
+		}
+
+		link.append(body);
+		article.append(link);
+		grid.append(article);
+	}
+
+	async function loadMorePosts() {
+		if (!(button instanceof HTMLButtonElement) || !grid) return;
+
+		const offset = button.dataset.offset;
+		if (!offset) return;
+
+		button.disabled = true;
+		button.textContent = "Loading...";
+		if (status) status.textContent = "";
+
+		try {
+			const response = await fetch(`/api/blog-posts.json?offset=${encodeURIComponent(offset)}`);
+			if (!response.ok) {
+				throw new Error("Request failed");
+			}
+
+			const payload = await response.json();
+			const items = Array.isArray(payload.items) ? payload.items : [];
+			for (const item of items) {
+				appendPostCard(item);
+			}
+
+			if (typeof payload.nextOffset === "number") {
+				button.dataset.offset = String(payload.nextOffset);
+				button.disabled = false;
+				button.textContent = "Load more";
+				return;
+			}
+
+			button.remove();
+			if (status) {
+				status.textContent = "All posts loaded.";
+			}
+		} catch {
+			button.disabled = false;
+			button.textContent = "Load more";
+			if (status) {
+				status.textContent = "Could not load more posts.";
+			}
+		}
+	}
+
+	if (button instanceof HTMLButtonElement) {
+		button.addEventListener("click", () => {
+			void loadMorePosts();
+		});
+	}
+</script>
+
+<style>
+	.blog-shell {
+		padding-top: 132px;
+	}
+
+	.blog-hero p {
+		max-width: 42rem;
+	}
+
+	:global(.blog-grid) {
+		grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+	}
+
+	:global(.blog-card) {
+		border: 1px solid var(--line);
+		border-radius: var(--radius);
+		background: var(--surface);
+		box-shadow: var(--shadow-soft);
+		backdrop-filter: blur(12px);
+		-webkit-backdrop-filter: blur(12px);
+		overflow: hidden;
+		transition:
+			transform 0.18s ease,
+			box-shadow 0.18s ease,
+			border-color 0.18s ease;
+	}
+
+	:global(.blog-card:hover) {
+		transform: translateY(-3px);
+		border-color: var(--line-strong);
+		box-shadow: var(--shadow);
+	}
+
+	:global(.blog-card-link) {
+		display: grid;
+		height: 100%;
+	}
+
+	:global(.blog-card-image img) {
+		width: 100%;
+		aspect-ratio: 16 / 9;
+		object-fit: cover;
+	}
+
+	:global(.blog-card h3) {
+		margin: 10px 0 12px;
+		font-size: 1.45rem;
+		line-height: 1.15;
+	}
+
+	:global(.blog-card p) {
+		color: var(--muted);
+		line-height: 1.65;
+	}
+
+	:global(.blog-card-meta) {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 12px;
+	}
+
+	.load-more-row {
+		display: grid;
+		justify-items: center;
+		gap: 10px;
+		margin-top: 28px;
+	}
+
+	.load-more-button {
+		border: 0;
+		cursor: pointer;
+	}
+
+	.load-more-button[disabled] {
+		cursor: wait;
+		opacity: 0.7;
+	}
+
+	.load-more-status {
+		min-height: 1.2rem;
+		margin: 0;
+		color: var(--muted);
+		font-size: 0.95rem;
+	}
+
+	@media (max-width: 720px) {
+		.blog-shell {
+			padding-top: 112px;
+		}
+	}
+</style>
