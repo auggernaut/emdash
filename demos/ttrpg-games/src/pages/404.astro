@@ -2,17 +2,119 @@
 import Base from "../layouts/Base.astro";
 ---
 
-<Base title="Page not found">
-	<section class="hero-card">
-		<span class="eyebrow">404</span>
-		<h1>That page is not in the directory.</h1>
-		<p>
-			The route could not be resolved in this EmDash site. Return to the main
-			directory or browse the imported category pages.
-		</p>
-		<div class="badges" style="margin-top: 18px;">
-			<a href="/" class="button-link primary">Return home</a>
-			<a href="/categories" class="button-link">Browse categories</a>
-		</div>
-	</section>
+<Base
+	title="Page Not Found | TTRPG Games"
+	description="The page you requested could not be found in the TTRPG Games directory."
+>
+	<div class="stack animate-up not-found-shell">
+		<section class="hero-card not-found-hero">
+			<div class="not-found-mark">404</div>
+			<span class="eyebrow">Page Not Found</span>
+			<h1>That game, category, or article is not here.</h1>
+			<p>
+				The link may be outdated, the page may have moved, or the entry may no longer
+				be part of the directory. The fastest recovery path is to jump back into the
+				main catalog and search from there.
+			</p>
+			<div class="badges not-found-actions">
+				<a href="/" class="button-link primary">Return home</a>
+				<a href="/categories" class="button-link">Browse categories</a>
+				<a href="/blog" class="button-link">Read the blog</a>
+			</div>
+		</section>
+
+		<section class="grid not-found-grid">
+			<article class="panel not-found-card">
+				<div class="kicker">Best Next Step</div>
+				<h2>Start from the category map</h2>
+				<p>
+					If you were following a recommendation trail, categories are usually the
+					quickest way to get back to the right part of the directory.
+				</p>
+				<a href="/categories" class="button-link">See all categories</a>
+			</article>
+
+			<article class="panel not-found-card">
+				<div class="kicker">Editorial Picks</div>
+				<h2>Use the blog as a fallback</h2>
+				<p>
+					The blog covers genres, mechanics, and recommendation roundups, so it is a
+					good backup path when a direct item URL fails.
+				</p>
+				<a href="/blog" class="button-link">Open the blog</a>
+			</article>
+
+			<article class="panel not-found-card">
+				<div class="kicker">Missing Something?</div>
+				<h2>Submit the game you expected</h2>
+				<p>
+					If the missing page points to a game that should be listed, send it in so
+					it can be reviewed and added properly.
+				</p>
+				<a href="/submit-game" class="button-link">Submit a game</a>
+			</article>
+		</section>
+	</div>
 </Base>
+
+<style>
+	.not-found-shell {
+		padding-top: 120px;
+	}
+
+	.not-found-hero {
+		display: grid;
+		gap: 18px;
+		padding-block: 48px;
+	}
+
+	.not-found-mark {
+		font-size: clamp(4.5rem, 12vw, 8rem);
+		line-height: 0.9;
+		font-weight: 800;
+		letter-spacing: -0.06em;
+		color: rgba(177, 78, 44, 0.18);
+	}
+
+	.not-found-actions {
+		margin-top: 8px;
+	}
+
+	.not-found-grid {
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+		gap: 20px;
+	}
+
+	.not-found-card {
+		display: grid;
+		gap: 14px;
+		align-content: start;
+	}
+
+	.not-found-card h2 {
+		margin: 0;
+		font-size: 1.45rem;
+		line-height: 1.15;
+	}
+
+	.not-found-card p {
+		margin: 0;
+		color: var(--muted);
+		line-height: 1.65;
+	}
+
+	.not-found-card .button-link {
+		justify-self: start;
+		margin-top: 6px;
+	}
+
+	@media (max-width: 900px) {
+		.not-found-shell {
+			padding-top: 96px;
+		}
+
+		.not-found-grid {
+			grid-template-columns: 1fr;
+		}
+	}
+</style>

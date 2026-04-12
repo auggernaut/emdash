@@ -11,15 +11,15 @@ The admin UI is at `http://localhost:4321/_emdash/admin`.
 
 ## Key Files
 
-| File                     | Purpose                                                                            |
-| ------------------------ | ---------------------------------------------------------------------------------- |
-| `astro.config.mjs`       | Astro config with `emdash()` integration, database, and storage                    |
-| `src/live.config.ts`     | EmDash loader registration (boilerplate -- don't modify)                           |
-| `data.db`                | Live site content database and current source of truth                             |
-| `backups/`               | Timestamped database backups created before live data changes                      |
-| `emdash-env.d.ts`        | Generated types for collections (auto-regenerated on dev server start)             |
-| `src/layouts/Base.astro` | Base layout with EmDash wiring (menus, search, page contributions)                 |
-| `src/pages/`             | Astro pages -- all server-rendered                                                 |
+| File                     | Purpose                                                                |
+| ------------------------ | ---------------------------------------------------------------------- |
+| `astro.config.mjs`       | Astro config with `emdash()` integration, database, and storage        |
+| `src/live.config.ts`     | EmDash loader registration (boilerplate -- don't modify)               |
+| `data.db`                | Live site content database and current source of truth                 |
+| `backups/`               | Timestamped database backups created before live data changes          |
+| `emdash-env.d.ts`        | Generated types for collections (auto-regenerated on dev server start) |
+| `src/layouts/Base.astro` | Base layout with EmDash wiring (menus, search, page contributions)     |
+| `src/pages/`             | Astro pages -- all server-rendered                                     |
 
 ## Skills
 

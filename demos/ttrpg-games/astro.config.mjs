@@ -9,6 +9,7 @@ import { relatedGamesWidgetPlugin } from "./src/plugins/related-widget/index.ts"
 
 export default defineConfig({
 	output: "server",
+	trailingSlash: "never",
 	adapter: node({
 		mode: "standalone",
 	}),

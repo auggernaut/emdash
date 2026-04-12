@@ -27,6 +27,7 @@ When adding a game, do not stop at title + blurb.
 
 Populate the entry with:
 
+- `at_a_glance`
 - cover image URL
 - `website_url`
 - publisher/creator
@@ -73,6 +74,10 @@ Try DriveThruRPG first for user reviews.
 
 If the game is not on DriveThruRPG or does not have usable review volume, fall back to credible user-review sources. Summarize the consensus in original prose. Do not paste long quotes.
 
+Any DriveThruRPG link you store should include the affiliate id `affiliate_id=1659151`, with that parameter present exactly once.
+
+Any itch.io link you store should include the affiliate code `ac=YUqaLN4pVvG`, with that parameter present exactly once.
+
 `review_summary` should describe the review pattern, not your own opinion alone.
 
 ### 6. Curate related games deliberately
@@ -110,6 +115,8 @@ Each fit blurb should answer why this game belongs in that specific category. It
 - `body_html` should be richer than the structured fields.
 - Images should end up on Cloudinary.
 - Reviews should reflect user sentiment from DriveThruRPG first, then fallback sources if needed.
+- DriveThruRPG links should include `affiliate_id=1659151`.
+- itch.io links should include `ac=YUqaLN4pVvG`.
 
 ## Verification
 
@@ -120,6 +127,7 @@ After finishing:
 - verify related games exist and the related blurbs are comparative
 - verify taxonomy assignments were written
 - verify category-page fit blurbs exist for the assigned categories
+- verify any stored itch.io links include `ac=YUqaLN4pVvG`
 - run `pnpm --silent lint:quick` from `/Users/home/Dev/git/emdash`
 
 If code changed, also run the relevant typecheck.

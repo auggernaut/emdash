@@ -38,6 +38,7 @@ const REMOTE_SOURCE_OVERRIDES = new Map([
 		"adventurer-conqueror-king-system",
 		"https://autarch.co/wp-content/uploads/2020/11/acks-cover.jpg",
 	],
+	["alone-among-the-stars", "https://img.itch.zone/aW1nLzE3MDE3MzYucG5n/original/WhMlwY.png"],
 	[
 		"black-sword-hack",
 		"https://www.themerrymushmen.com/wp-content/uploads/2023/01/BSH-COVER-600x851.jpg",
@@ -51,9 +52,106 @@ const REMOTE_SOURCE_OVERRIDES = new Map([
 		"thousand-year-old-vampire",
 		"https://thousandyearoldvampire.com/cdn/shop/products/TYOVCover_1200x1200.jpg?v=1609637742",
 	],
+	["cthulhu-dark", "https://www.indiepressrevolution.com/xcart/image.php?type=P&id=20616"],
 	[
 		"tinycthulhu",
 		"https://shop.gallantknightgames.com/cdn/shop/products/TinyCthulhuCover.png?v=1735506131&width=416",
+	],
+	[
+		"gamma-world",
+		"https://cf.geekdo-images.com/jlM7-2YGmQTt0keljM4q0w__imagepage/img/cXtpDnizA3ekDSjgbwbfQoEb_xI=/fit-in/900x600/filters:no_upscale():strip_icc()/pic829642.jpg",
+	],
+	[
+		"ghost-lines",
+		"https://cf.geekdo-images.com/qk0K5j47LEL_-FKrWGAcVw__imagepage/img/k4FpmKpqwZqfsZkJxabYLoTgyow=/fit-in/900x600/filters:no_upscale():strip_icc()/pic1551252.png",
+	],
+	["ihunt", "https://img.itch.zone/aW1nLzQ3MTIwMzMucG5n/original/xJSptz.png"],
+	[
+		"legend-of-the-five-rings",
+		"https://cf.geekdo-images.com/IsDZ5C0CQnTANq9JRXCvsQ__imagepage/img/qw08wTMA1oQaCsEOKJyQR3wsC4A=/fit-in/900x600/filters:no_upscale():strip_icc()/pic4135268.png",
+	],
+	[
+		"mage-the-awakening",
+		"https://cf.geekdo-images.com/N2xXxUE2hys8uq0pNFLYEA__imagepage/img/LArKZzNSiP8l2FyPGenl0t8zHLE=/fit-in/900x600/filters:no_upscale():strip_icc()/pic3005679.jpg",
+	],
+	[
+		"marvel-heroic-roleplaying",
+		"https://cf.geekdo-images.com/P9kcwwiC08FPCvl3FIzMBA__imagepage/img/BBlKNToPCz_7Sa1Pas2PXwGGEeI=/fit-in/900x600/filters:no_upscale():strip_icc()/pic1243900.png",
+	],
+	[
+		"mouse-guard",
+		"https://cf.geekdo-images.com/1ChN3tCWtlDOYap4lot_ww__imagepage/img/Sox5CrsL_J4ZdCGCudxbt6O5G2Y=/fit-in/900x600/filters:no_upscale():strip_icc()/pic567766.jpg",
+	],
+	["neurocity", "https://img.itch.zone/aW1nLzI0NDg3MjQ0LmpwZw==/original/bT89yS.jpg"],
+	[
+		"numenera",
+		"https://www.montecookgames.com/store/wp-content/uploads/2018/04/N2-Slipcase-Set-Tags-2-1.jpg",
+	],
+	[
+		"otherscape",
+		"https://sonofoak.com/cdn/shop/collections/OS_-_Launch_banner_variant_5b_4476d284-b0d2-4f62-a3dc-427fce5838cc.jpg?v=1731435122",
+	],
+	["outgunned", "https://twolittlemice.net/wp-content/uploads/2025/07/Preoirder.jpg"],
+	[
+		"pathfinder",
+		"https://cdn.paizo.com/d960ad1b-9967-00f9-1158-72274b18312d/ffad1f69-89fb-41a0-aff5-14a27cd09c57/Pathfinder2ogimage.jpg",
+	],
+	[
+		"pirate-borg",
+		"https://images.squarespace-cdn.com/content/v1/603fdb9fada6165d919a6543/64bdd27f-bbe7-4fc1-86d6-651c81b00ddb/kraken.jpg",
+	],
+	["roll-for-shoes", "https://rollforshoes.com/apple-touch-icon.png"],
+	["sagas-of-the-icelanders", "https://img.itch.zone/aW1nLzE4NTI0NDIucG5n/original/jfSKGT.png"],
+	["blood-borg", "https://img.itch.zone/aW1nLzE3OTk2MDExLnBuZw==/original/VHKOnd.png"],
+	["dead-belt", "https://img.itch.zone/aW1nLzE3ODQzOTQyLnBuZw==/original/Twv9gG.png"],
+	[
+		"polaris-rpg",
+		"https://res.cloudinary.com/csicdn/image/upload/c_pad%2Cfl_lossy%2Ch_350%2Cq_auto%2Cw_350/v1/Images/Products/Misc%20Art/Paizo%20Publishing/full/PZOBBEUSPOL01.jpg",
+	],
+	["slugblaster", "https://slugblaster.com/assets/images/share.jpg?v=35e1eb8f"],
+	[
+		"tales-of-argosa",
+		"https://lowfantasygaming.com/wp-content/uploads/2026/01/argosa-hex-map-square-for-website.png",
+	],
+	[
+		"the-morrow-project",
+		"https://upload.wikimedia.org/wikipedia/en/5/57/Timeline_Morrow_Project_1st_ed_cover_1980.jpg",
+	],
+	[
+		"the-witcher-trpg",
+		"https://talsorianstore.com/cdn/shop/products/WitcherTRPGCover300dpi_600x.jpg?v=1538592644",
+	],
+	[
+		"thirsty-sword-lesbians",
+		"https://evilhat.com/wp-content/uploads/2021/10/products-TSL-Cover-Mockup-front-900px.jpg",
+	],
+	[
+		"timewatch-rpg",
+		"https://pelgranepress.com/wp-content/uploads/2020/04/Hardcover-PELGTW01-800x800.jpg",
+	],
+	[
+		"tricube-tales",
+		"https://keeper.farirpgs.com/.netlify/images?h=600&url=_astro%2Fimage.BrtJ3cgJ.png&w=600",
+	],
+	["uprising", "https://evilhat.com/wp-content/uploads/2018/09/Uprising-RPG-3d.webp"],
+	[
+		"uncharted-worlds",
+		"https://res.cloudinary.com/lunargent/images/f_auto,q_auto/v1617563452/corecover/corecover.jpeg",
+	],
+	["undying", "https://magpiegames.com/cdn/shop/products/UndyingHC-600x600-1_1024x1024.jpg"],
+	["vaults-of-vaarn", "https://vaultsofvaarn.com/wp-content/uploads/2022/07/fw2jd23wqauzr-n.jpeg"],
+	["villains-and-vigilantes", "https://upload.wikimedia.org/wikipedia/en/a/a8/V%26V_2nd_ed.jpg"],
+	[
+		"warhammer-40k-rogue-trader",
+		"https://upload.wikimedia.org/wikipedia/en/8/89/Rogue_Trader%2C_Core_Rulebook.jpg",
+	],
+	[
+		"warhammer-fantasy-roleplay",
+		"https://upload.wikimedia.org/wikipedia/en/7/7d/Warhammer_fantasy_roleplay_cover.jpg",
+	],
+	[
+		"worlds-in-peril",
+		"https://cf.geekdo-images.com/P1Fh97QZisgo9fw8JkmYng__opengraph/img/tpIj7zlVEupUiRAERYn0cBi95Dw=/0x100:840x541/fit-in/1200x630/filters:strip_icc()/pic2223156.png",
 	],
 ]);
 

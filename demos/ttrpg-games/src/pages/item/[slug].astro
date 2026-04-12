@@ -506,19 +506,6 @@ const hasDecisionGuideContent =
 						</section>
 					)
 				}
-
-				{
-					game.data.notes && (
-						<section class="glass-panel">
-							<div class="kicker" style="color: var(--gold-accent);">Notes</div>
-							<h2>Import notes</h2>
-							<div class="panel-content">
-								<p class="panel-copy">{game.data.notes}</p>
-							</div>
-						</section>
-					)
-				}
-
 				{
 					resolvedRelatedGames.length > 0 && (
 						<section class="glass-panel">

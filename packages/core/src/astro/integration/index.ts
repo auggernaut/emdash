@@ -198,7 +198,7 @@ export function emdash(config: EmDashConfig = {}): AstroIntegration {
 				});
 
 				// Inject all core routes
-				injectCoreRoutes(injectRoute);
+				injectCoreRoutes(injectRoute, { srcDir: astroConfig.srcDir });
 
 				// Only inject passkey/oauth/magic-link routes when NOT using external auth
 				if (!useExternalAuth) {

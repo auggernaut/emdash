@@ -13,6 +13,10 @@ const DEFAULT_SYNC_INTERVAL_MINUTES = 60;
 const RETRY_DELAY_MINUTES = 15;
 const STALE_LOCK_MINUTES = 30;
 const HTML_IMG_TAG_PATTERN = /<img\b[^>]*\bsrc=(["'])([^"']+)\1[^>]*>/gi;
+const DRIVETHRU_AFFILIATE_ID = "1659151";
+const DRIVETHRU_URL_PATTERN = /https?:\/\/(?:www\.)?drivethrurpg\.com\/[^\s"'<>)]*/gi;
+const HTTP_URL_PATTERN = /^http:\/\//i;
+const LEADING_EMPTY_QUERY_PARAM_PATTERN = /\?&/g;
 
 type ContentHandlerResult = {
 	success: boolean;
@@ -149,6 +153,40 @@ async function recordImport(
 
 function addMinutes(date: Date, minutes: number): string {
 	return new Date(date.getTime() + minutes * 60_000).toISOString();
+}
+
+function normalizeDriveThruUrl(urlText: string): string {
+	try {
+		let candidate = urlText
+			.trim()
+			.replace(HTTP_URL_PATTERN, "https://")
+			.replace(LEADING_EMPTY_QUERY_PARAM_PATTERN, "?");
+		const firstQuestionMark = candidate.indexOf("?");
+		if (firstQuestionMark !== -1) {
+			candidate =
+				candidate.slice(0, firstQuestionMark + 1) +
+				candidate.slice(firstQuestionMark + 1).replaceAll("?", "&");
+		}
+
+		const url = new URL(candidate);
+		if (!url.hostname.endsWith("drivethrurpg.com")) return urlText;
+
+		const preservedParams = new URLSearchParams();
+		for (const [key, value] of url.searchParams.entries()) {
+			if (key === "affiliate_id") continue;
+			preservedParams.append(key, value);
+		}
+		preservedParams.set("affiliate_id", DRIVETHRU_AFFILIATE_ID);
+		url.search = preservedParams.toString();
+		return url.toString();
+	} catch {
+		return urlText;
+	}
+}
+
+function normalizeDriveThruLinksInHtml(html: string): string {
+	if (!html.includes("drivethrurpg.com")) return html;
+	return html.replace(DRIVETHRU_URL_PATTERN, (match) => normalizeDriveThruUrl(match));
 }
 
 function getSyncIntervalMinutes(): number {
@@ -374,11 +412,12 @@ async function localizeBodyHtmlImages(
 	bodyHtml: string,
 ): Promise<string> {
 	if (!bodyHtml || !runtime.storage) return bodyHtml;
+	const normalizedBodyHtml = normalizeDriveThruLinksInHtml(bodyHtml);
 
 	const replacements = new Map<string, string>();
 	let imageIndex = 0;
 
-	for (const match of bodyHtml.matchAll(HTML_IMG_TAG_PATTERN)) {
+	for (const match of normalizedBodyHtml.matchAll(HTML_IMG_TAG_PATTERN)) {
 		const sourceUrl = match[2];
 		if (!sourceUrl || replacements.has(sourceUrl)) continue;
 		imageIndex += 1;
@@ -388,14 +427,17 @@ async function localizeBodyHtmlImages(
 		);
 	}
 
-	return bodyHtml.replace(HTML_IMG_TAG_PATTERN, (fullMatch, quote: string, sourceUrl: string) => {
-		const localized = replacements.get(sourceUrl);
-		if (!localized || localized === sourceUrl) {
-			return fullMatch;
-		}
+	return normalizedBodyHtml.replace(
+		HTML_IMG_TAG_PATTERN,
+		(fullMatch, quote: string, sourceUrl: string) => {
+			const localized = replacements.get(sourceUrl);
+			if (!localized || localized === sourceUrl) {
+				return fullMatch;
+			}
 
-		return fullMatch.replace(`${quote}${sourceUrl}${quote}`, `${quote}${localized}${quote}`);
-	});
+			return fullMatch.replace(`${quote}${sourceUrl}${quote}`, `${quote}${localized}${quote}`);
+		},
+	);
 }
 
 async function syncImportedPostTimestamps(
