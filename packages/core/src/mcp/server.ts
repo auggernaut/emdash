@@ -15,8 +15,10 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { McpError, ErrorCode } from "@modelcontextprotocol/sdk/types.js";
 import { z } from "zod";
 
+import { handleTermCreate, handleTermList } from "../api/handlers/taxonomies.js";
 import type { EmDashHandlers } from "../astro/types.js";
 import { hasScope } from "../auth/api-tokens.js";
+import { decodeBase64ToBytes } from "../utils/base64.js";
 
 const COLLECTION_SLUG_PATTERN = /^[a-z][a-z0-9_]*$/;
 
@@ -67,6 +69,19 @@ function errorResult(error: unknown): {
 } {
 	const msg = error instanceof Error ? error.message : String(error);
 	return { content: [{ type: "text", text: msg }], isError: true };
+}
+
+function flattenTermTree<T extends { children?: T[] }>(terms: T[]): T[] {
+	const flat: T[] = [];
+
+	for (const term of terms) {
+		flat.push(term);
+		if (Array.isArray(term.children) && term.children.length > 0) {
+			flat.push(...flattenTermTree(term.children));
+		}
+	}
+
+	return flat;
 }
 
 // ---------------------------------------------------------------------------
@@ -151,12 +166,14 @@ function requireOwnership(
 }
 
 /**
- * Extract the author ID from a content handler response.
+ * Extract the owner ID from a content handler response.
  *
  * Content handlers return `{ item: { id, authorId, ... }, _rev? }`.
- * This helper navigates that shape safely.
+ * This helper navigates that shape safely. Some imported or system-owned
+ * content may not have an authorId; in that case we return an empty string
+ * so canActOnOwn() falls back to the anyPermission branch for editors+.
  */
-function extractContentAuthorId(data: unknown): string {
+function extractContentOwnerId(data: unknown): string {
 	if (!data || typeof data !== "object") {
 		throw new McpError(
 			ErrorCode.InternalError,
@@ -166,14 +183,7 @@ function extractContentAuthorId(data: unknown): string {
 	const obj = data as Record<string, unknown>;
 	const item =
 		obj.item && typeof obj.item === "object" ? (obj.item as Record<string, unknown>) : obj;
-	const authorId = typeof item?.authorId === "string" ? item.authorId : "";
-	if (!authorId) {
-		throw new McpError(
-			ErrorCode.InternalError,
-			"Cannot determine content ownership: content has no authorId",
-		);
-	}
-	return authorId;
+	return typeof item?.authorId === "string" ? item.authorId : "";
 }
 
 /**
@@ -296,6 +306,12 @@ export function createMcpServer(): McpServer {
 					.record(z.string(), z.unknown())
 					.describe("Field values as key-value pairs matching the collection schema"),
 				slug: z.string().optional().describe("URL slug (auto-generated from title if omitted)"),
+				authorId: z
+					.string()
+					.optional()
+					.describe(
+						"Optional author ID to assign. Requires editor-level any-content edit permission when different from the authenticated user.",
+					),
 				status: z
 					.enum(["draft", "published"])
 					.optional()
@@ -316,7 +332,18 @@ export function createMcpServer(): McpServer {
 		async (args, extra) => {
 			requireScope(extra, "content:write");
 			requireRole(extra, Role.CONTRIBUTOR);
-			const { emdash, userId } = getExtra(extra);
+			const { emdash, userId, userRole } = getExtra(extra);
+			const user = { id: userId, role: userRole };
+			let authorId = userId;
+			if (args.authorId !== undefined) {
+				if (args.authorId !== userId && !hasPermission(user, "content:edit_any" as Permission)) {
+					throw new McpError(
+						ErrorCode.InvalidRequest,
+						"Insufficient permissions: setting authorId requires content:edit_any",
+					);
+				}
+				authorId = args.authorId;
+			}
 
 			// Creating a translation requires edit permission on the source item
 			if (args.translationOf) {
@@ -324,7 +351,7 @@ export function createMcpServer(): McpServer {
 				if (!source.success) return unwrap(source);
 				requireOwnership(
 					extra,
-					extractContentAuthorId(source.data),
+					extractContentOwnerId(source.data),
 					"content:edit_own",
 					"content:edit_any",
 				);
@@ -332,7 +359,6 @@ export function createMcpServer(): McpServer {
 
 			// Publishing requires publish permission — create as draft then publish
 			if (args.status === "published") {
-				const user = { id: userId, role: getExtra(extra).userRole };
 				if (!hasPermission(user, "content:publish_own" as Permission)) {
 					throw new McpError(
 						ErrorCode.InvalidRequest,
@@ -342,7 +368,7 @@ export function createMcpServer(): McpServer {
 				const result = await emdash.handleContentCreate(args.collection, {
 					data: args.data,
 					slug: args.slug,
-					authorId: userId,
+					authorId,
 					locale: args.locale,
 					translationOf: args.translationOf,
 				});
@@ -358,7 +384,7 @@ export function createMcpServer(): McpServer {
 				await emdash.handleContentCreate(args.collection, {
 					data: args.data,
 					slug: args.slug,
-					authorId: userId,
+					authorId,
 					locale: args.locale,
 					translationOf: args.translationOf,
 				}),
@@ -383,6 +409,12 @@ export function createMcpServer(): McpServer {
 					.optional()
 					.describe("Field values to update (only include changed fields)"),
 				slug: z.string().optional().describe("New URL slug"),
+				authorId: z
+					.string()
+					.optional()
+					.describe(
+						"Optional author ID to assign. Requires editor-level any-content edit permission when different from the authenticated user.",
+					),
 				status: z
 					.enum(["draft", "published"])
 					.optional()
@@ -398,7 +430,8 @@ export function createMcpServer(): McpServer {
 		async (args, extra) => {
 			requireScope(extra, "content:write");
 			requireRole(extra, Role.AUTHOR);
-			const { emdash, userId } = getExtra(extra);
+			const { emdash, userId, userRole } = getExtra(extra);
+			const user = { id: userId, role: userRole };
 
 			// Fetch item to check ownership
 			const existing = await emdash.handleContentGet(args.collection, args.id);
@@ -407,18 +440,28 @@ export function createMcpServer(): McpServer {
 			}
 			requireOwnership(
 				extra,
-				extractContentAuthorId(existing.data),
+				extractContentOwnerId(existing.data),
 				"content:edit_own",
 				"content:edit_any",
 			);
 
 			const resolvedId = extractContentId(existing.data) ?? args.id;
+			let authorId = userId;
+			if (args.authorId !== undefined) {
+				if (args.authorId !== userId && !hasPermission(user, "content:edit_any" as Permission)) {
+					throw new McpError(
+						ErrorCode.InvalidRequest,
+						"Insufficient permissions: setting authorId requires content:edit_any",
+					);
+				}
+				authorId = args.authorId;
+			}
 
 			// Status transitions route through dedicated handlers for proper revision management
 			if (args.status === "published") {
 				requireOwnership(
 					extra,
-					extractContentAuthorId(existing.data),
+					extractContentOwnerId(existing.data),
 					"content:publish_own",
 					"content:publish_any",
 				);
@@ -426,7 +469,7 @@ export function createMcpServer(): McpServer {
 					const updateResult = await emdash.handleContentUpdate(args.collection, resolvedId, {
 						data: args.data,
 						slug: args.slug,
-						authorId: userId,
+						authorId,
 						_rev: args._rev,
 					});
 					if (!updateResult.success) return unwrap(updateResult);
@@ -437,7 +480,7 @@ export function createMcpServer(): McpServer {
 			if (args.status === "draft") {
 				requireOwnership(
 					extra,
-					extractContentAuthorId(existing.data),
+					extractContentOwnerId(existing.data),
 					"content:publish_own",
 					"content:publish_any",
 				);
@@ -445,7 +488,7 @@ export function createMcpServer(): McpServer {
 					const updateResult = await emdash.handleContentUpdate(args.collection, resolvedId, {
 						data: args.data,
 						slug: args.slug,
-						authorId: userId,
+						authorId,
 						_rev: args._rev,
 					});
 					if (!updateResult.success) return unwrap(updateResult);
@@ -457,7 +500,7 @@ export function createMcpServer(): McpServer {
 				await emdash.handleContentUpdate(args.collection, resolvedId, {
 					data: args.data,
 					slug: args.slug,
-					authorId: userId,
+					authorId,
 					_rev: args._rev,
 				}),
 			);
@@ -490,7 +533,7 @@ export function createMcpServer(): McpServer {
 			}
 			requireOwnership(
 				extra,
-				extractContentAuthorId(existing.data),
+				extractContentOwnerId(existing.data),
 				"content:delete_own",
 				"content:delete_any",
 			);
@@ -522,7 +565,7 @@ export function createMcpServer(): McpServer {
 			}
 			requireOwnership(
 				extra,
-				extractContentAuthorId(existing.data),
+				extractContentOwnerId(existing.data),
 				"content:edit_own",
 				"content:edit_any",
 			);
@@ -578,7 +621,7 @@ export function createMcpServer(): McpServer {
 			}
 			requireOwnership(
 				extra,
-				extractContentAuthorId(existing.data),
+				extractContentOwnerId(existing.data),
 				"content:publish_own",
 				"content:publish_any",
 			);
@@ -612,7 +655,7 @@ export function createMcpServer(): McpServer {
 			}
 			requireOwnership(
 				extra,
-				extractContentAuthorId(existing.data),
+				extractContentOwnerId(existing.data),
 				"content:publish_own",
 				"content:publish_any",
 			);
@@ -650,7 +693,7 @@ export function createMcpServer(): McpServer {
 			}
 			requireOwnership(
 				extra,
-				extractContentAuthorId(existing.data),
+				extractContentOwnerId(existing.data),
 				"content:publish_own",
 				"content:publish_any",
 			);
@@ -706,7 +749,7 @@ export function createMcpServer(): McpServer {
 			}
 			requireOwnership(
 				extra,
-				extractContentAuthorId(existing.data),
+				extractContentOwnerId(existing.data),
 				"content:edit_own",
 				"content:edit_any",
 			);
@@ -781,6 +824,74 @@ export function createMcpServer(): McpServer {
 			requireScope(extra, "content:read");
 			const ec = getEmDash(extra);
 			return unwrap(await ec.handleContentTranslations(args.collection, args.id));
+		},
+	);
+
+	server.registerTool(
+		"content_get_terms",
+		{
+			title: "Get Content Terms",
+			description:
+				"Get the taxonomy terms assigned to a content item for a specific taxonomy. " +
+				"Useful for inspecting categories, tags, genres, or other term-based " +
+				"classification attached to a game or page.",
+			inputSchema: z.object({
+				collection: z.string().describe("Collection slug"),
+				id: z.string().describe("Content item ID or slug"),
+				taxonomy: z.string().describe("Taxonomy name"),
+			}),
+			annotations: { readOnlyHint: true },
+		},
+		async (args, extra) => {
+			requireScope(extra, "content:read");
+			const ec = getEmDash(extra);
+
+			const existing = await ec.handleContentGet(args.collection, args.id);
+			if (!existing.success) {
+				return unwrap(existing);
+			}
+
+			const resolvedId = extractContentId(existing.data) ?? args.id;
+			return unwrap(await ec.handleContentTermsGet(args.collection, resolvedId, args.taxonomy));
+		},
+	);
+
+	server.registerTool(
+		"content_set_terms",
+		{
+			title: "Set Content Terms",
+			description:
+				"Replace the taxonomy terms assigned to a content item for a specific " +
+				"taxonomy. Use this to curate categories, genres, themes, and other " +
+				"term-based relationships on games or pages.",
+			inputSchema: z.object({
+				collection: z.string().describe("Collection slug"),
+				id: z.string().describe("Content item ID or slug"),
+				taxonomy: z.string().describe("Taxonomy name"),
+				termIds: z.array(z.string()).describe("Term IDs to assign to this item"),
+			}),
+		},
+		async (args, extra) => {
+			requireScope(extra, "content:write");
+			requireRole(extra, Role.AUTHOR);
+			const ec = getEmDash(extra);
+
+			const existing = await ec.handleContentGet(args.collection, args.id);
+			if (!existing.success) {
+				return unwrap(existing);
+			}
+
+			requireOwnership(
+				extra,
+				extractContentOwnerId(existing.data),
+				"content:edit_own",
+				"content:edit_any",
+			);
+
+			const resolvedId = extractContentId(existing.data) ?? args.id;
+			return unwrap(
+				await ec.handleContentTermsSet(args.collection, resolvedId, args.taxonomy, args.termIds),
+			);
 		},
 	);
 
@@ -1120,6 +1231,66 @@ export function createMcpServer(): McpServer {
 	);
 
 	server.registerTool(
+		"media_upload",
+		{
+			title: "Upload Media",
+			description:
+				"Upload a new media file by providing its bytes as standard base64. " +
+				"Creates the media record, stores the file through the configured storage " +
+				"backend, and returns the resulting media item.",
+			inputSchema: z.object({
+				filename: z.string().describe("Original filename"),
+				mimeType: z.string().describe("MIME type, e.g. image/png"),
+				dataBase64: z.string().describe("File bytes encoded as standard base64"),
+				width: z.number().int().positive().optional().describe("Image width in pixels"),
+				height: z.number().int().positive().optional().describe("Image height in pixels"),
+				alt: z.string().optional().describe("Alt text for accessibility"),
+				caption: z.string().optional().describe("Caption text"),
+				thumbnailBase64: z
+					.string()
+					.optional()
+					.describe("Optional thumbnail bytes as standard base64 for placeholder generation"),
+				thumbnailMimeType: z
+					.string()
+					.optional()
+					.describe("Optional thumbnail MIME type (defaults to mimeType)"),
+			}),
+		},
+		async (args, extra) => {
+			requireScope(extra, "media:write");
+			requireRole(extra, Role.CONTRIBUTOR);
+			const { emdash, userId } = getExtra(extra);
+
+			let body: Uint8Array;
+			let thumbnailBody: Uint8Array | undefined;
+			try {
+				body = decodeBase64ToBytes(args.dataBase64);
+				thumbnailBody = args.thumbnailBase64
+					? decodeBase64ToBytes(args.thumbnailBase64)
+					: undefined;
+			} catch {
+				throw new McpError(ErrorCode.InvalidRequest, "Invalid base64 payload");
+			}
+
+			return unwrap(
+				await emdash.handleMediaUpload({
+					filename: args.filename,
+					mimeType: args.mimeType,
+					body,
+					size: body.byteLength,
+					width: args.width,
+					height: args.height,
+					alt: args.alt,
+					caption: args.caption,
+					thumbnailBody,
+					thumbnailMimeType: args.thumbnailMimeType,
+					authorId: userId,
+				}),
+			);
+		},
+	);
+
+	server.registerTool(
 		"media_update",
 		{
 			title: "Update Media Metadata",
@@ -1301,36 +1472,20 @@ export function createMcpServer(): McpServer {
 		async (args, extra) => {
 			requireScope(extra, "content:read");
 			const ec = getEmDash(extra);
-			try {
-				const taxonomy = (await ec.db
-					.selectFrom("_emdash_taxonomy_defs" as never)
-					.select("id" as never)
-					.where("name" as never, "=", args.taxonomy as never)
-					.executeTakeFirst()) as { id: string } | undefined;
+			const result = await handleTermList(ec.db, args.taxonomy);
+			if (!result.success) return unwrap(result);
 
-				if (!taxonomy) return errorResult(`Taxonomy '${args.taxonomy}' not found`);
+			const allTerms = flattenTermTree(result.data.terms);
+			const limit = Math.min(args.limit ?? 50, 100);
+			const startIndex = args.cursor
+				? Math.max(0, allTerms.findIndex((term) => term.id === args.cursor) + 1)
+				: 0;
+			const slice = allTerms.slice(startIndex, startIndex + limit + 1);
+			const hasMore = slice.length > limit;
+			const items = hasMore ? slice.slice(0, limit) : slice;
+			const nextCursor = hasMore ? items.at(-1)?.id : undefined;
 
-				const limit = Math.min(args.limit ?? 50, 100);
-				let query = ec.db
-					.selectFrom("_emdash_taxonomy_terms" as never)
-					.selectAll()
-					.where("taxonomy_id" as never, "=", taxonomy.id as never)
-					.orderBy("label" as never, "asc")
-					.limit(limit + 1);
-
-				if (args.cursor) {
-					query = query.where("id" as never, ">" as never, args.cursor as never);
-				}
-
-				const rows = (await query.execute()) as Array<{ id: string }>;
-				const hasMore = rows.length > limit;
-				const items = hasMore ? rows.slice(0, limit) : rows;
-				const nextCursor = hasMore ? items.at(-1)?.id : undefined;
-
-				return jsonResult({ items, nextCursor });
-			} catch (error) {
-				return errorResult(error);
-			}
+			return jsonResult({ items, nextCursor });
 		},
 	);
 
@@ -1353,40 +1508,14 @@ export function createMcpServer(): McpServer {
 			requireScope(extra, "content:write");
 			requireRole(extra, Role.EDITOR);
 			const ec = getEmDash(extra);
-			try {
-				const { ulid } = await import("ulidx");
-
-				const taxonomy = (await ec.db
-					.selectFrom("_emdash_taxonomy_defs" as never)
-					.select("id" as never)
-					.where("name" as never, "=", args.taxonomy as never)
-					.executeTakeFirst()) as { id: string } | undefined;
-
-				if (!taxonomy) return errorResult(`Taxonomy '${args.taxonomy}' not found`);
-
-				const id = ulid();
-				await ec.db
-					.insertInto("_emdash_taxonomy_terms" as never)
-					.values({
-						id,
-						taxonomy_id: taxonomy.id,
-						slug: args.slug,
-						label: args.label,
-						parent_id: args.parentId ?? null,
-						description: args.description ?? null,
-					} as never)
-					.execute();
-
-				const term = await ec.db
-					.selectFrom("_emdash_taxonomy_terms" as never)
-					.selectAll()
-					.where("id" as never, "=", id as never)
-					.executeTakeFirstOrThrow();
-
-				return jsonResult(term);
-			} catch (error) {
-				return errorResult(error);
-			}
+			return unwrap(
+				await handleTermCreate(ec.db, args.taxonomy, {
+					slug: args.slug,
+					label: args.label,
+					parentId: args.parentId,
+					description: args.description,
+				}),
+			);
 		},
 	);
 
@@ -1530,7 +1659,7 @@ export function createMcpServer(): McpServer {
 			}
 			requireOwnership(
 				extra,
-				extractContentAuthorId(existing.data),
+				extractContentOwnerId(existing.data),
 				"content:edit_own",
 				"content:edit_any",
 			);

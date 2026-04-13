@@ -5,18 +5,12 @@
  * POST /_emdash/api/media - Upload new media (via configured storage adapter)
  */
 
-import * as path from "node:path";
-
 import type { APIRoute } from "astro";
-import { ulid } from "ulidx";
 
 import { requirePerm } from "#api/authorize.js";
 import { apiError, apiSuccess, handleError, unwrapResult } from "#api/error.js";
 import { isParseError, parseQuery } from "#api/parse.js";
 import { mediaListQuery } from "#api/schemas.js";
-import { MediaRepository } from "#db/repositories/media.js";
-import { generatePlaceholder } from "#media/placeholder.js";
-import { computeContentHash } from "#utils/hash.js";
 
 import type { MediaItem } from "../../types.js";
 
@@ -80,7 +74,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
 	const denied = requirePerm(user, "media:upload");
 	if (denied) return denied;
 
-	if (!emdash?.handleMediaCreate) {
+	if (!emdash?.handleMediaUpload) {
 		return apiError("NOT_CONFIGURED", "EmDash is not initialized", 500);
 	}
 
@@ -118,30 +112,8 @@ export const POST: APIRoute = async ({ request, locals }) => {
 			);
 		}
 
-		// Get file content and compute hash
+		// Get file content
 		const buffer = new Uint8Array(await file.arrayBuffer());
-		const contentHash = await computeContentHash(buffer);
-
-		// Check for existing media with same content hash (deduplication)
-		const repo = new MediaRepository(emdash.db);
-		const existing = await repo.findByContentHash(contentHash);
-		if (existing) {
-			// Same content already exists - return existing item
-			const itemWithUrl = addUrlToMedia(existing);
-			return apiSuccess({ item: itemWithUrl, deduplicated: true });
-		}
-
-		// Generate unique storage key
-		const id = ulid();
-		const ext = path.extname(file.name) || "";
-		const storageKey = `${id}${ext}`;
-
-		// Upload to storage using the configured adapter
-		await emdash.storage.upload({
-			key: storageKey,
-			body: buffer,
-			contentType: file.type,
-		});
 
 		// Get image dimensions from form data (sent by client)
 		const widthEntry = formData.get("width");
@@ -156,41 +128,21 @@ export const POST: APIRoute = async ({ request, locals }) => {
 		// instead of the full buffer to avoid OOM on memory-constrained runtimes.
 		const thumbnailEntry = formData.get("thumbnail");
 		const thumbnail = thumbnailEntry instanceof File ? thumbnailEntry : null;
+		const thumbnailBuffer = thumbnail ? new Uint8Array(await thumbnail.arrayBuffer()) : undefined;
 
-		let placeholder: Awaited<ReturnType<typeof generatePlaceholder>> = null;
-		if (file.type.startsWith("image/")) {
-			if (thumbnail) {
-				const thumbBuffer = new Uint8Array(await thumbnail.arrayBuffer());
-				placeholder = await generatePlaceholder(thumbBuffer, thumbnail.type);
-			} else {
-				const clientDims = width && height ? { width, height } : undefined;
-				placeholder = await generatePlaceholder(buffer, file.type, clientDims);
-			}
-		}
-
-		// Create media record
-		const result = await emdash.handleMediaCreate({
+		const result = await emdash.handleMediaUpload({
 			filename: file.name,
 			mimeType: file.type,
+			body: buffer,
 			size: file.size,
 			width,
 			height,
-			storageKey,
-			contentHash,
-			blurhash: placeholder?.blurhash,
-			dominantColor: placeholder?.dominantColor,
+			thumbnailBody: thumbnailBuffer,
+			thumbnailMimeType: thumbnail?.type,
 			authorId: user?.id,
 		});
 
-		if (!result.success) {
-			// Clean up the uploaded file on failure
-			try {
-				await emdash.storage.delete(storageKey);
-			} catch {
-				// Ignore cleanup errors
-			}
-			return unwrapResult(result);
-		}
+		if (!result.success) return unwrapResult(result);
 
 		// Add URL to the response (relative URL for portability)
 		const itemWithUrl = addUrlToMedia(result.data.item);

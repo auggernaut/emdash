@@ -5,7 +5,7 @@
 import type { Kysely } from "kysely";
 import { ulid } from "ulidx";
 
-import { TaxonomyRepository } from "../../database/repositories/taxonomy.js";
+import { ContentRepository, TaxonomyRepository } from "../../database/repositories/index.js";
 import type { Database } from "../../database/types.js";
 import type { ApiResult } from "../types.js";
 
@@ -58,6 +58,18 @@ export interface TermGetResponse {
 	};
 }
 
+export interface ContentTermData {
+	id: string;
+	name: string;
+	slug: string;
+	label: string;
+	parentId: string | null;
+}
+
+export interface ContentTermsResponse {
+	terms: ContentTermData[];
+}
+
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
@@ -84,6 +96,22 @@ function buildTree(flatTerms: TermWithCount[]): TermWithCount[] {
 	return roots;
 }
 
+function mapContentTerm(term: {
+	id: string;
+	name: string;
+	slug: string;
+	label: string;
+	parentId: string | null;
+}): ContentTermData {
+	return {
+		id: term.id,
+		name: term.name,
+		slug: term.slug,
+		label: term.label,
+		parentId: term.parentId,
+	};
+}
+
 /**
  * Look up a taxonomy definition by name, returning a NOT_FOUND error if missing.
  */
@@ -108,6 +136,29 @@ async function requireTaxonomyDef(
 	}
 
 	return { success: true, def };
+}
+
+async function requireEntryId(
+	db: Kysely<Database>,
+	collection: string,
+	entryIdOrSlug: string,
+): Promise<
+	{ success: true; entryId: string } | { success: false; error: { code: string; message: string } }
+> {
+	const repo = new ContentRepository(db);
+	const entry = await repo.findByIdOrSlug(collection, entryIdOrSlug);
+
+	if (!entry) {
+		return {
+			success: false,
+			error: {
+				code: "NOT_FOUND",
+				message: `Content item not found: ${entryIdOrSlug}`,
+			},
+		};
+	}
+
+	return { success: true, entryId: entry.id };
 }
 
 // ---------------------------------------------------------------------------
@@ -518,6 +569,95 @@ export async function handleTermDelete(
 		return {
 			success: false,
 			error: { code: "TERM_DELETE_ERROR", message: "Failed to delete term" },
+		};
+	}
+}
+
+/**
+ * Get terms assigned to a content entry for a specific taxonomy.
+ */
+export async function handleContentTermsGet(
+	db: Kysely<Database>,
+	collection: string,
+	entryIdOrSlug: string,
+	taxonomyName: string,
+): Promise<ApiResult<ContentTermsResponse>> {
+	try {
+		const lookup = await requireTaxonomyDef(db, taxonomyName);
+		if (!lookup.success) return lookup;
+
+		const entryLookup = await requireEntryId(db, collection, entryIdOrSlug);
+		if (!entryLookup.success) return entryLookup;
+
+		const repo = new TaxonomyRepository(db);
+		const terms = await repo.getTermsForEntry(collection, entryLookup.entryId, taxonomyName);
+
+		return {
+			success: true,
+			data: {
+				terms: terms.map(mapContentTerm),
+			},
+		};
+	} catch {
+		return {
+			success: false,
+			error: { code: "CONTENT_TERMS_GET_ERROR", message: "Failed to get entry terms" },
+		};
+	}
+}
+
+/**
+ * Replace all terms assigned to a content entry for a specific taxonomy.
+ */
+export async function handleContentTermsSet(
+	db: Kysely<Database>,
+	collection: string,
+	entryIdOrSlug: string,
+	taxonomyName: string,
+	termIds: string[],
+): Promise<ApiResult<ContentTermsResponse>> {
+	try {
+		const lookup = await requireTaxonomyDef(db, taxonomyName);
+		if (!lookup.success) return lookup;
+
+		const entryLookup = await requireEntryId(db, collection, entryIdOrSlug);
+		if (!entryLookup.success) return entryLookup;
+
+		const uniqueTermIds = [...new Set(termIds)];
+		const repo = new TaxonomyRepository(db);
+
+		for (const termId of uniqueTermIds) {
+			const term = await repo.findById(termId);
+			if (!term) {
+				return {
+					success: false,
+					error: { code: "NOT_FOUND", message: `Term ID '${termId}' not found` },
+				};
+			}
+			if (term.name !== taxonomyName) {
+				return {
+					success: false,
+					error: {
+						code: "VALIDATION_ERROR",
+						message: `Term ID '${termId}' does not belong to taxonomy '${taxonomyName}'`,
+					},
+				};
+			}
+		}
+
+		await repo.setTermsForEntry(collection, entryLookup.entryId, taxonomyName, uniqueTermIds);
+		const terms = await repo.getTermsForEntry(collection, entryLookup.entryId, taxonomyName);
+
+		return {
+			success: true,
+			data: {
+				terms: terms.map(mapContentTerm),
+			},
+		};
+	} catch {
+		return {
+			success: false,
+			error: { code: "CONTENT_TERMS_SET_ERROR", message: "Failed to set entry terms" },
 		};
 	}
 }

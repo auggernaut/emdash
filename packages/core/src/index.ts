@@ -60,6 +60,8 @@ export {
 	handleContentDiscardDraft,
 	handleContentCompare,
 	handleContentTranslations,
+	handleContentTermsGet,
+	handleContentTermsSet,
 	handleMediaList,
 	handleMediaGet,
 	handleMediaCreate,
@@ -81,6 +83,7 @@ export type {
 	ManifestResponse,
 	FieldDescriptor,
 	ApiContext,
+	ContentTermsResponse,
 } from "./api/index.js";
 
 // Content converters (Portable Text <-> ProseMirror)

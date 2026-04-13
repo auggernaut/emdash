@@ -8,10 +8,9 @@
 import type { APIRoute } from "astro";
 
 import { requirePerm, requireOwnerPerm } from "#api/authorize.js";
-import { apiError, apiSuccess, handleError, requireDb } from "#api/error.js";
+import { apiError, unwrapResult, requireDb } from "#api/error.js";
 import { parseBody, isParseError } from "#api/parse.js";
 import { contentTermsBody } from "#api/schemas.js";
-import { TaxonomyRepository } from "#db/repositories/taxonomy.js";
 
 export const prerender = false;
 
@@ -33,20 +32,10 @@ export const GET: APIRoute = async ({ params, locals }) => {
 	if (dbErr) return dbErr;
 
 	try {
-		const repo = new TaxonomyRepository(emdash!.db);
-		const terms = await repo.getTermsForEntry(collection, id, taxonomy);
-
-		return apiSuccess({
-			terms: terms.map((t) => ({
-				id: t.id,
-				name: t.name,
-				slug: t.slug,
-				label: t.label,
-				parentId: t.parentId,
-			})),
-		});
+		return unwrapResult(await emdash!.handleContentTermsGet(collection, id, taxonomy));
 	} catch (error) {
-		return handleError(error, "Failed to get entry terms", "TERMS_GET_ERROR");
+		const message = error instanceof Error ? error.message : "Failed to get entry terms";
+		return apiError("TERMS_GET_ERROR", message, 500);
 	}
 };
 
@@ -101,40 +90,9 @@ export const POST: APIRoute = async ({ params, request, locals }) => {
 		const body = await parseBody(request, contentTermsBody);
 		if (isParseError(body)) return body;
 		const { termIds } = body;
-
-		const repo = new TaxonomyRepository(emdash!.db);
-
-		// Verify all term IDs exist and belong to the correct taxonomy
-		for (const termId of termIds) {
-			const term = await repo.findById(termId);
-			if (!term) {
-				return apiError("NOT_FOUND", `Term ID '${termId}' not found`, 404);
-			}
-			if (term.name !== taxonomy) {
-				return apiError(
-					"VALIDATION_ERROR",
-					`Term ID '${termId}' does not belong to taxonomy '${taxonomy}'`,
-					400,
-				);
-			}
-		}
-
-		// Set the terms (replaces existing)
-		await repo.setTermsForEntry(collection, id, taxonomy, termIds);
-
-		// Get the updated terms
-		const terms = await repo.getTermsForEntry(collection, id, taxonomy);
-
-		return apiSuccess({
-			terms: terms.map((t) => ({
-				id: t.id,
-				name: t.name,
-				slug: t.slug,
-				label: t.label,
-				parentId: t.parentId,
-			})),
-		});
+		return unwrapResult(await emdash!.handleContentTermsSet(collection, id, taxonomy, termIds));
 	} catch (error) {
-		return handleError(error, "Failed to set entry terms", "TERMS_SET_ERROR");
+		const message = error instanceof Error ? error.message : "Failed to set entry terms";
+		return apiError("TERMS_SET_ERROR", message, 500);
 	}
 };

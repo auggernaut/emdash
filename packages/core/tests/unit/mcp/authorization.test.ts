@@ -23,7 +23,7 @@ import { createMcpServer } from "../../../src/mcp/server.js";
 
 const INSUFFICIENT_PERMISSIONS_RE = /Insufficient permissions/i;
 const INSUFFICIENT_SCOPE_RE = /Insufficient scope/i;
-const NO_AUTHOR_ID_RE = /content has no authorId/i;
+const NO_AUTHOR_ID_RE = /Insufficient permissions/i;
 
 const AUTHOR_USER_ID = "user_author";
 const OTHER_USER_ID = "user_other";
@@ -31,6 +31,7 @@ const CONTENT_ID = "01CONTENT";
 const CONTENT_SLUG = "test-post";
 const REVISION_ID = "01REVISION";
 const MEDIA_ID = "01MEDIA";
+const TERM_ID = "01TERM";
 
 // ---------------------------------------------------------------------------
 // Mock EmDashHandlers
@@ -123,6 +124,34 @@ function createMockHandlers(ownerId: string = AUTHOR_USER_ID): EmDashHandlers {
 			success: true,
 			data: { translations: [] },
 		}),
+		handleContentTermsGet: vi.fn().mockResolvedValue({
+			success: true,
+			data: {
+				terms: [
+					{
+						id: TERM_ID,
+						name: "genre",
+						slug: "fantasy",
+						label: "Fantasy",
+						parentId: null,
+					},
+				],
+			},
+		}),
+		handleContentTermsSet: vi.fn().mockResolvedValue({
+			success: true,
+			data: {
+				terms: [
+					{
+						id: TERM_ID,
+						name: "genre",
+						slug: "fantasy",
+						label: "Fantasy",
+						parentId: null,
+					},
+				],
+			},
+		}),
 		handleMediaGet: vi.fn().mockResolvedValue({
 			success: true,
 			data: { item: mediaItem },
@@ -130,6 +159,10 @@ function createMockHandlers(ownerId: string = AUTHOR_USER_ID): EmDashHandlers {
 		handleMediaList: vi.fn().mockResolvedValue({
 			success: true,
 			data: { items: [mediaItem] },
+		}),
+		handleMediaUpload: vi.fn().mockResolvedValue({
+			success: true,
+			data: { item: mediaItem },
 		}),
 		handleMediaUpdate: vi.fn().mockResolvedValue({
 			success: true,
@@ -266,6 +299,54 @@ describe("MCP Authorization", () => {
 	// -----------------------------------------------------------------------
 
 	describe("content ownership enforcement", () => {
+		it("AUTHOR can create content for themselves", async () => {
+			const handlers = createMockHandlers(AUTHOR_USER_ID);
+			({ client, cleanup } = await setupMcpPair({
+				userId: AUTHOR_USER_ID,
+				userRole: Role.AUTHOR,
+				handlers,
+			}));
+
+			const result = await client.callTool({
+				name: "content_create",
+				arguments: {
+					collection: "post",
+					data: { title: "My post" },
+					authorId: AUTHOR_USER_ID,
+				},
+			});
+
+			expect(result.isError).toBeFalsy();
+			expect(handlers.handleContentCreate).toHaveBeenCalledWith(
+				"post",
+				expect.objectContaining({
+					data: { title: "My post" },
+					authorId: AUTHOR_USER_ID,
+				}),
+			);
+		});
+
+		it("AUTHOR cannot create content for another user", async () => {
+			const handlers = createMockHandlers(AUTHOR_USER_ID);
+			({ client, cleanup } = await setupMcpPair({
+				userId: AUTHOR_USER_ID,
+				userRole: Role.AUTHOR,
+				handlers,
+			}));
+
+			const result = await client.callTool({
+				name: "content_create",
+				arguments: {
+					collection: "post",
+					data: { title: "Nope" },
+					authorId: OTHER_USER_ID,
+				},
+			});
+
+			expect(result.isError).toBe(true);
+			expect(handlers.handleContentCreate).not.toHaveBeenCalled();
+		});
+
 		it("CONTRIBUTOR cannot update another user's content", async () => {
 			// Content owned by AUTHOR_USER_ID, caller is OTHER_USER_ID with CONTRIBUTOR role
 			const handlers = createMockHandlers(AUTHOR_USER_ID);
@@ -351,6 +432,57 @@ describe("MCP Authorization", () => {
 
 			expect(result.isError).toBeFalsy();
 			expect(handlers.handleContentUpdate).toHaveBeenCalled();
+		});
+
+		it("EDITOR can reassign content ownership explicitly", async () => {
+			const handlers = createMockHandlers(AUTHOR_USER_ID);
+			({ client, cleanup } = await setupMcpPair({
+				userId: OTHER_USER_ID,
+				userRole: Role.EDITOR,
+				handlers,
+			}));
+
+			const result = await client.callTool({
+				name: "content_update",
+				arguments: {
+					collection: "post",
+					id: CONTENT_ID,
+					data: { title: "Editor update" },
+					authorId: AUTHOR_USER_ID,
+				},
+			});
+
+			expect(result.isError).toBeFalsy();
+			expect(handlers.handleContentUpdate).toHaveBeenCalledWith(
+				"post",
+				CONTENT_ID,
+				expect.objectContaining({
+					data: { title: "Editor update" },
+					authorId: AUTHOR_USER_ID,
+				}),
+			);
+		});
+
+		it("AUTHOR cannot reassign content ownership", async () => {
+			const handlers = createMockHandlers(AUTHOR_USER_ID);
+			({ client, cleanup } = await setupMcpPair({
+				userId: AUTHOR_USER_ID,
+				userRole: Role.AUTHOR,
+				handlers,
+			}));
+
+			const result = await client.callTool({
+				name: "content_update",
+				arguments: {
+					collection: "post",
+					id: CONTENT_ID,
+					data: { title: "Should fail" },
+					authorId: OTHER_USER_ID,
+				},
+			});
+
+			expect(result.isError).toBe(true);
+			expect(handlers.handleContentUpdate).not.toHaveBeenCalled();
 		});
 	});
 
@@ -677,6 +809,104 @@ describe("MCP Authorization", () => {
 			expect(result.isError).toBeFalsy();
 		});
 
+		it("rejects content_set_terms without content:write scope", async () => {
+			const handlers = createMockHandlers(AUTHOR_USER_ID);
+			({ client, cleanup } = await setupMcpPair({
+				userId: AUTHOR_USER_ID,
+				userRole: Role.AUTHOR,
+				handlers,
+				tokenScopes: ["content:read"],
+			}));
+
+			const result = await client.callTool({
+				name: "content_set_terms",
+				arguments: {
+					collection: "post",
+					id: CONTENT_ID,
+					taxonomy: "genre",
+					termIds: [TERM_ID],
+				},
+			});
+
+			expect(result.isError).toBe(true);
+			const text = (result.content as Array<{ text: string }>)[0]?.text ?? "";
+			expect(text).toMatch(INSUFFICIENT_SCOPE_RE);
+		});
+
+		it("allows content_get_terms with content:read scope", async () => {
+			const handlers = createMockHandlers(AUTHOR_USER_ID);
+			({ client, cleanup } = await setupMcpPair({
+				userId: AUTHOR_USER_ID,
+				userRole: Role.AUTHOR,
+				handlers,
+				tokenScopes: ["content:read"],
+			}));
+
+			const result = await client.callTool({
+				name: "content_get_terms",
+				arguments: {
+					collection: "post",
+					id: CONTENT_ID,
+					taxonomy: "genre",
+				},
+			});
+
+			expect(result.isError).toBeFalsy();
+			expect(handlers.handleContentTermsGet).toHaveBeenCalledWith("post", CONTENT_ID, "genre");
+		});
+
+		it("rejects media_upload without media:write scope", async () => {
+			const handlers = createMockHandlers(AUTHOR_USER_ID);
+			({ client, cleanup } = await setupMcpPair({
+				userId: AUTHOR_USER_ID,
+				userRole: Role.CONTRIBUTOR,
+				handlers,
+				tokenScopes: ["media:read"],
+			}));
+
+			const result = await client.callTool({
+				name: "media_upload",
+				arguments: {
+					filename: "test.png",
+					mimeType: "image/png",
+					dataBase64: "aGVsbG8=",
+				},
+			});
+
+			expect(result.isError).toBe(true);
+			const text = (result.content as Array<{ text: string }>)[0]?.text ?? "";
+			expect(text).toMatch(INSUFFICIENT_SCOPE_RE);
+		});
+
+		it("allows media_upload with media:write scope", async () => {
+			const handlers = createMockHandlers(AUTHOR_USER_ID);
+			({ client, cleanup } = await setupMcpPair({
+				userId: AUTHOR_USER_ID,
+				userRole: Role.CONTRIBUTOR,
+				handlers,
+				tokenScopes: ["media:read", "media:write"],
+			}));
+
+			const result = await client.callTool({
+				name: "media_upload",
+				arguments: {
+					filename: "test.png",
+					mimeType: "image/png",
+					dataBase64: "aGVsbG8=",
+				},
+			});
+
+			expect(result.isError).toBeFalsy();
+			expect(handlers.handleMediaUpload).toHaveBeenCalledWith(
+				expect.objectContaining({
+					filename: "test.png",
+					mimeType: "image/png",
+					authorId: AUTHOR_USER_ID,
+					body: expect.any(Uint8Array),
+				}),
+			);
+		});
+
 		it("session auth (no tokenScopes) allows all scopes", async () => {
 			const handlers = createMockHandlers(AUTHOR_USER_ID);
 			({ client, cleanup } = await setupMcpPair({
@@ -750,6 +980,34 @@ describe("MCP Authorization", () => {
 	});
 
 	// -----------------------------------------------------------------------
+	// content_set_terms ownership
+	// -----------------------------------------------------------------------
+
+	describe("content_set_terms ownership", () => {
+		it("AUTHOR cannot change terms on another user's content", async () => {
+			const handlers = createMockHandlers(AUTHOR_USER_ID);
+			({ client, cleanup } = await setupMcpPair({
+				userId: OTHER_USER_ID,
+				userRole: Role.AUTHOR,
+				handlers,
+			}));
+
+			const result = await client.callTool({
+				name: "content_set_terms",
+				arguments: {
+					collection: "post",
+					id: CONTENT_ID,
+					taxonomy: "genre",
+					termIds: [TERM_ID],
+				},
+			});
+
+			expect(result.isError).toBe(true);
+			expect(handlers.handleContentTermsSet).not.toHaveBeenCalled();
+		});
+	});
+
+	// -----------------------------------------------------------------------
 	// resolvedId: slug -> ULID resolution before handler calls
 	// -----------------------------------------------------------------------
 
@@ -814,6 +1072,47 @@ describe("MCP Authorization", () => {
 				expect.objectContaining({ data: { title: "Updated" } }),
 			);
 		});
+
+		it("content_get_terms passes resolvedId (not slug) to handler", async () => {
+			const handlers = createMockHandlers(AUTHOR_USER_ID);
+			({ client, cleanup } = await setupMcpPair({
+				userId: AUTHOR_USER_ID,
+				userRole: Role.AUTHOR,
+				handlers,
+			}));
+
+			const result = await client.callTool({
+				name: "content_get_terms",
+				arguments: { collection: "post", id: CONTENT_SLUG, taxonomy: "genre" },
+			});
+
+			expect(result.isError).toBeFalsy();
+			expect(handlers.handleContentTermsGet).toHaveBeenCalledWith("post", CONTENT_ID, "genre");
+		});
+
+		it("content_set_terms passes resolvedId (not slug) to handler", async () => {
+			const handlers = createMockHandlers(AUTHOR_USER_ID);
+			({ client, cleanup } = await setupMcpPair({
+				userId: AUTHOR_USER_ID,
+				userRole: Role.AUTHOR,
+				handlers,
+			}));
+
+			const result = await client.callTool({
+				name: "content_set_terms",
+				arguments: {
+					collection: "post",
+					id: CONTENT_SLUG,
+					taxonomy: "genre",
+					termIds: [TERM_ID],
+				},
+			});
+
+			expect(result.isError).toBeFalsy();
+			expect(handlers.handleContentTermsSet).toHaveBeenCalledWith("post", CONTENT_ID, "genre", [
+				TERM_ID,
+			]);
+		});
 	});
 
 	// -----------------------------------------------------------------------
@@ -821,18 +1120,50 @@ describe("MCP Authorization", () => {
 	// -----------------------------------------------------------------------
 
 	describe("missing authorId handling", () => {
-		it("returns clear error when content has no authorId", async () => {
-			// Create handlers where content has no authorId (e.g. imported content)
+		const contentWithoutAuthor = {
+			id: CONTENT_ID,
+			slug: "imported-post",
+			status: "draft",
+			title: "Imported",
+			createdAt: new Date().toISOString(),
+			updatedAt: new Date().toISOString(),
+		};
+
+		it("allows editors to update content with no authorId", async () => {
 			const handlers = createMockHandlers(AUTHOR_USER_ID);
-			const contentWithoutAuthor = {
-				id: CONTENT_ID,
-				slug: "imported-post",
-				status: "draft",
-				title: "Imported",
-				createdAt: new Date().toISOString(),
-				updatedAt: new Date().toISOString(),
-				// no authorId
-			};
+			handlers.handleContentGet = vi.fn().mockResolvedValue({
+				success: true,
+				data: { item: contentWithoutAuthor },
+			});
+
+			({ client, cleanup } = await setupMcpPair({
+				userId: OTHER_USER_ID,
+				userRole: Role.EDITOR,
+				handlers,
+			}));
+
+			const result = await client.callTool({
+				name: "content_update",
+				arguments: {
+					collection: "post",
+					id: CONTENT_ID,
+					data: { title: "Editor update" },
+				},
+			});
+
+			expect(result.isError).toBeFalsy();
+			expect(handlers.handleContentUpdate).toHaveBeenCalledWith(
+				"post",
+				CONTENT_ID,
+				expect.objectContaining({
+					data: { title: "Editor update" },
+					authorId: OTHER_USER_ID,
+				}),
+			);
+		});
+
+		it("denies authors when content has no authorId", async () => {
+			const handlers = createMockHandlers(AUTHOR_USER_ID);
 			handlers.handleContentGet = vi.fn().mockResolvedValue({
 				success: true,
 				data: { item: contentWithoutAuthor },

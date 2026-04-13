@@ -266,6 +266,19 @@ export interface EmDashHandlers {
 
 	handleContentTranslations: (collection: string, id: string) => Promise<HandlerResponse>;
 
+	handleContentTermsGet: (
+		collection: string,
+		id: string,
+		taxonomy: string,
+	) => Promise<HandlerResponse>;
+
+	handleContentTermsSet: (
+		collection: string,
+		id: string,
+		taxonomy: string,
+		termIds: string[],
+	) => Promise<HandlerResponse>;
+
 	// Media handlers
 	handleMediaList: (params: {
 		cursor?: string;
@@ -274,6 +287,20 @@ export interface EmDashHandlers {
 	}) => Promise<HandlerResponse>;
 
 	handleMediaGet: (id: string) => Promise<HandlerResponse>;
+
+	handleMediaUpload: (input: {
+		filename: string;
+		mimeType: string;
+		body: Uint8Array;
+		size?: number;
+		width?: number;
+		height?: number;
+		alt?: string;
+		caption?: string;
+		thumbnailBody?: Uint8Array;
+		thumbnailMimeType?: string;
+		authorId?: string;
+	}) => Promise<HandlerResponse>;
 
 	handleMediaCreate: (input: {
 		filename: string;

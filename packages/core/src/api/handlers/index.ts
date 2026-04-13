@@ -141,6 +141,8 @@ export {
 	handleTermGet,
 	handleTermUpdate,
 	handleTermDelete,
+	handleContentTermsGet,
+	handleContentTermsSet,
 	type TaxonomyDef,
 	type TaxonomyListResponse,
 	type TermData,
@@ -148,6 +150,8 @@ export {
 	type TermListResponse,
 	type TermResponse,
 	type TermGetResponse,
+	type ContentTermData,
+	type ContentTermsResponse,
 } from "./taxonomies.js";
 
 // Marketplace handlers

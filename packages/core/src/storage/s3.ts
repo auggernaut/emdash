@@ -13,6 +13,7 @@ import {
 	HeadObjectCommand,
 	ListObjectsV2Command,
 	type ListObjectsV2Response,
+	type S3ClientConfig,
 } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { z } from "zod";
@@ -131,20 +132,19 @@ export class S3Storage implements Storage {
 		this.publicUrl = config.publicUrl;
 		this.endpoint = config.endpoint;
 
-		const clientConfig: ConstructorParameters<typeof S3Client>[0] = {
+		// oxlint-disable-next-line @typescript-eslint/no-unsafe-type-assertion
+		const clientConfig = {
 			endpoint: config.endpoint,
 			region: config.region || "auto",
-			...(config.accessKeyId && config.secretAccessKey
-				? {
-						credentials: {
-							accessKeyId: config.accessKeyId,
-							secretAccessKey: config.secretAccessKey,
-						},
-					}
-				: {}),
 			// Required for R2 and some S3-compatible services
 			forcePathStyle: true,
-		};
+		} as S3ClientConfig;
+		if (config.accessKeyId && config.secretAccessKey) {
+			clientConfig.credentials = {
+				accessKeyId: config.accessKeyId,
+				secretAccessKey: config.secretAccessKey,
+			};
+		}
 		this.client = new S3Client(clientConfig);
 	}
 

@@ -21,6 +21,7 @@ export default defineConfig({
 		react(),
 		emdash({
 			database: sqlite({ url: "file:./data.db" }),
+			mcp: true,
 			plugins: [relatedGamesWidgetPlugin(), categoryPageWidgetsPlugin()],
 			storage: local({
 				directory: "./uploads",

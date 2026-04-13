@@ -9,6 +9,7 @@
 
 import type { Element } from "@emdash-cms/blocks";
 import { Kysely, sql, type Dialect } from "kysely";
+import { ulid } from "ulidx";
 import virtualConfig from "virtual:emdash/config";
 
 import { validateRev } from "./api/rev.js";
@@ -21,10 +22,12 @@ import type { EmDashManifest, ManifestCollection } from "./astro/types.js";
 import { getAuthMode } from "./auth/mode.js";
 import { isSqlite } from "./database/dialect-helpers.js";
 import { runMigrations } from "./database/migrations/runner.js";
+import { MediaRepository } from "./database/repositories/media.js";
 import { RevisionRepository } from "./database/repositories/revision.js";
 import type { ContentItem as ContentItemInternal } from "./database/repositories/types.js";
 import { validateIdentifier } from "./database/validate.js";
 import { normalizeMediaValue } from "./media/normalize.js";
+import { generatePlaceholder } from "./media/placeholder.js";
 import type { MediaProvider, MediaProviderCapabilities } from "./media/types.js";
 import type { SandboxedPlugin, SandboxRunner } from "./plugins/sandbox/types.js";
 import type {
@@ -38,7 +41,7 @@ import type {
 	PageFragmentContribution,
 } from "./plugins/types.js";
 import type { FieldType } from "./schema/types.js";
-import { hashString } from "./utils/hash.js";
+import { computeContentHash, hashString } from "./utils/hash.js";
 import { COMMIT, VERSION } from "./version.js";
 
 const LEADING_SLASH_PATTERN = /^\//;
@@ -64,6 +67,14 @@ const VALID_LINK_REL = new Set([
 	"license",
 	"site.standard.document",
 ]);
+
+/** Maximum allowed file upload size (50 MB). */
+const MAX_UPLOAD_SIZE = 50 * 1024 * 1024;
+
+function getFilenameExtension(filename: string): string {
+	const lastDot = filename.lastIndexOf(".");
+	return lastDot > 0 ? filename.slice(lastDot) : "";
+}
 
 /**
  * Runtime validation for sandboxed plugin metadata contributions.
@@ -118,6 +129,8 @@ import {
 	handleContentDiscardDraft,
 	handleContentCompare,
 	handleContentTranslations,
+	handleContentTermsGet,
+	handleContentTermsSet,
 	handleMediaList,
 	handleMediaGet,
 	handleMediaCreate,
@@ -1701,6 +1714,14 @@ export class EmDashRuntime {
 		return handleContentTranslations(this.db, collection, id);
 	}
 
+	async handleContentTermsGet(collection: string, id: string, taxonomy: string) {
+		return handleContentTermsGet(this.db, collection, id, taxonomy);
+	}
+
+	async handleContentTermsSet(collection: string, id: string, taxonomy: string, termIds: string[]) {
+		return handleContentTermsSet(this.db, collection, id, taxonomy, termIds);
+	}
+
 	// =========================================================================
 	// Media Handlers
 	// =========================================================================
@@ -1713,16 +1734,124 @@ export class EmDashRuntime {
 		return handleMediaGet(this.db, id);
 	}
 
+	async handleMediaUpload(input: {
+		filename: string;
+		mimeType: string;
+		body: Uint8Array;
+		size?: number;
+		width?: number;
+		height?: number;
+		alt?: string;
+		caption?: string;
+		thumbnailBody?: Uint8Array;
+		thumbnailMimeType?: string;
+		authorId?: string;
+	}) {
+		if (!this.storage) {
+			return {
+				success: false as const,
+				error: { code: "NO_STORAGE", message: "Storage not configured" },
+			};
+		}
+
+		const size = input.size ?? input.body.byteLength;
+		if (size > MAX_UPLOAD_SIZE) {
+			return {
+				success: false as const,
+				error: {
+					code: "PAYLOAD_TOO_LARGE",
+					message: `File exceeds maximum size of ${MAX_UPLOAD_SIZE / 1024 / 1024}MB`,
+				},
+			};
+		}
+
+		const contentHash = await computeContentHash(input.body);
+		const repo = new MediaRepository(this.db);
+		const existing = await repo.findByContentHash(contentHash);
+		if (existing) {
+			return {
+				success: true as const,
+				data: { item: existing, deduplicated: true },
+			};
+		}
+
+		const storageKey = `${ulid()}${getFilenameExtension(input.filename)}`;
+
+		try {
+			await this.storage.upload({
+				key: storageKey,
+				body: input.body,
+				contentType: input.mimeType,
+			});
+
+			let placeholder: Awaited<ReturnType<typeof generatePlaceholder>> = null;
+			if (input.mimeType.startsWith("image/")) {
+				if (input.thumbnailBody) {
+					placeholder = await generatePlaceholder(
+						input.thumbnailBody,
+						input.thumbnailMimeType ?? input.mimeType,
+					);
+				} else {
+					const dims =
+						input.width && input.height ? { width: input.width, height: input.height } : undefined;
+					placeholder = await generatePlaceholder(input.body, input.mimeType, dims);
+				}
+			}
+
+			const result = await this.handleMediaCreate({
+				filename: input.filename,
+				mimeType: input.mimeType,
+				size,
+				width: input.width,
+				height: input.height,
+				alt: input.alt,
+				caption: input.caption,
+				storageKey,
+				contentHash,
+				blurhash: placeholder?.blurhash,
+				dominantColor: placeholder?.dominantColor,
+				authorId: input.authorId,
+			});
+
+			if (!result.success) {
+				try {
+					await this.storage.delete(storageKey);
+				} catch {
+					// Ignore cleanup errors
+				}
+			}
+
+			return result;
+		} catch {
+			try {
+				await this.storage.delete(storageKey);
+			} catch {
+				// Ignore cleanup errors
+			}
+
+			return {
+				success: false as const,
+				error: {
+					code: "UPLOAD_ERROR",
+					message: "Upload failed",
+				},
+			};
+		}
+	}
+
 	async handleMediaCreate(input: {
 		filename: string;
 		mimeType: string;
 		size?: number;
 		width?: number;
 		height?: number;
+		alt?: string;
+		caption?: string;
 		storageKey: string;
 		contentHash?: string;
 		blurhash?: string;
 		dominantColor?: string;
+		authorId?: string;
 	}) {
 		// Run beforeUpload hooks
 		let processedInput = input;

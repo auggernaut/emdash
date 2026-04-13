@@ -279,10 +279,13 @@ export const onRequest = defineMiddleware(async (context, next) => {
 				handleContentDiscardDraft: runtime.handleContentDiscardDraft.bind(runtime),
 				handleContentCompare: runtime.handleContentCompare.bind(runtime),
 				handleContentTranslations: runtime.handleContentTranslations.bind(runtime),
+				handleContentTermsGet: runtime.handleContentTermsGet.bind(runtime),
+				handleContentTermsSet: runtime.handleContentTermsSet.bind(runtime),
 
 				// Media handlers
 				handleMediaList: runtime.handleMediaList.bind(runtime),
 				handleMediaGet: runtime.handleMediaGet.bind(runtime),
+				handleMediaUpload: runtime.handleMediaUpload.bind(runtime),
 				handleMediaCreate: runtime.handleMediaCreate.bind(runtime),
 				handleMediaUpdate: runtime.handleMediaUpdate.bind(runtime),
 				handleMediaDelete: runtime.handleMediaDelete.bind(runtime),
