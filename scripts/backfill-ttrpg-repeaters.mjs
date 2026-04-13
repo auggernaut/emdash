@@ -5,9 +5,9 @@ import { parseArgs } from "node:util";
 
 const scriptDir = path.dirname(new URL(import.meta.url).pathname);
 const rootDir = path.resolve(scriptDir, "..");
-const defaultDatabasePath = path.join(rootDir, "demos/ttrpg-games/data.db");
-const requireFromDemo = createRequire(path.join(rootDir, "demos/ttrpg-games/package.json"));
-const BetterSqlite3 = requireFromDemo("better-sqlite3");
+const defaultDatabasePath = path.join(rootDir, "sites/ttrpg-games/data.db");
+const requireFromSite = createRequire(path.join(rootDir, "sites/ttrpg-games/package.json"));
+const BetterSqlite3 = requireFromSite("better-sqlite3");
 
 const FIELD_CONFIGS = [
 	{

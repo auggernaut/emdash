@@ -5,14 +5,14 @@ description: Curate standalone tabletop RPG entries for the ttrpg-games site. Us
 
 # TTRPG Game Curation
 
-Use this skill for `/Users/home/Dev/git/emdash/demos/ttrpg-games` when the task is about adding or enriching a game entry in the directory.
+Use this skill for `/Users/home/Dev/git/emdash/sites/ttrpg-games` when the task is about adding or enriching a game entry in the directory.
 
 ## Scope
 
 This site is a directory of standalone games. Treat the live database as the source of truth:
 
-- Live DB: `/Users/home/Dev/git/emdash/demos/ttrpg-games/data.db`
-- Backups: `/Users/home/Dev/git/emdash/demos/ttrpg-games/backups/`
+- Live DB: `/Users/home/Dev/git/emdash/sites/ttrpg-games/data.db`
+- Backups: `/Users/home/Dev/git/emdash/sites/ttrpg-games/backups/`
 - Do not treat `seed/seed.json` as the primary editing surface unless the user explicitly asks for seed work.
 
 When possible, use the EmDash MCP/API surface for content operations instead of writing rows directly.

@@ -6,10 +6,10 @@ import { parseArgs } from "node:util";
 
 const scriptDir = path.dirname(new URL(import.meta.url).pathname);
 const rootDir = path.resolve(scriptDir, "..");
-const defaultDatabasePath = path.join(rootDir, "demos/ttrpg-games/data.db");
-const defaultEnvPath = path.join(rootDir, "demos/ttrpg-games/.env");
-const uploadsDir = path.join(rootDir, "demos/ttrpg-games/uploads");
-const publicGameImagesDir = path.join(rootDir, "demos/ttrpg-games/public/images/games");
+const defaultDatabasePath = path.join(rootDir, "sites/ttrpg-games/data.db");
+const defaultEnvPath = path.join(rootDir, "sites/ttrpg-games/.env");
+const uploadsDir = path.join(rootDir, "sites/ttrpg-games/uploads");
+const publicGameImagesDir = path.join(rootDir, "sites/ttrpg-games/public/images/games");
 const cloudinaryPrefix = "https://res.cloudinary.com/";
 const LINE_SPLIT_PATTERN = /\r?\n/;
 const STRIP_QUOTES_PATTERN = /^['"]|['"]$/g;

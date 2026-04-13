@@ -3,8 +3,8 @@ import fs from "node:fs";
 import path from "node:path";
 
 const rootDir = "/Users/home/Dev/git/emdash";
-const databasePath = path.join(rootDir, "demos/ttrpg-games/data.db");
-const backupsDir = path.join(rootDir, "demos/ttrpg-games/backups");
+const databasePath = path.join(rootDir, "sites/ttrpg-games/data.db");
+const backupsDir = path.join(rootDir, "sites/ttrpg-games/backups");
 const HTML_TAG_PATTERN = /<[^>]+>/g;
 const HTML_NBSP_PATTERN = /&nbsp;/g;
 const HTML_AMP_PATTERN = /&amp;/g;

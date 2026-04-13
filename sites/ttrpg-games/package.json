@@ -1,5 +1,5 @@
 {
-  "name": "@emdash-cms/demo-ttrpg-games",
+  "name": "@auggernaut/ttrpg-games",
   "version": "0.0.3",
   "private": true,
   "type": "module",

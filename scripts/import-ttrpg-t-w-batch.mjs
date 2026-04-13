@@ -4,8 +4,8 @@ import fs from "node:fs";
 import path from "node:path";
 
 const rootDir = "/Users/home/Dev/git/emdash";
-const databasePath = path.join(rootDir, "demos/ttrpg-games/data.db");
-const backupsDir = path.join(rootDir, "demos/ttrpg-games/backups");
+const databasePath = path.join(rootDir, "sites/ttrpg-games/data.db");
+const backupsDir = path.join(rootDir, "sites/ttrpg-games/backups");
 const cloudinaryPrefix = "https://res.cloudinary.com/";
 const pad2 = (value) => String(value).padStart(2, "0");
 

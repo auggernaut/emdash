@@ -12,10 +12,10 @@ import {
 
 const scriptDir = path.dirname(new URL(import.meta.url).pathname);
 const rootDir = path.resolve(scriptDir, "..");
-const defaultDatabasePath = path.join(rootDir, "demos/ttrpg-games/data.db");
+const defaultDatabasePath = path.join(rootDir, "sites/ttrpg-games/data.db");
 const categoriesCsvPath = path.join(rootDir, "ttrpg-categories.csv");
-const requireFromDemo = createRequire(path.join(rootDir, "demos/ttrpg-games/package.json"));
-const BetterSqlite3 = requireFromDemo("better-sqlite3");
+const requireFromSite = createRequire(path.join(rootDir, "sites/ttrpg-games/package.json"));
+const BetterSqlite3 = requireFromSite("better-sqlite3");
 
 function pad(value) {
 	return String(value).padStart(2, "0");

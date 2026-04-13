@@ -24,7 +24,7 @@ const watchCommands = [
 	},
 	{
 		label: "ttrpg",
-		args: ["--filter", "@emdash-cms/demo-ttrpg-games", "dev"],
+		args: ["--filter", "@auggernaut/ttrpg-games", "dev"],
 	},
 ];
 

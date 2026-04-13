@@ -2,6 +2,7 @@ packages:
   - packages/*
   - packages/plugins/*
   - demos/*
+  - sites/*
   - templates/*
   - packages/blocks/playground
   - e2e/fixture

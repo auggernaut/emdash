@@ -5,7 +5,7 @@ import { parseArgs } from "node:util";
 
 const scriptDir = path.dirname(new URL(import.meta.url).pathname);
 const rootDir = path.resolve(scriptDir, "..");
-const defaultDatabasePath = path.join(rootDir, "demos/ttrpg-games/data.db");
+const defaultDatabasePath = path.join(rootDir, "sites/ttrpg-games/data.db");
 
 const CURATED_ASSIGNMENTS = {
 	alienrpg: {

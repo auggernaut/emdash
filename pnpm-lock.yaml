@@ -429,49 +429,6 @@ importers:
         specifier: 'catalog:'
         version: 0.9.7(prettier-plugin-astro@0.14.1)(prettier@3.8.1)(typescript@6.0.0-beta)
 
-  demos/ttrpg-games:
-    dependencies:
-      '@astrojs/node':
-        specifier: 'catalog:'
-        version: 10.0.0(astro@6.0.1(@types/node@24.10.13)(jiti@2.6.1)(lightningcss@1.31.1)(rollup@4.55.2)(tsx@4.21.0)(typescript@6.0.0-beta)(yaml@2.8.2))
-      '@astrojs/react':
-        specifier: 'catalog:'
-        version: 5.0.0(@types/node@24.10.13)(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(jiti@2.6.1)(lightningcss@1.31.1)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(tsx@4.21.0)(yaml@2.8.2)
-      '@emdash-cms/gutenberg-to-portable-text':
-        specifier: workspace:*
-        version: link:../../packages/gutenberg-to-portable-text
-      astro:
-        specifier: 'catalog:'
-        version: 6.0.1(@types/node@24.10.13)(jiti@2.6.1)(lightningcss@1.31.1)(rollup@4.55.2)(tsx@4.21.0)(typescript@6.0.0-beta)(yaml@2.8.2)
-      better-sqlite3:
-        specifier: 'catalog:'
-        version: 12.8.0
-      emdash:
-        specifier: workspace:*
-        version: link:../../packages/core
-      kysely:
-        specifier: ^0.27.0
-        version: 0.27.6
-      react:
-        specifier: 'catalog:'
-        version: 19.2.4
-      react-dom:
-        specifier: 'catalog:'
-        version: 19.2.4(react@19.2.4)
-      seobot:
-        specifier: ^1.5.0
-        version: 1.5.0
-    devDependencies:
-      '@astrojs/check':
-        specifier: 'catalog:'
-        version: 0.9.7(prettier-plugin-astro@0.14.1)(prettier@3.8.1)(typescript@6.0.0-beta)
-      '@types/react':
-        specifier: 'catalog:'
-        version: 19.2.14
-      '@types/react-dom':
-        specifier: 'catalog:'
-        version: 19.2.3(@types/react@19.2.14)
-
   docs:
     dependencies:
       '@astrojs/cloudflare':
@@ -1339,6 +1296,49 @@ importers:
       '@x402/svm':
         specifier: ^2.8.0
         version: 2.8.0(@solana/kit@5.5.1(typescript@5.9.3))(@solana/sysvars@5.5.1(typescript@5.9.3))
+
+  sites/ttrpg-games:
+    dependencies:
+      '@astrojs/node':
+        specifier: 'catalog:'
+        version: 10.0.0(astro@6.0.1(@types/node@24.10.13)(jiti@2.6.1)(lightningcss@1.31.1)(rollup@4.55.2)(tsx@4.21.0)(typescript@6.0.0-beta)(yaml@2.8.2))
+      '@astrojs/react':
+        specifier: 'catalog:'
+        version: 5.0.0(@types/node@24.10.13)(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(jiti@2.6.1)(lightningcss@1.31.1)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(tsx@4.21.0)(yaml@2.8.2)
+      '@emdash-cms/gutenberg-to-portable-text':
+        specifier: workspace:*
+        version: link:../../packages/gutenberg-to-portable-text
+      astro:
+        specifier: 'catalog:'
+        version: 6.0.1(@types/node@24.10.13)(jiti@2.6.1)(lightningcss@1.31.1)(rollup@4.55.2)(tsx@4.21.0)(typescript@6.0.0-beta)(yaml@2.8.2)
+      better-sqlite3:
+        specifier: 'catalog:'
+        version: 12.8.0
+      emdash:
+        specifier: workspace:*
+        version: link:../../packages/core
+      kysely:
+        specifier: ^0.27.0
+        version: 0.27.6
+      react:
+        specifier: 'catalog:'
+        version: 19.2.4
+      react-dom:
+        specifier: 'catalog:'
+        version: 19.2.4(react@19.2.4)
+      seobot:
+        specifier: ^1.5.0
+        version: 1.5.0
+    devDependencies:
+      '@astrojs/check':
+        specifier: 'catalog:'
+        version: 0.9.7(prettier-plugin-astro@0.14.1)(prettier@3.8.1)(typescript@6.0.0-beta)
+      '@types/react':
+        specifier: 'catalog:'
+        version: 19.2.14
+      '@types/react-dom':
+        specifier: 'catalog:'
+        version: 19.2.3(@types/react@19.2.14)
 
   templates/blank:
     dependencies:
