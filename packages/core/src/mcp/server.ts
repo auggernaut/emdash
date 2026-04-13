@@ -15,7 +15,6 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { McpError, ErrorCode } from "@modelcontextprotocol/sdk/types.js";
 import { z } from "zod";
 
-import { handleTermCreate, handleTermList } from "../api/handlers/taxonomies.js";
 import type { EmDashHandlers } from "../astro/types.js";
 import { hasScope } from "../auth/api-tokens.js";
 import { decodeBase64ToBytes } from "../utils/base64.js";
@@ -69,19 +68,6 @@ function errorResult(error: unknown): {
 } {
 	const msg = error instanceof Error ? error.message : String(error);
 	return { content: [{ type: "text", text: msg }], isError: true };
-}
-
-function flattenTermTree<T extends { children?: T[] }>(terms: T[]): T[] {
-	const flat: T[] = [];
-
-	for (const term of terms) {
-		flat.push(term);
-		if (Array.isArray(term.children) && term.children.length > 0) {
-			flat.push(...flattenTermTree(term.children));
-		}
-	}
-
-	return flat;
 }
 
 // ---------------------------------------------------------------------------
@@ -1428,26 +1414,8 @@ export function createMcpServer(): McpServer {
 			requireScope(extra, "content:read");
 			const ec = getEmDash(extra);
 			try {
-				const rows = (await ec.db
-					.selectFrom("_emdash_taxonomy_defs" as never)
-					.selectAll()
-					.execute()) as Array<{
-					id: string;
-					name: string;
-					label: string;
-					label_singular: string | null;
-					hierarchical: number;
-					collections: string | null;
-				}>;
-				const taxonomies = rows.map((row) => ({
-					id: row.id,
-					name: row.name,
-					label: row.label,
-					labelSingular: row.label_singular ?? undefined,
-					hierarchical: row.hierarchical === 1,
-					collections: row.collections ? JSON.parse(row.collections) : [],
-				}));
-				return jsonResult(taxonomies);
+				const { handleTaxonomyList } = await import("../api/handlers/taxonomies.js");
+				return unwrap(await handleTaxonomyList(ec.db));
 			} catch (error) {
 				return errorResult(error);
 			}
@@ -1472,20 +1440,48 @@ export function createMcpServer(): McpServer {
 		async (args, extra) => {
 			requireScope(extra, "content:read");
 			const ec = getEmDash(extra);
-			const result = await handleTermList(ec.db, args.taxonomy);
-			if (!result.success) return unwrap(result);
+			try {
+				// Verify taxonomy exists via handler layer
+				const { handleTaxonomyList } = await import("../api/handlers/taxonomies.js");
+				const listResult = await handleTaxonomyList(ec.db);
+				if (!listResult.success) return unwrap(listResult);
 
-			const allTerms = flattenTermTree(result.data.terms);
-			const limit = Math.min(args.limit ?? 50, 100);
-			const startIndex = args.cursor
-				? Math.max(0, allTerms.findIndex((term) => term.id === args.cursor) + 1)
-				: 0;
-			const slice = allTerms.slice(startIndex, startIndex + limit + 1);
-			const hasMore = slice.length > limit;
-			const items = hasMore ? slice.slice(0, limit) : slice;
-			const nextCursor = hasMore ? items.at(-1)?.id : undefined;
+				const taxonomies = (listResult.data as { taxonomies: Array<{ name: string; id?: string }> })
+					.taxonomies;
+				const taxonomy = taxonomies.find((t: { name: string }) => t.name === args.taxonomy);
+				if (!taxonomy) return errorResult(`Taxonomy '${args.taxonomy}' not found`);
 
-			return jsonResult({ items, nextCursor });
+				// Paginated term query via repository (avoids N+1 of handleTermList)
+				const { TaxonomyRepository } = await import("../database/repositories/taxonomy.js");
+				const repo = new TaxonomyRepository(ec.db);
+				const limit = Math.min(args.limit ?? 50, 100);
+				const terms = await repo.findByName(args.taxonomy);
+
+				// Manual cursor pagination over the sorted results
+				let startIdx = 0;
+				if (args.cursor) {
+					const cursorIdx = terms.findIndex((t) => t.id === args.cursor);
+					if (cursorIdx >= 0) startIdx = cursorIdx + 1;
+				}
+
+				const page = terms.slice(startIdx, startIdx + limit);
+				const hasMore = startIdx + limit < terms.length;
+				const nextCursor = hasMore ? page.at(-1)?.id : undefined;
+
+				return jsonResult({
+					items: page.map((t) => ({
+						id: t.id,
+						name: t.name,
+						slug: t.slug,
+						label: t.label,
+						parentId: t.parentId,
+						description: typeof t.data?.description === "string" ? t.data.description : undefined,
+					})),
+					nextCursor,
+				});
+			} catch (error) {
+				return errorResult(error);
+			}
 		},
 	);
 
@@ -1508,14 +1504,19 @@ export function createMcpServer(): McpServer {
 			requireScope(extra, "content:write");
 			requireRole(extra, Role.EDITOR);
 			const ec = getEmDash(extra);
-			return unwrap(
-				await handleTermCreate(ec.db, args.taxonomy, {
-					slug: args.slug,
-					label: args.label,
-					parentId: args.parentId,
-					description: args.description,
-				}),
-			);
+			try {
+				const { handleTermCreate } = await import("../api/handlers/taxonomies.js");
+				return unwrap(
+					await handleTermCreate(ec.db, args.taxonomy, {
+						slug: args.slug,
+						label: args.label,
+						parentId: args.parentId,
+						description: args.description,
+					}),
+				);
+			} catch (error) {
+				return errorResult(error);
+			}
 		},
 	);
 

@@ -216,6 +216,8 @@ export type {
 	ResolvedHook,
 	ResolvedPluginHooks,
 	ContentHookEvent,
+	ContentDeleteEvent,
+	ContentPublishStateChangeEvent,
 	MediaUploadEvent,
 	HookResult,
 	PluginRoute,
