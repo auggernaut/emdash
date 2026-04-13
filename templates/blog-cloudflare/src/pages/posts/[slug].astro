@@ -4,6 +4,7 @@ import {
 	getEmDashCollection,
 	getEntryTerms,
 	getSeoMeta,
+	decodeSlug,
 	getSiteSettings,
 } from "emdash";
 import {
@@ -18,7 +19,7 @@ import PostCard from "../../components/PostCard.astro";
 import { getReadingTime } from "../../utils/reading-time";
 import { resolveBlogSiteIdentity } from "../../utils/site-identity";
 
-const { slug } = Astro.params;
+const slug = decodeSlug(Astro.params.slug);
 
 if (!slug) {
 	return Astro.redirect("/404");
@@ -101,6 +102,7 @@ const publishDate =
 
 <Base
 	title={seo.title}
+	pageTitle={seo.ogTitle}
 	description={seo.description}
 	image={seo.ogImage}
 	canonical={seo.canonical}
@@ -216,7 +218,7 @@ const publishDate =
 					<h1 class="article-title" {...post.edit.title}>{post.data.title}</h1>
 					{
 						post.data.excerpt && (
-							<p class="article-excerpt">{post.data.excerpt}</p>
+							<p class="article-excerpt" {...post.edit.excerpt}>{post.data.excerpt}</p>
 						)
 					}
 				</header>

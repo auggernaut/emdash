@@ -1,4 +1,23 @@
+import { execSync } from "node:child_process";
+import { readFileSync } from "node:fs";
+
 import { defineConfig } from "tsdown";
+
+function readPackageVersion(): string {
+	const pkg: unknown = JSON.parse(readFileSync("package.json", "utf-8"));
+	if (pkg && typeof pkg === "object" && "version" in pkg && typeof pkg.version === "string") {
+		return pkg.version;
+	}
+	throw new Error("package.json is missing a string version");
+}
+
+const commit = (() => {
+	try {
+		return execSync("git rev-parse --short HEAD", { encoding: "utf-8" }).trim();
+	} catch {
+		return "unknown";
+	}
+})();
 
 export default defineConfig({
 	entry: [
@@ -45,6 +64,10 @@ export default defineConfig({
 	format: "esm",
 	dts: true,
 	clean: true,
+	define: {
+		__EMDASH_VERSION__: JSON.stringify(readPackageVersion()),
+		__EMDASH_COMMIT__: JSON.stringify(commit),
+	},
 	// Externalize native modules, dialect-specific packages, and internal shared modules
 	external: [
 		// Native modules that use __filename

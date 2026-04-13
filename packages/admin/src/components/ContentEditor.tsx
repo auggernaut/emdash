@@ -549,7 +549,7 @@ export function ContentEditor({
 					{!isNew && (
 						<>
 							{supportsDrafts && hasPendingChanges && onDiscardDraft && (
-								<Dialog.Root disablePointerDismissal>
+								<Dialog.Root>
 									<Dialog.Trigger
 										render={(p) => (
 											<Button {...p} type="button" variant="outline" size="sm" icon={<X />}>
@@ -717,7 +717,11 @@ export function ContentEditor({
 										<div className="mt-1 flex flex-wrap items-center gap-1.5">
 											{supportsDrafts ? (
 												<>
-													{isLive && <Badge variant="primary">Published</Badge>}
+													{isLive && (
+														<Badge variant="primary" className="text-white">
+															Published
+														</Badge>
+													)}
 													{hasPendingChanges && <Badge variant="secondary">Pending changes</Badge>}
 													{!isLive && !hasSchedule && <Badge variant="secondary">Draft</Badge>}
 													{hasSchedule && <Badge variant="outline">Scheduled</Badge>}
@@ -1193,6 +1197,7 @@ function FieldRenderer({
 		case "boolean":
 			return (
 				<Switch
+					id={id}
 					label={label}
 					checked={typeof value === "boolean" ? value : value === 1}
 					onCheckedChange={handleChange}
@@ -1202,7 +1207,7 @@ function FieldRenderer({
 		case "portableText": {
 			const labelId = `${id}-label`;
 			return (
-				<div>
+				<div id={id}>
 					{!minimal && (
 						<span
 							id={labelId}
@@ -1257,6 +1262,7 @@ function FieldRenderer({
 			}
 			return (
 				<Select
+					id={id}
 					label={label}
 					value={typeof value === "string" ? value : ""}
 					onValueChange={(v) => handleChange(v ?? "")}
@@ -1316,6 +1322,7 @@ function FieldRenderer({
 				value != null && typeof value === "object" ? (value as ImageFieldValue) : undefined;
 			return (
 				<ImageFieldRenderer
+					id={id}
 					label={label}
 					description={
 						name === "featured_image"
@@ -1391,6 +1398,7 @@ interface ImageFieldValue {
  * Handles backwards compatibility with legacy string URLs.
  */
 interface ImageFieldRendererProps {
+	id?: string;
 	label: string;
 	description?: string;
 	value: ImageFieldValue | string | undefined;
@@ -1399,6 +1407,7 @@ interface ImageFieldRendererProps {
 }
 
 function ImageFieldRenderer({
+	id,
 	label,
 	description,
 	value,
@@ -1438,7 +1447,7 @@ function ImageFieldRenderer({
 	};
 
 	return (
-		<div>
+		<div id={id}>
 			<Label>{label}</Label>
 			{displayUrl ? (
 				<div className="mt-2 relative group">
@@ -1679,7 +1688,14 @@ function BylineCreditsEditor({
 						<div className="mt-6 flex justify-end gap-2">
 							<Dialog.Close
 								render={(p) => (
-									<Button {...p} variant="secondary" onClick={resetQuickCreate}>
+									<Button
+										{...p}
+										variant="secondary"
+										onClick={(e) => {
+											resetQuickCreate();
+											p.onClick?.(e);
+										}}
+									>
 										Cancel
 									</Button>
 								)}

@@ -196,19 +196,27 @@ export async function resolveSourceEntry(
 ): Promise<string | undefined> {
 	const cleaned = distPath.replace(LEADING_DOT_SLASH_RE, "");
 
+	const isDistPath = DIST_PREFIX_RE.test(cleaned);
+
+	// Prefer mapping built exports back to source. Bundle/probe operations
+	// should compile from source, not from an already-built dist entry.
+	if (isDistPath) {
+		// Convert dist path to src: dist/foo.mjs → src/foo.ts
+		const srcPath = cleaned.replace(DIST_PREFIX_RE, "src/").replace(MJS_EXT_RE, ".ts");
+		const srcFull = resolve(pluginDir, srcPath);
+		if (await fileExists(srcFull)) return srcFull;
+
+		// Try .tsx
+		const tsxPath = srcPath.replace(TS_TO_TSX_RE, ".tsx");
+		const tsxFull = resolve(pluginDir, tsxPath);
+		if (await fileExists(tsxFull)) return tsxFull;
+	}
+
 	// Try the path directly (might be source already)
 	const direct = resolve(pluginDir, cleaned);
 	if (await fileExists(direct)) return direct;
 
-	// Convert dist path to src: dist/foo.mjs → src/foo.ts
-	const srcPath = cleaned.replace(DIST_PREFIX_RE, "src/").replace(MJS_EXT_RE, ".ts");
-	const srcFull = resolve(pluginDir, srcPath);
-	if (await fileExists(srcFull)) return srcFull;
-
-	// Try .tsx
-	const tsxPath = srcPath.replace(TS_TO_TSX_RE, ".tsx");
-	const tsxFull = resolve(pluginDir, tsxPath);
-	if (await fileExists(tsxFull)) return tsxFull;
+	if (isDistPath) return undefined;
 
 	return undefined;
 }

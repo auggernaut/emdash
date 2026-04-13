@@ -227,6 +227,16 @@ describe("resolveSourceEntry", () => {
 		expect(result).toBe(join(tempDir, "src", "index.ts"));
 	});
 
+	it("prefers source when both dist and src entries exist", async () => {
+		await mkdir(join(tempDir, "src"), { recursive: true });
+		await mkdir(join(tempDir, "dist"), { recursive: true });
+		await writeFile(join(tempDir, "src", "index.ts"), "");
+		await writeFile(join(tempDir, "dist", "index.mjs"), "");
+
+		const result = await resolveSourceEntry(tempDir, "./dist/index.mjs");
+		expect(result).toBe(join(tempDir, "src", "index.ts"));
+	});
+
 	it("falls back to .tsx when .ts doesn't exist", async () => {
 		await mkdir(join(tempDir, "src"), { recursive: true });
 		await writeFile(join(tempDir, "src", "index.tsx"), "");
