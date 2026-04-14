@@ -3,40 +3,37 @@
 	"name": "ttrpg-games",
 	"main": "./src/worker.ts",
 	"compatibility_date": "2026-03-01",
-	"compatibility_flags": [
-		"nodejs_compat",
-		"disable_nodejs_process_v2"
-	],
+	"compatibility_flags": ["nodejs_compat", "disable_nodejs_process_v2"],
 	"kv_namespaces": [
 		{
 			"binding": "SESSION",
 			"id": "2e83b3f4670f4048861b07f779393186",
-		}
+		},
 	],
 	"d1_databases": [
 		{
 			"binding": "DB",
 			"database_name": "ttrpg-games",
 			"database_id": "9971c90a-4316-4d8b-9b69-e002b91dc34d",
-			"remote": true
-		}
+			"remote": true,
+		},
 	],
 	"r2_buckets": [
 		{
 			"binding": "MEDIA",
 			"bucket_name": "ttrpg-games-media",
-			"remote": true
-		}
+			"remote": true,
+		},
 	],
 	"images": {
-		"binding": "IMAGES"
+		"binding": "IMAGES",
 	},
 	"observability": {
-		"enabled": true
+		"enabled": true,
 	},
 	"vars": {
-		"SEOBOT_SYNC_INTERVAL_MINUTES": "1440"
-	}
+		"SEOBOT_SYNC_INTERVAL_MINUTES": "1440",
+	},
 	// Add custom domain routing once the Worker is deployed:
 	// "routes": [
 	// 	{ "pattern": "ttrpg-games.com", "zone_name": "ttrpg-games.com", "custom_domain": true },

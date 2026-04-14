@@ -672,7 +672,12 @@ export async function syncSeobotPosts(runtime: RuntimeLike): Promise<SeobotSyncR
 				headline,
 				article.html || "",
 			);
-			const featuredImage = await importFeaturedImage(runtime, article.slug, headline, article.image);
+			const featuredImage = await importFeaturedImage(
+				runtime,
+				article.slug,
+				headline,
+				article.image,
+			);
 
 			const created = await runtime.handleContentCreate("posts", {
 				slug: article.slug,

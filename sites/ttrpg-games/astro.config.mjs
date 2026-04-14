@@ -1,8 +1,8 @@
 import cloudflare from "@astrojs/cloudflare";
 import react from "@astrojs/react";
+import { d1, r2 } from "@emdash-cms/cloudflare";
 import { defineConfig } from "astro/config";
 import emdash from "emdash/astro";
-import { d1, r2 } from "@emdash-cms/cloudflare";
 
 import { categoryPageWidgetsPlugin } from "./src/plugins/category-page-widgets/index.ts";
 import { relatedGamesWidgetPlugin } from "./src/plugins/related-widget/index.ts";

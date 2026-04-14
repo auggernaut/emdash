@@ -31,6 +31,9 @@ export interface TextListItem {
 
 export interface GameData {
 	id: string;
+	createdAt?: Date | null;
+	updatedAt?: Date | null;
+	publishedAt?: Date | null;
 	title: string;
 	website_url?: string | null;
 	image_url?: string | null;
@@ -85,8 +88,6 @@ export interface GameData {
 
 export interface GameEntry {
 	id: string;
-	createdAt?: Date | null;
-	publishedAt?: Date | null;
 	data: GameData;
 }
 

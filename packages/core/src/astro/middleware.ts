@@ -225,8 +225,8 @@ export const onRequest = defineMiddleware(async (context, next) => {
 				}
 			}
 
-				const response = await next();
-				return applyBaselineSecurityHeaders(response);
+			const response = await next();
+			return applyBaselineSecurityHeaders(response);
 		}
 	}
 
@@ -398,9 +398,9 @@ export const onRequest = defineMiddleware(async (context, next) => {
 				const sessionDb = new Kysely<Database>({ dialect: sessionDialect });
 
 				// Wrap the request in ALS with the per-request db
-					return runWithContext({ editMode: false, db: sessionDb }, async () => {
-						let response = await next();
-						response = applyBaselineSecurityHeaders(response);
+				return runWithContext({ editMode: false, db: sessionDb }, async () => {
+					let response = await next();
+					response = applyBaselineSecurityHeaders(response);
 
 					// Set bookmark cookie for authenticated users only — they need
 					// read-your-writes consistency across requests. Anonymous visitors

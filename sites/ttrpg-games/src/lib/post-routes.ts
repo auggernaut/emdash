@@ -7,7 +7,9 @@ type PostRouteEntryLike = {
 	data?: PostRouteDataLike | null;
 };
 
-export function isToolPost(value: PostRouteEntryLike | PostRouteDataLike | null | undefined): boolean {
+export function isToolPost(
+	value: PostRouteEntryLike | PostRouteDataLike | null | undefined,
+): boolean {
 	if (!value || typeof value !== "object") return false;
 	if ("data" in value) {
 		return value.data?.is_tool === true || value.data?.is_tool === 1;
@@ -28,7 +30,9 @@ export function getPostPath(slugOrPost: string | PostRouteEntryLike, isTool = fa
 	return getPostPath(slugOrPost.id, isToolPost(slugOrPost));
 }
 
-export function getPostIndexPath(postOrIsTool: PostRouteEntryLike | PostRouteDataLike | boolean): string {
+export function getPostIndexPath(
+	postOrIsTool: PostRouteEntryLike | PostRouteDataLike | boolean,
+): string {
 	if (typeof postOrIsTool === "boolean") {
 		return postOrIsTool ? "/tools" : "/blog";
 	}

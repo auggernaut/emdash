@@ -382,9 +382,17 @@ export class FTSManager {
 		this.validateInputs(collectionSlug);
 		const ftsTable = this.getFtsTableName(collectionSlug);
 		const contentTable = this.getContentTableName(collectionSlug);
+		const fields = await this.getSearchableFields(collectionSlug);
+		const config = await this.getSearchConfig(collectionSlug);
 
 		if (!(await this.ftsTableExists(collectionSlug))) {
-			return false;
+			if (!config?.enabled || fields.length === 0) {
+				return false;
+			}
+
+			console.warn(`FTS index for "${collectionSlug}" is missing. Rebuilding.`);
+			await this.rebuildIndex(collectionSlug, fields, config.weights);
+			return true;
 		}
 
 		// Check 1: Row count mismatch
@@ -404,8 +412,6 @@ export class FTSManager {
 			console.warn(
 				`FTS index for "${collectionSlug}" has ${ftsRows} rows but content table has ${contentRows}. Rebuilding.`,
 			);
-			const fields = await this.getSearchableFields(collectionSlug);
-			const config = await this.getSearchConfig(collectionSlug);
 			if (fields.length > 0) {
 				await this.rebuildIndex(collectionSlug, fields, config?.weights);
 			}

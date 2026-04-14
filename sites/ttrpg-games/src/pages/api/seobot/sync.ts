@@ -1,7 +1,7 @@
+import { createStorage as createR2Storage } from "@emdash-cms/cloudflare/storage/r2";
 import type { APIRoute } from "astro";
 import { handleContentCreate, handleContentGet } from "emdash";
 import { getDb } from "emdash/runtime";
-import { createStorage as createR2Storage } from "@emdash-cms/cloudflare/storage/r2";
 
 import { syncSeobotPosts } from "../../../lib/seobot-sync";
 

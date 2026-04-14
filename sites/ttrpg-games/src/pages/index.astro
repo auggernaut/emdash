@@ -1,6 +1,7 @@
 ---
 import { getEmDashCollection } from "emdash";
 import Base from "../layouts/Base.astro";
+import { sortRecentlyAddedGames, topRatedCardLabelFor } from "../lib/home-page-games";
 import type { Badge, CategoryPageEntry, GameEntry } from "../lib/types";
 
 const NON_ALPHANUMERIC_PATTERN = /[^a-z0-9]/g;
@@ -11,12 +12,6 @@ Astro.cache.set(cacheHint);
 
 const games = rawGames as unknown as GameEntry[];
 const categoryPages = rawCategoryPages as unknown as CategoryPageEntry[];
-
-function timestampFor(value: string | null | undefined): number {
-	if (!value) return 0;
-	const parsed = Date.parse(value);
-	return Number.isNaN(parsed) ? 0 : parsed;
-}
 
 const rankedGames = games.toSorted((left, right) => {
 	const leftRank = left.data.rank ?? Number.MAX_SAFE_INTEGER;
@@ -58,20 +53,7 @@ const popularCategories = [
 	),
 ].slice(0, 9);
 
-const recentlyAddedGames = games
-	.toSorted((left, right) => {
-		const rightTime = Math.max(
-			timestampFor(right.createdAt?.toISOString()),
-			timestampFor(right.publishedAt?.toISOString()),
-		);
-		const leftTime = Math.max(
-			timestampFor(left.createdAt?.toISOString()),
-			timestampFor(left.publishedAt?.toISOString()),
-		);
-		if (leftTime !== rightTime) return rightTime - leftTime;
-		return right.data.id.localeCompare(left.data.id);
-	})
-	.slice(0, 12);
+const recentlyAddedGames = sortRecentlyAddedGames(games).slice(0, 12);
 
 const faqs = [
 	{
@@ -135,10 +117,6 @@ function cardCopy(game: GameEntry): string {
 						<strong>{categoryPages.length}</strong>
 						<span>Guides</span>
 					</div>
-					<div class="stat-pill">
-						<span class="gold-star">★</span>
-						<span>Top Rated</span>
-					</div>
 				</div>
 				<div class="hero-actions">
 					<a href="/categories" class="button-link primary">Browse all categories</a>
@@ -180,16 +158,18 @@ function cardCopy(game: GameEntry): string {
 						<a href={`/item/${game.id}`}>
 							{
 								game.data.image_url && (
-									<img
-										src={game.data.image_url}
-										alt={game.data.title}
-										loading="lazy"
-									/>
+									<div class="card-image">
+										<img
+											src={game.data.image_url}
+											alt={game.data.title}
+											loading="lazy"
+										/>
+									</div>
 								)
 							}
 							<div class="card-body">
 								<div class="kicker" style={game.data.is_top_rated ? "color: var(--gold-accent); font-weight: 800;" : ""}>
-									{game.data.is_top_rated ? "★ " : ""}{game.data.rank ? `Rank #${game.data.rank}` : "Directory pick"}
+									{game.data.is_top_rated ? "★ " : ""}{topRatedCardLabelFor(game)}
 								</div>
 								<h3>{game.data.title}</h3>
 								<p style="font-size: 0.95rem; line-height: 1.6;">{cardCopy(game)}</p>
@@ -253,11 +233,13 @@ function cardCopy(game: GameEntry): string {
 						<a href={`/item/${game.id}`}>
 							{
 								game.data.image_url && (
-									<img
-										src={game.data.image_url}
-										alt={game.data.title}
-										loading="lazy"
-									/>
+									<div class="card-image">
+										<img
+											src={game.data.image_url}
+											alt={game.data.title}
+											loading="lazy"
+										/>
+									</div>
 								)
 							}
 							<div class="card-body">
@@ -379,11 +361,6 @@ function cardCopy(game: GameEntry): string {
 			font-weight: 700;
 		}
 
-		.gold-star {
-			color: var(--gold-accent);
-			font-size: 1.5rem;
-		}
-
 		.hero-actions {
 			display: flex;
 			gap: 18px;
@@ -459,14 +436,36 @@ function cardCopy(game: GameEntry): string {
 			}
 		}
 
+		/* Match homepage cards to the shared category-card treatment. */
 		.game-card {
-			position: relative;
-			transition: all 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+			background: var(--surface-glass);
+			border: 1px solid var(--line);
+			border-radius: 24px;
+			overflow: hidden;
+			transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+			backdrop-filter: blur(8px);
 		}
 
 		.game-card:hover {
-			transform: translateY(-10px) scale(1.025);
-			box-shadow: 0 40px 80px rgba(31, 26, 22, 0.14);
+			transform: translateY(-10px) scale(1.02);
+			border-color: var(--gold-accent);
+			box-shadow: 0 32px 64px rgba(31, 26, 22, 0.15);
+		}
+
+		.card-image {
+			aspect-ratio: 16 / 10;
+			overflow: hidden;
+		}
+
+		.card-image img {
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+			transition: transform 0.8s ease;
+		}
+
+		.game-card:hover .card-image img {
+			transform: scale(1.1);
 		}
 
 		.section-header h2 {
