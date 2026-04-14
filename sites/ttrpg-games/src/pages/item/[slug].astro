@@ -27,11 +27,17 @@ const ESCAPE_LT_PATTERN = /</g;
 const ESCAPE_GT_PATTERN = />/g;
 const ESCAPE_QUOTE_PATTERN = /"/g;
 const ESCAPE_APOSTROPHE_PATTERN = /'/g;
+const LEGACY_ITEM_SLUG_REDIRECTS = new Map([["agêratos", "ageratos"]]);
 
 const { slug } = Astro.params;
 
 if (!slug) {
 	return Astro.redirect("/404");
+}
+
+const redirectedSlug = LEGACY_ITEM_SLUG_REDIRECTS.get(slug);
+if (redirectedSlug) {
+	return Astro.redirect(`/item/${encodeURIComponent(redirectedSlug)}`, 308);
 }
 
 const { entry: rawGame, cacheHint } = await getEmDashEntry("games", slug);

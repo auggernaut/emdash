@@ -3,17 +3,19 @@
   "version": "0.0.3",
   "private": true,
   "type": "module",
-	"scripts": {
-		"dev": "astro dev",
-		"build": "astro build",
-		"preview": "astro preview",
-		"start": "node ./dist/server/entry.mjs",
-		"backfill:schema": "node ../../scripts/backfill-ttrpg-schema.mjs --database ./data.db",
-		"typecheck": "astro check"
-	},
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "deploy": "pnpm build && wrangler deploy",
+    "cf:types": "wrangler types",
+    "typecheck": "astro check",
+    "test": "vitest run"
+  },
   "dependencies": {
+    "@astrojs/cloudflare": "catalog:",
     "@emdash-cms/gutenberg-to-portable-text": "workspace:*",
-    "@astrojs/node": "catalog:",
+    "@emdash-cms/cloudflare": "workspace:*",
     "@astrojs/react": "catalog:",
     "astro": "catalog:",
     "better-sqlite3": "catalog:",
@@ -26,6 +28,8 @@
   "devDependencies": {
     "@astrojs/check": "catalog:",
     "@types/react": "catalog:",
-    "@types/react-dom": "catalog:"
+    "@types/react-dom": "catalog:",
+    "vitest": "catalog:",
+    "wrangler": "catalog:"
   }
 }

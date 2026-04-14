@@ -106,6 +106,8 @@ export interface Post {
   content?: PortableTextBlock[];
   body_html?: string;
   excerpt?: string;
+  is_tool?: boolean;
+  tool_id?: string;
   createdAt: Date;
   updatedAt: Date;
   publishedAt: Date | null;

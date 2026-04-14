@@ -1,0 +1,162 @@
+---
+import { getEmDashCollection } from "emdash";
+import { Image } from "emdash/ui";
+
+import Base from "../layouts/Base.astro";
+import { getPostPath, isToolPost } from "../lib/post-routes";
+import type { PostEntry } from "../lib/types";
+
+export const prerender = false;
+
+const PAGE_SIZE = 24;
+const ALL_POSTS_LIMIT = 500;
+
+const { entries: rawPosts, cacheHint } = await getEmDashCollection("posts", {
+	orderBy: { published_at: "desc" },
+	limit: ALL_POSTS_LIMIT,
+});
+
+Astro.cache.set(cacheHint);
+
+const allPosts = (rawPosts as unknown as PostEntry[]).filter((post) => isToolPost(post));
+const posts = allPosts.slice(0, PAGE_SIZE);
+
+function formatDate(date: Date | null | undefined): string | null {
+	if (!date) return null;
+	return date.toLocaleDateString("en-US", {
+		year: "numeric",
+		month: "long",
+		day: "numeric",
+	});
+}
+---
+
+<Base
+	title="Tools | TTRPG Games"
+	description="Interactive RPG quizzes, planners, and explainers from TTRPG Games."
+>
+	<div class="stack blog-shell animate-up">
+		<section class="hero-card blog-hero">
+			<span class="eyebrow">Tools</span>
+			<h1>Tools</h1>
+			<p>
+				Interactive quizzes, planners, and explainers for choosing systems, shaping sessions,
+				and narrowing down what your table wants to play.
+			</p>
+			<div class="badges" style="margin-top: 18px;">
+				<span class="badge">Quizzes</span>
+				<span class="badge">Planners</span>
+				<span class="badge">Explainers</span>
+			</div>
+		</section>
+
+		{
+			posts.length === 0 ? (
+				<section class="panel prose">
+					<p>No tool posts are available yet.</p>
+				</section>
+			) : (
+				<section>
+					<div class="section-header">
+						<div>
+							<div class="kicker">Interactive guides</div>
+							<h2>Latest tools</h2>
+						</div>
+						<p>
+							These tools are stored as native EmDash posts and published on their own tool URLs.
+						</p>
+					</div>
+
+					<div class="grid blog-grid" id="tools-grid">
+						{posts.map((post) => (
+							<article class="blog-card">
+								<a href={getPostPath(post.id)} class="blog-card-link">
+									{
+										post.data.featured_image && (
+											<div class="blog-card-image">
+												<Image image={post.data.featured_image} />
+											</div>
+										)
+									}
+									<div class="card-body">
+										<div class="blog-card-meta">
+											{formatDate(post.data.publishedAt) && (
+												<span class="muted">{formatDate(post.data.publishedAt)}</span>
+											)}
+										</div>
+										<h3>{post.data.title}</h3>
+										{post.data.excerpt && <p>{post.data.excerpt}</p>}
+									</div>
+								</a>
+							</article>
+						))}
+					</div>
+				</section>
+			)
+		}
+	</div>
+</Base>
+
+<style>
+	.blog-shell {
+		padding-top: 132px;
+	}
+
+	.blog-hero p {
+		max-width: 58ch;
+	}
+
+	:global(.blog-grid) {
+		gap: 20px;
+	}
+
+	:global(.blog-card) {
+		background: rgba(255, 248, 241, 0.94);
+		border: 1px solid var(--line);
+		border-radius: 22px;
+		overflow: hidden;
+		box-shadow: var(--shadow-soft);
+		transition: transform 0.18s ease, box-shadow 0.18s ease;
+	}
+
+	:global(.blog-card:hover) {
+		transform: translateY(-2px);
+		box-shadow: 0 26px 58px rgba(39, 24, 13, 0.14);
+	}
+
+	:global(.blog-card-link) {
+		display: grid;
+		color: inherit;
+		text-decoration: none;
+	}
+
+	:global(.blog-card-image img) {
+		width: 100%;
+		aspect-ratio: 16 / 10;
+		object-fit: cover;
+	}
+
+	:global(.blog-card h3) {
+		margin: 10px 0 0;
+		font-size: clamp(1.35rem, 1rem + 0.9vw, 1.85rem);
+	}
+
+	:global(.blog-card p) {
+		margin: 12px 0 0;
+		color: var(--muted);
+	}
+
+	:global(.blog-card-meta) {
+		display: flex;
+		gap: 10px;
+		font-size: 0.8rem;
+		text-transform: uppercase;
+		letter-spacing: 0.18em;
+	}
+
+	@media (max-width: 900px) {
+		.blog-shell {
+			padding-top: 116px;
+		}
+	}
+</style>

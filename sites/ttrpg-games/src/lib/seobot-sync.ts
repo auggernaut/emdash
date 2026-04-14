@@ -4,6 +4,7 @@ import { sql, type Kysely } from "kysely";
 import type { IArticleIndex } from "seobot/dist/types/blog";
 
 import { getSeobotArticle, getSeobotArticles, getSeobotHeadline } from "./seobot";
+import { getSeobotPostMetadata } from "./seobot-post-metadata";
 
 const IMPORT_TABLE = "_ttrpg_seobot_imports";
 const SYNC_STATE_TABLE = "_ttrpg_seobot_sync_state";
@@ -56,6 +57,11 @@ type ImportStateRow = {
 	source_id: string;
 	source_slug: string;
 	post_id: string;
+};
+
+type PostMetadataTargetRow = {
+	post_id: string;
+	source_slug: string;
 };
 
 export type SeobotSyncResult = {
@@ -148,6 +154,23 @@ async function recordImport(
 			source_slug = excluded.source_slug,
 			post_id = excluded.post_id,
 			imported_at = datetime('now')
+	`.execute(db);
+}
+
+async function syncImportedPostMetadata(
+	db: Kysely<Database>,
+	postId: string,
+	metadata: {
+		is_tool: boolean;
+		tool_id: string | null;
+	},
+): Promise<void> {
+	await sql`
+		UPDATE ${sql.ref("ec_posts")}
+		SET
+			is_tool = ${metadata.is_tool ? 1 : 0},
+			tool_id = ${metadata.tool_id}
+		WHERE id = ${postId}
 	`.execute(db);
 }
 
@@ -258,7 +281,8 @@ async function discoverNewArticles(db: Kysely<Database>): Promise<{
 		);
 		discovered.push(...newArticles);
 
-		if (newArticles.length === 0) break;
+		// Keep scanning older pages even if this page is fully known.
+		// Otherwise the sync stalls once the newest page has been imported.
 		if ((page + 1) * PAGE_SIZE >= result.total) break;
 	}
 
@@ -302,6 +326,27 @@ function extensionForImage(url: string, contentType: string): string {
 	return ".jpg";
 }
 
+async function findExistingMediaByFilename(
+	db: Kysely<Database>,
+	filename: string,
+): Promise<{
+	id: string;
+	filename: string;
+	mime_type: string;
+	storage_key: string;
+	width: number | null;
+	height: number | null;
+} | null> {
+	const media = await db
+		.selectFrom("media")
+		.select(["id", "filename", "mime_type", "storage_key", "width", "height"])
+		.where("filename", "=", filename)
+		.orderBy("created_at", "desc")
+		.executeTakeFirst();
+
+	return media ?? null;
+}
+
 async function importImageUrlToLocal(
 	runtime: RuntimeLike,
 	articleSlug: string,
@@ -321,6 +366,11 @@ async function importImageUrlToLocal(
 		const contentType = response.headers.get("content-type") || "image/jpeg";
 		const bytes = await response.arrayBuffer();
 		const extension = extensionForImage(imageUrl, contentType);
+		const filename = `${articleSlug}-inline-${index}${extension}`;
+		const existing = await findExistingMediaByFilename(runtime.db, filename);
+		if (existing) {
+			return `/_emdash/api/media/file/${existing.storage_key}`;
+		}
 		const storageKey = `${ulid()}${extension}`;
 
 		await runtime.storage.upload({
@@ -330,7 +380,7 @@ async function importImageUrlToLocal(
 		});
 
 		const media = await handleMediaCreate(runtime.db, {
-			filename: `${articleSlug}-inline-${index}${extension}`,
+			filename,
 			mimeType: contentType,
 			size: bytes.byteLength,
 			alt: headline,
@@ -366,6 +416,23 @@ async function importFeaturedImage(
 		const contentType = response.headers.get("content-type") || "image/jpeg";
 		const bytes = await response.arrayBuffer();
 		const extension = extensionForImage(imageUrl, contentType);
+		const filename = `${articleSlug}${extension}`;
+		const existing = await findExistingMediaByFilename(runtime.db, filename);
+		if (existing) {
+			return {
+				provider: "local",
+				id: existing.id,
+				src: `/_emdash/api/media/file/${existing.storage_key}`,
+				alt: headline,
+				width: existing.width ?? undefined,
+				height: existing.height ?? undefined,
+				filename: existing.filename,
+				mimeType: existing.mime_type,
+				meta: {
+					storageKey: existing.storage_key,
+				},
+			};
+		}
 		const storageKey = `${ulid()}${extension}`;
 
 		await runtime.storage.upload({
@@ -375,7 +442,7 @@ async function importFeaturedImage(
 		});
 
 		const media = await handleMediaCreate(runtime.db, {
-			filename: `${articleSlug}${extension}`,
+			filename,
 			mimeType: contentType,
 			size: bytes.byteLength,
 			alt: headline,
@@ -474,40 +541,77 @@ async function repairImportedPosts(runtime: RuntimeLike): Promise<number> {
 	let repairedCount = 0;
 
 	for (const target of repairTargets.rows) {
-		const articleResult = await getSeobotArticle(target.source_slug);
-		if (!articleResult.configured || articleResult.error || !articleResult.article) {
-			continue;
+		try {
+			const articleResult = await getSeobotArticle(target.source_slug);
+			if (!articleResult.configured || articleResult.error || !articleResult.article) {
+				continue;
+			}
+
+			const article = articleResult.article;
+			const headline = getSeobotHeadline(article);
+			const localizedBodyHtml = await localizeBodyHtmlImages(
+				runtime,
+				article.slug,
+				headline,
+				article.html || "",
+			);
+			const content = JSON.stringify(
+				htmlToPortableText(localizedBodyHtml || article.html || `<p>${article.markdown || ""}</p>`),
+			);
+
+			await sql`
+				UPDATE ${sql.ref("ec_posts")}
+				SET
+					body_html = ${localizedBodyHtml || null},
+					content = ${content},
+					excerpt = CASE
+						WHEN excerpt IS NULL OR trim(excerpt) = '' THEN ${article.metaDescription || ""}
+						ELSE excerpt
+					END,
+					updated_at = ${article.updatedAt || article.publishedAt || article.createdAt}
+				WHERE id = ${target.post_id}
+			`.execute(runtime.db);
+
+			repairedCount += 1;
+		} catch (error) {
+			console.error(`Unexpected SEObot repair failure for ${target.source_slug}`, error);
 		}
-
-		const article = articleResult.article;
-		const headline = getSeobotHeadline(article);
-		const localizedBodyHtml = await localizeBodyHtmlImages(
-			runtime,
-			article.slug,
-			headline,
-			article.html || "",
-		);
-		const content = JSON.stringify(
-			htmlToPortableText(localizedBodyHtml || article.html || `<p>${article.markdown || ""}</p>`),
-		);
-
-		await sql`
-			UPDATE ${sql.ref("ec_posts")}
-			SET
-				body_html = ${localizedBodyHtml || null},
-				content = ${content},
-				excerpt = CASE
-					WHEN excerpt IS NULL OR trim(excerpt) = '' THEN ${article.metaDescription || ""}
-					ELSE excerpt
-				END,
-				updated_at = ${article.updatedAt || article.publishedAt || article.createdAt}
-			WHERE id = ${target.post_id}
-		`.execute(runtime.db);
-
-		repairedCount += 1;
 	}
 
 	return repairedCount;
+}
+
+async function backfillImportedPostMetadata(runtime: RuntimeLike): Promise<number> {
+	const targets = await sql<PostMetadataTargetRow>`
+		SELECT imports.post_id, imports.source_slug
+		FROM ${sql.ref(IMPORT_TABLE)} AS imports
+		INNER JOIN ${sql.ref("ec_posts")} AS posts
+			ON posts.id = imports.post_id
+		WHERE posts.is_tool IS NULL
+			OR (posts.is_tool = 1 AND (posts.tool_id IS NULL OR trim(posts.tool_id) = ''))
+	`.execute(runtime.db);
+
+	let updatedCount = 0;
+
+	for (const target of targets.rows) {
+		try {
+			const articleResult = await getSeobotArticle(target.source_slug);
+			if (!articleResult.configured || articleResult.error || !articleResult.article) {
+				continue;
+			}
+
+			await syncImportedPostMetadata(
+				runtime.db,
+				target.post_id,
+				getSeobotPostMetadata(articleResult.article),
+			);
+			updatedCount += 1;
+		} catch (error) {
+			console.error(`Unexpected SEObot metadata backfill failure for ${target.source_slug}`, error);
+		}
+	}
+
+	return updatedCount;
 }
 
 export async function syncSeobotPosts(runtime: RuntimeLike): Promise<SeobotSyncResult> {
@@ -525,66 +629,87 @@ export async function syncSeobotPosts(runtime: RuntimeLike): Promise<SeobotSyncR
 	}
 
 	let importedCount = 0;
-	const repairedCount = await repairImportedPosts(runtime);
+	try {
+		await backfillImportedPostMetadata(runtime);
+	} catch (error) {
+		console.error("Unexpected SEObot metadata backfill pass failure", error);
+	}
+	let repairedCount = 0;
+	try {
+		repairedCount = await repairImportedPosts(runtime);
+	} catch (error) {
+		console.error("Unexpected SEObot repair pass failure", error);
+	}
 	let linkedCount = 0;
 	let skippedCount = 0;
 	const importedSlugs: string[] = [];
 
 	for (const articleIndex of discovery.articles) {
-		const existing = await runtime.handleContentGet("posts", articleIndex.slug);
-		if (existing.success && existing.data?.item) {
-			await recordImport(runtime.db, articleIndex.id, articleIndex.slug, existing.data.item.id);
-			linkedCount += 1;
-			continue;
-		}
+		try {
+			const existing = await runtime.handleContentGet("posts", articleIndex.slug);
+			if (existing.success && existing.data?.item) {
+				await syncImportedPostMetadata(
+					runtime.db,
+					existing.data.item.id,
+					getSeobotPostMetadata(articleIndex),
+				);
+				await recordImport(runtime.db, articleIndex.id, articleIndex.slug, existing.data.item.id);
+				linkedCount += 1;
+				continue;
+			}
 
-		const articleResult = await getSeobotArticle(articleIndex.slug);
-		if (!articleResult.configured || articleResult.error || !articleResult.article) {
+			const articleResult = await getSeobotArticle(articleIndex.slug);
+			if (!articleResult.configured || articleResult.error || !articleResult.article) {
+				skippedCount += 1;
+				continue;
+			}
+
+			const article = articleResult.article;
+			const headline = getSeobotHeadline(article);
+			const localizedBodyHtml = await localizeBodyHtmlImages(
+				runtime,
+				article.slug,
+				headline,
+				article.html || "",
+			);
+			const featuredImage = await importFeaturedImage(runtime, article.slug, headline, article.image);
+
+			const created = await runtime.handleContentCreate("posts", {
+				slug: article.slug,
+				status: "published",
+				data: {
+					title: headline,
+					excerpt: article.metaDescription || "",
+					content: htmlToPortableText(
+						localizedBodyHtml || article.html || `<p>${article.markdown || ""}</p>`,
+					),
+					body_html: localizedBodyHtml || null,
+					featured_image: featuredImage,
+					...getSeobotPostMetadata(article),
+				},
+			});
+
+			if (!created.success || !created.data?.item) {
+				console.error(`Failed to import SEObot post ${article.slug}`, created.error);
+				skippedCount += 1;
+				continue;
+			}
+
+			await recordImport(runtime.db, article.id, article.slug, created.data.item.id);
+			await syncImportedPostTimestamps(
+				runtime.db,
+				created.data.item.id,
+				article.createdAt,
+				article.publishedAt || article.createdAt,
+				article.updatedAt || article.publishedAt || article.createdAt,
+			);
+
+			importedCount += 1;
+			importedSlugs.push(article.slug);
+		} catch (error) {
+			console.error(`Unexpected SEObot import failure for ${articleIndex.slug}`, error);
 			skippedCount += 1;
-			continue;
 		}
-
-		const article = articleResult.article;
-		const headline = getSeobotHeadline(article);
-		const localizedBodyHtml = await localizeBodyHtmlImages(
-			runtime,
-			article.slug,
-			headline,
-			article.html || "",
-		);
-		const featuredImage = await importFeaturedImage(runtime, article.slug, headline, article.image);
-
-		const created = await runtime.handleContentCreate("posts", {
-			slug: article.slug,
-			status: "published",
-			data: {
-				title: headline,
-				excerpt: article.metaDescription || "",
-				content: htmlToPortableText(
-					localizedBodyHtml || article.html || `<p>${article.markdown || ""}</p>`,
-				),
-				body_html: localizedBodyHtml || null,
-				featured_image: featuredImage,
-			},
-		});
-
-		if (!created.success || !created.data?.item) {
-			console.error(`Failed to import SEObot post ${article.slug}`, created.error);
-			skippedCount += 1;
-			continue;
-		}
-
-		await recordImport(runtime.db, article.id, article.slug, created.data.item.id);
-		await syncImportedPostTimestamps(
-			runtime.db,
-			created.data.item.id,
-			article.createdAt,
-			article.publishedAt || article.createdAt,
-			article.updatedAt || article.publishedAt || article.createdAt,
-		);
-
-		importedCount += 1;
-		importedSlugs.push(article.slug);
 	}
 
 	return {

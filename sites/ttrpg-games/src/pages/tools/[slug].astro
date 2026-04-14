@@ -23,15 +23,15 @@ if (!rawPost) {
 Astro.cache.set(cacheHint);
 
 const post = rawPost as unknown as PostEntry;
-if (isToolPost(post)) {
-	return Astro.redirect(`/tools/${encodeURIComponent(post.id)}`, 308);
+if (!isToolPost(post)) {
+	return Astro.redirect(`/blog/${encodeURIComponent(post.id)}`, 308);
 }
 const { entries: rawRecentPosts } = await getEmDashCollection("posts", {
 	orderBy: { published_at: "desc" },
 	limit: 4,
 });
 const recentPosts = (rawRecentPosts as unknown as PostEntry[]).filter(
-	(entry) => entry.id !== post.id && !isToolPost(entry),
+	(entry) => entry.id !== post.id && isToolPost(entry),
 );
 
 function formatDate(date: Date | null | undefined): string | null {
@@ -77,7 +77,7 @@ const bodyHtml = post.data.body_html?.replace(LEADING_H1_PATTERN, "").trim() || 
 		<nav class="breadcrumbs">
 			<a href="/">Home</a>
 			<span class="breadcrumb-separator">/</span>
-			<a href="/blog">Blog</a>
+			<a href="/tools">Tools</a>
 			<span class="breadcrumb-separator">/</span>
 			<span>{post.data.title}</span>
 		</nav>
@@ -126,7 +126,7 @@ const bodyHtml = post.data.body_html?.replace(LEADING_H1_PATTERN, "").trim() || 
 		}
 
 		<div class="article-actions">
-			<a href="/blog" class="button-link">Back to blog</a>
+			<a href="/tools" class="button-link">Back to tools</a>
 			<a href="/categories" class="button-link primary">Browse categories</a>
 		</div>
 	</div>
@@ -223,42 +223,5 @@ const bodyHtml = post.data.body_html?.replace(LEADING_H1_PATTERN, "").trim() || 
 		display: grid;
 		gap: 12px;
 		margin-top: 18px;
-	}
-
-	.related-link {
-		display: flex;
-		flex-wrap: wrap;
-		align-items: center;
-		justify-content: space-between;
-		gap: 12px;
-		padding: 14px 16px;
-		border: 1px solid var(--line);
-		border-radius: 16px;
-		background: rgba(255, 253, 248, 0.7);
-	}
-
-	.related-link span {
-		color: var(--muted);
-		font-size: 0.95rem;
-	}
-
-	.article-actions {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 12px;
-	}
-
-	@media (max-width: 860px) {
-		.blog-page {
-			padding-top: 112px;
-		}
-
-		.article-hero {
-			grid-template-columns: 1fr;
-		}
-
-		.article-hero-copy h1 {
-			max-width: none;
-		}
 	}
 </style>

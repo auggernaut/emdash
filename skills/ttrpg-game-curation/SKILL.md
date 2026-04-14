@@ -9,25 +9,27 @@ Use this skill for `/Users/home/Dev/git/emdash/sites/ttrpg-games` when the task 
 
 ## Scope
 
-This site is a directory of standalone games. Treat the live database as the source of truth:
+This site is a directory of standalone games. Treat the live EmDash instance as the source of truth:
 
-- Live DB: `/Users/home/Dev/git/emdash/sites/ttrpg-games/data.db`
-- Backups: `/Users/home/Dev/git/emdash/sites/ttrpg-games/backups/`
+- Primary editing surface: the site's MCP/API endpoints
 - Do not treat `seed/seed.json` as the primary editing surface unless the user explicitly asks for seed work.
 
-When possible, use the EmDash MCP/API surface for content operations instead of writing rows directly.
+Use the EmDash MCP/API surface for normal content operations.
 
-- Prefer MCP for content create/update/delete, taxonomy assignment, and category-page updates.
-- Use direct DB edits only for verification, emergency repair, or when the current MCP/API surface genuinely cannot perform the change.
+- Use MCP first for content create/update/delete, taxonomy assignment, category-page updates, and verification.
+- Use MCP/API exclusively for production content work on this site.
+- If the MCP/API surface cannot perform the change, stop and report the blocker instead of dropping to direct database edits.
 - For local `ttrpg-games` work, the MCP server runs from the dev site at `/_emdash/api/mcp` when enabled.
 
 ## Workflow
 
-### 1. Back up before data edits
+### 1. Connect to the right MCP target first
 
-Before changing the live site data, copy `data.db` into `backups/` with a timestamped filename.
+Before changing production content:
 
-Do this even if the actual content mutation will happen through MCP, since the local site still persists to `data.db`.
+- verify you are pointed at the intended EmDash MCP/API target
+- prefer reading the existing entry through MCP before planning edits
+- confirm whether the page is already published, since draft-only MCP edits are not live
 
 ### 2. Check for an existing or legacy entry before creating a new one
 
@@ -148,6 +150,7 @@ When using MCP for this site:
 - use `content_set_terms` for taxonomy assignment
 - use `content_get` + `content_update` for category-page `game_notes`
 - if the target page is published and should change live, follow with `content_publish`
+- after each material mutation, re-read the affected entry through MCP before deciding on further edits
 
 For author ownership:
 
@@ -172,6 +175,7 @@ For reconciliation work:
 - DriveThruRPG links should include `affiliate_id=1659151`.
 - itch.io links should include `ac=YUqaLN4pVvG`.
 - Preserve established live slugs when reconciling older entries.
+- Prefer MCP/API reads when checking current production state.
 - MCP updates to published content are not live until published.
 
 ## Verification

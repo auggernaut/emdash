@@ -120,6 +120,8 @@ export interface PostData {
 	content?: unknown[] | null;
 	body_html?: string | null;
 	featured_image?: string | MediaValue | null;
+	is_tool?: boolean | number | null;
+	tool_id?: string | null;
 	publishedAt?: Date | null;
 	updatedAt?: Date | null;
 }

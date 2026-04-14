@@ -1,8 +1,8 @@
-import node from "@astrojs/node";
+import cloudflare from "@astrojs/cloudflare";
 import react from "@astrojs/react";
 import { defineConfig } from "astro/config";
-import emdash, { local } from "emdash/astro";
-import { sqlite } from "emdash/db";
+import emdash from "emdash/astro";
+import { d1, r2 } from "@emdash-cms/cloudflare";
 
 import { categoryPageWidgetsPlugin } from "./src/plugins/category-page-widgets/index.ts";
 import { relatedGamesWidgetPlugin } from "./src/plugins/related-widget/index.ts";
@@ -10,9 +10,7 @@ import { relatedGamesWidgetPlugin } from "./src/plugins/related-widget/index.ts"
 export default defineConfig({
 	output: "server",
 	trailingSlash: "never",
-	adapter: node({
-		mode: "standalone",
-	}),
+	adapter: cloudflare(),
 	image: {
 		layout: "constrained",
 		responsiveStyles: true,
@@ -20,13 +18,10 @@ export default defineConfig({
 	integrations: [
 		react(),
 		emdash({
-			database: sqlite({ url: "file:./data.db" }),
+			database: d1({ binding: "DB", session: "auto" }),
 			mcp: true,
 			plugins: [relatedGamesWidgetPlugin(), categoryPageWidgetsPlugin()],
-			storage: local({
-				directory: "./uploads",
-				baseUrl: "/_emdash/api/media/file",
-			}),
+			storage: r2({ binding: "MEDIA" }),
 		}),
 	],
 	devToolbar: { enabled: false },

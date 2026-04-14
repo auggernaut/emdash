@@ -3,6 +3,7 @@ import { getEmDashCollection } from "emdash";
 import { Image } from "emdash/ui";
 
 import Base from "../layouts/Base.astro";
+import { getPostPath, isToolPost } from "../lib/post-routes";
 import type { PostEntry } from "../lib/types";
 
 export const prerender = false;
@@ -17,7 +18,7 @@ const { entries: rawPosts, cacheHint } = await getEmDashCollection("posts", {
 
 Astro.cache.set(cacheHint);
 
-const allPosts = rawPosts as unknown as PostEntry[];
+const allPosts = (rawPosts as unknown as PostEntry[]).filter((post) => !isToolPost(post));
 const posts = allPosts.slice(0, PAGE_SIZE);
 const nextOffset = allPosts.length > PAGE_SIZE ? PAGE_SIZE : null;
 
@@ -75,7 +76,7 @@ function formatDate(date: Date | null | undefined): string | null {
 					<div class="grid blog-grid" id="blog-grid">
 						{posts.map((post) => (
 							<article class="blog-card">
-								<a href={`/blog/${post.id}`} class="blog-card-link">
+								<a href={getPostPath(post.id)} class="blog-card-link">
 									{
 										post.data.featured_image && (
 											<div class="blog-card-image">
@@ -130,7 +131,7 @@ function formatDate(date: Date | null | undefined): string | null {
 
 		const link = document.createElement("a");
 		link.className = "blog-card-link";
-		link.href = `/blog/${item.slug}`;
+		link.href = item.href || `/blog/${item.slug}`;
 
 		if (item.image?.src) {
 			const imageWrap = document.createElement("div");

@@ -3,11 +3,14 @@ import { getSiteSettings } from "emdash";
 import { getDb } from "emdash/runtime";
 import { sql } from "kysely";
 
+import { getPostPath } from "../lib/post-routes";
+
 export const prerender = false;
 
 interface DynamicSitemapRow {
 	slug: string | null;
 	updated_at: string;
+	is_tool?: number | null;
 }
 
 interface SitemapUrlEntry {
@@ -30,7 +33,7 @@ async function fetchDynamicRows(
 	const db = await getDb();
 
 	const rows = await sql<DynamicSitemapRow>`
-		SELECT c.slug, c.updated_at
+		SELECT c.slug, c.updated_at, ${collection === "posts" ? sql.raw("c.is_tool") : sql`NULL`} AS is_tool
 		FROM ${sql.ref(`ec_${collection}`)} c
 		LEFT JOIN _emdash_seo s
 			ON s.collection = ${collection}
@@ -98,6 +101,7 @@ export const GET: APIRoute = async ({ url }) => {
 
 		const siteUrl = (settings.url || url.origin).replace(TRAILING_SLASH_RE, "");
 		const defaultLastmod = latestUpdatedAt(games, categoryPages, posts);
+		const toolPosts = posts.filter((row) => row.slug && row.is_tool === 1);
 
 		const entries: SitemapUrlEntry[] = [
 			{ path: "/", lastmod: defaultLastmod, changefreq: "daily", priority: 1.0 },
@@ -108,6 +112,16 @@ export const GET: APIRoute = async ({ url }) => {
 				priority: 0.8,
 			},
 			{ path: "/blog", lastmod: latestUpdatedAt(posts), changefreq: "daily", priority: 0.8 },
+			...(toolPosts.length > 0
+				? [
+						{
+							path: "/tools",
+							lastmod: latestUpdatedAt(toolPosts),
+							changefreq: "daily" as const,
+							priority: 0.8,
+						},
+					]
+				: []),
 			...categoryPages
 				.filter((row) => row.slug)
 				.map((row) => ({
@@ -127,7 +141,7 @@ export const GET: APIRoute = async ({ url }) => {
 			...posts
 				.filter((row) => row.slug)
 				.map((row) => ({
-					path: `/blog/${encodeURIComponent(row.slug!)}`,
+					path: getPostPath(row.slug!, row.is_tool === 1),
 					lastmod: row.updated_at,
 					changefreq: "weekly" as const,
 					priority: 0.7,

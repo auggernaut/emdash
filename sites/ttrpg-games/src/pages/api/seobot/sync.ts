@@ -1,10 +1,7 @@
-import { fileURLToPath } from "node:url";
-
 import type { APIRoute } from "astro";
-import { handleContentCreate, handleContentGet, type Database } from "emdash";
-import { createDialect } from "emdash/db/sqlite";
-import { LocalStorage } from "emdash/storage/local";
-import { Kysely } from "kysely";
+import { handleContentCreate, handleContentGet } from "emdash";
+import { getDb } from "emdash/runtime";
+import { createStorage as createR2Storage } from "@emdash-cms/cloudflare/storage/r2";
 
 import { syncSeobotPosts } from "../../../lib/seobot-sync";
 
@@ -31,37 +28,48 @@ function isAuthorized(request: Request): boolean {
 	return bearer === configuredSecret || headerSecret === configuredSecret;
 }
 
-export const POST: APIRoute = async ({ request, cache }) => {
+export const POST: APIRoute = async ({ request, cache, locals }) => {
 	if (!isAuthorized(request)) {
 		return Response.json({ error: "Unauthorized." }, { status: 401 });
 	}
 
-	const dbPath = fileURLToPath(new URL("../../../../data.db", import.meta.url));
-	const uploadDirectory = fileURLToPath(new URL("../../../../uploads", import.meta.url));
-	const db = new Kysely<Database>({
-		dialect: createDialect({ url: `file:${dbPath}` }),
-	});
-	const storage = new LocalStorage({
-		directory: uploadDirectory,
-		baseUrl: "/_emdash/api/media/file",
-	});
+	try {
+		const db = locals.emdash?.db ?? (await getDb());
+		const storage = locals.emdash?.storage ?? createR2Storage({ binding: "MEDIA" });
 
-	const result = await syncSeobotPosts({
-		db,
-		storage,
-		handleContentCreate: (collection, body) => handleContentCreate(db, collection, body),
-		handleContentGet: (collection, id, locale) => handleContentGet(db, collection, id, locale),
-	});
+		const result = await syncSeobotPosts({
+			db,
+			storage,
+			handleContentCreate: (collection, body) => handleContentCreate(db, collection, body),
+			handleContentGet: (collection, id, locale) => handleContentGet(db, collection, id, locale),
+		});
 
-	await db.destroy();
+		if (result.error) {
+			return Response.json(result, { status: result.configured ? 502 : 500 });
+		}
 
-	if (result.error) {
-		return Response.json(result, { status: result.configured ? 502 : 500 });
+		if (result.importedCount > 0 && cache.enabled) {
+			try {
+				await cache.invalidate({ tags: ["posts"] });
+			} catch (error) {
+				console.error("Failed to invalidate blog cache after SEObot sync", error);
+			}
+		}
+
+		return Response.json(result);
+	} catch (error) {
+		console.error("Unhandled SEObot sync failure", error);
+		return Response.json(
+			{
+				configured: true,
+				importedCount: 0,
+				repairedCount: 0,
+				linkedCount: 0,
+				skippedCount: 0,
+				importedSlugs: [],
+				error: error instanceof Error ? error.message : "SEObot sync failed.",
+			},
+			{ status: 502 },
+		);
 	}
-
-	if (result.importedCount > 0 && cache.enabled) {
-		await cache.invalidate({ tags: ["posts"] });
-	}
-
-	return Response.json(result);
 };

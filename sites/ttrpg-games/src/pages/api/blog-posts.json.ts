@@ -1,6 +1,7 @@
 import type { APIRoute } from "astro";
 import { getEmDashCollection } from "emdash";
 
+import { getPostPath } from "../../lib/post-routes";
 import type { PostEntry } from "../../lib/types";
 
 export const prerender = false;
@@ -78,6 +79,7 @@ export const GET: APIRoute = async ({ url }) => {
 		const image = getImageData(post.data.featured_image);
 		return {
 			slug: post.id,
+			href: getPostPath(post.id),
 			title: post.data.title,
 			excerpt: post.data.excerpt || "",
 			publishedLabel: formatDate(post.data.publishedAt),
