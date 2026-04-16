@@ -1,6 +1,7 @@
 import type { CategoryFaq, GameEntry } from "./types.js";
 
 export const SITE_NAME = "TTRPG Games Directory";
+export const SITE_FAVICON_PATH = "/favicon.svg";
 export const SITE_LOGO_PATH = "/images/logo-red-transparent-cropped.png";
 
 interface BreadcrumbItem {

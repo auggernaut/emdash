@@ -2,7 +2,7 @@
 import { EmDashHead, EmDashBodyStart, EmDashBodyEnd } from "emdash/ui";
 import { createPublicPageContext, safeJsonLdSerialize } from "emdash/page";
 import LiveSearch from "emdash/ui/search";
-import { SITE_LOGO_PATH, SITE_NAME } from "../lib/structured-data.js";
+import { SITE_FAVICON_PATH, SITE_LOGO_PATH, SITE_NAME } from "../lib/structured-data.js";
 
 interface Props {
 	title: string;
@@ -34,6 +34,7 @@ const {
 
 const isHome = Astro.url.pathname === "/" || Astro.url.pathname === "" || Astro.url.pathname.endsWith("/index.html");
 
+const faviconHref = SITE_FAVICON_PATH;
 const logoSrc = SITE_LOGO_PATH;
 const primaryLinks = [
 	{ label: "Categories", url: "/categories" },
@@ -63,6 +64,7 @@ const pageCtx = createPublicPageContext({
 	siteUrl: pageType === "article" ? Astro.url.origin : undefined,
 	breadcrumbs: resolvedBreadcrumbs,
 });
+
 ---
 
 <!doctype html>
@@ -70,7 +72,11 @@ const pageCtx = createPublicPageContext({
 	<head>
 			<meta charset="UTF-8" />
 			<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+			<meta name="theme-color" content="#b14e2c" />
+			<meta name="color-scheme" content="light" />
 			<title>{title}</title>
+			<link rel="icon" type="image/svg+xml" href={faviconHref} />
+			<link rel="apple-touch-icon" href={logoSrc} />
 			{
 				structuredData.map((item) => (
 					<script is:inline type="application/ld+json" set:html={safeJsonLdSerialize(item)} />
