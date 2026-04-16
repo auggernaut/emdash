@@ -2,6 +2,7 @@ import { describe, expect, test } from "vitest";
 
 import {
 	DEFAULT_LOCALE,
+	getLocaleDir,
 	loadMessages,
 	resolveLocale,
 	SUPPORTED_LOCALES,
@@ -19,6 +20,28 @@ for (const { code } of SUPPORTED_LOCALES) {
 test("loadMessages falls back to English for unknown locale", async () => {
 	const [fallback, english] = await Promise.all([loadMessages("xx"), loadMessages("en")]);
 	expect(fallback).toEqual(english);
+});
+
+// -- getLocaleDir ----------------------------------------------------------
+
+describe("getLocaleDir", () => {
+	test("returns 'rtl' for Arabic", () => {
+		expect(getLocaleDir("ar")).toBe("rtl");
+	});
+
+	test("returns 'ltr' for English", () => {
+		expect(getLocaleDir("en")).toBe("ltr");
+	});
+
+	test("returns 'ltr' for locales without explicit dir", () => {
+		expect(getLocaleDir("de")).toBe("ltr");
+		expect(getLocaleDir("fr")).toBe("ltr");
+		expect(getLocaleDir("pt-BR")).toBe("ltr");
+	});
+
+	test("returns 'ltr' for unknown locale", () => {
+		expect(getLocaleDir("xx")).toBe("ltr");
+	});
 });
 
 // -- resolveLocale ---------------------------------------------------------
@@ -90,10 +113,21 @@ describe("resolveLocale", () => {
 		expect(resolveLocale(makeRequest({ "accept-language": "pt-PT" }))).toBe("pt-BR");
 	});
 
-	test("falls back to base language (zh-TW -> zh-CN)", () => {
-		expect(resolveLocale(makeRequest({ "accept-language": "zh-TW" }))).toBe("zh-CN");
+	test("matches exact accept-language tag with region (zh-TW)", () => {
+		expect(resolveLocale(makeRequest({ "accept-language": "zh-TW" }))).toBe("zh-TW");
 	});
 
+	test("matches Traditional Chinese script tag (zh-Hant -> zh-TW)", () => {
+		expect(resolveLocale(makeRequest({ "accept-language": "zh-Hant" }))).toBe("zh-TW");
+	});
+
+	test("matches Traditional Chinese script+region tag (zh-Hant-TW -> zh-TW)", () => {
+		expect(resolveLocale(makeRequest({ "accept-language": "zh-Hant-TW" }))).toBe("zh-TW");
+	});
+
+	test("matches Simplified Chinese script tag (zh-Hans -> zh-CN)", () => {
+		expect(resolveLocale(makeRequest({ "accept-language": "zh-Hans" }))).toBe("zh-CN");
+	});
 	// Accept-Language with quality weights
 	test("respects order in accept-language list", () => {
 		expect(resolveLocale(makeRequest({ "accept-language": "fr;q=0.9, de;q=1.0" }))).toBe("fr");

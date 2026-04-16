@@ -532,7 +532,7 @@ export function injectCoreRoutes(
 	});
 
 	injectRoute({
-		pattern: "/_emdash/.well-known/oauth-authorization-server",
+		pattern: "/.well-known/oauth-authorization-server/_emdash",
 		entrypoint: resolveRoute("api/well-known/oauth-authorization-server.ts"),
 	});
 
@@ -737,6 +737,11 @@ export function injectCoreRoutes(
 		entrypoint: resolveRoute("api/setup/dev-reset.ts"),
 	});
 
+	injectRoute({
+		pattern: "/_emdash/api/dev/emails",
+		entrypoint: resolveRoute("api/dev/emails.ts"),
+	});
+
 	// Current user endpoint (always available)
 	injectRoute({
 		pattern: "/_emdash/api/auth/me",
@@ -817,6 +822,11 @@ export function injectBuiltinAuthRoutes(injectRoute: InjectRoute): void {
 	injectRoute({
 		pattern: "/_emdash/api/auth/invite/complete",
 		entrypoint: resolveRoute("api/auth/invite/complete.ts"),
+	});
+
+	injectRoute({
+		pattern: "/_emdash/api/auth/invite/register-options",
+		entrypoint: resolveRoute("api/auth/invite/register-options.ts"),
 	});
 
 	// Magic link routes
