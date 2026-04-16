@@ -10,9 +10,12 @@
 
 import { env } from "cloudflare:workers";
 import type { DatabaseIntrospector, Dialect, Kysely } from "kysely";
+import { SqliteAdapter } from "kysely";
 import { D1Dialect } from "kysely-d1";
 
 import { D1Introspector } from "./d1-introspector.js";
+
+const D1_ADAPTER_MARKER = Symbol.for("emdash:d1-adapter");
 
 /**
  * D1 configuration (runtime type — matches the config-time type in index.ts)
@@ -30,6 +33,17 @@ interface D1Config {
  * cross-join with pragma_table_info() that D1 doesn't allow.
  */
 class EmDashD1Dialect extends D1Dialect {
+	override createAdapter(): SqliteAdapter {
+		const adapter = super.createAdapter();
+		Object.defineProperty(adapter, D1_ADAPTER_MARKER, {
+			value: true,
+			enumerable: false,
+			configurable: false,
+			writable: false,
+		});
+		return adapter;
+	}
+
 	override createIntrospector(db: Kysely<any>): DatabaseIntrospector {
 		return new D1Introspector(db);
 	}
