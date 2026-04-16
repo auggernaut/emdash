@@ -9,9 +9,15 @@ describe("home page", () => {
 		expect(pageSource).toContain('<div class="card-image">');
 	});
 
-	it("shows only counted hero stats", () => {
+	it("shows counted hero stats for games, categories, and articles", () => {
 		const pageSource = readFileSync(new URL("./index.astro", import.meta.url), "utf8");
 
+		expect(pageSource).toContain('getEmDashCollection("posts")');
+		expect(pageSource).toContain("<span>Games</span>");
+		expect(pageSource).toContain("<span>Categories</span>");
+		expect(pageSource).toContain("<span>Articles</span>");
+		expect(pageSource).not.toContain("<span>Systems</span>");
+		expect(pageSource).not.toContain("<span>Guides</span>");
 		expect(pageSource).not.toContain('class="gold-star"');
 	});
 });

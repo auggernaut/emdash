@@ -1,7 +1,8 @@
 ---
 import { EmDashHead, EmDashBodyStart, EmDashBodyEnd } from "emdash/ui";
-import { createPublicPageContext } from "emdash/page";
+import { createPublicPageContext, safeJsonLdSerialize } from "emdash/page";
 import LiveSearch from "emdash/ui/search";
+import { SITE_LOGO_PATH, SITE_NAME } from "../lib/structured-data.js";
 
 interface Props {
 	title: string;
@@ -9,44 +10,73 @@ interface Props {
 	image?: string | null;
 	canonical?: string | null;
 	content?: { collection: string; id: string; slug?: string | null };
+	pageType?: string;
+	publishedTime?: string | null;
+	modifiedTime?: string | null;
+	author?: string | null;
+	breadcrumbs?: Array<{ name: string; url: string }>;
 	structuredData?: unknown[];
 }
 
-const { title, description, image, canonical, content, structuredData = [] } = Astro.props;
+const {
+	title,
+	description,
+	image,
+	canonical,
+	content,
+	pageType = "website",
+	publishedTime,
+	modifiedTime,
+	author,
+	breadcrumbs,
+	structuredData = [],
+} = Astro.props;
 
 const isHome = Astro.url.pathname === "/" || Astro.url.pathname === "" || Astro.url.pathname.endsWith("/index.html");
 
-const logoSrc = "/_emdash/api/media/file/01KN700FE50XVF7AG34QJ4YMFM.webp";
+const logoSrc = SITE_LOGO_PATH;
 const primaryLinks = [
 	{ label: "Categories", url: "/categories" },
 	{ label: "Submit", url: "/submit-game" },
 	{ label: "Blog", url: "/blog" },
 ];
+const resolvedBreadcrumbs = breadcrumbs ?? (isHome ? [] : undefined);
 
 const pageCtx = createPublicPageContext({
 	Astro,
 	kind: content ? "content" : "custom",
-	pageType: "website",
+	pageType,
 	title,
 	description,
 	canonical,
 	image,
 	content,
+	articleMeta:
+		pageType === "article"
+			? {
+					publishedTime,
+					modifiedTime,
+					author,
+				}
+			: undefined,
+	siteName: pageType === "article" ? SITE_NAME : undefined,
+	siteUrl: pageType === "article" ? Astro.url.origin : undefined,
+	breadcrumbs: resolvedBreadcrumbs,
 });
 ---
 
 <!doctype html>
 <html lang="en">
 	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>{title}</title>
-		{
-			structuredData.map((item) => (
-				<script is:inline type="application/ld+json" set:html={JSON.stringify(item)} />
-			))
-		}
-		<EmDashHead page={pageCtx} />
+			<meta charset="UTF-8" />
+			<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+			<title>{title}</title>
+			{
+				structuredData.map((item) => (
+					<script is:inline type="application/ld+json" set:html={safeJsonLdSerialize(item)} />
+				))
+			}
+			<EmDashHead page={pageCtx} />
 	</head>
 	<body>
 		<EmDashBodyStart page={pageCtx} />
@@ -125,8 +155,7 @@ const pageCtx = createPublicPageContext({
 						<strong>Connect</strong>
 						<ul>
 							<li><a href="https://x.com/augustinbralley">Follow on X</a></li>
-							<li><a href="mailto:hello@emdash.local">Email Inquiries</a></li>
-							<li><a href="/terms-of-use">Editorial Policy</a></li>
+							<li><a href="mailto:augustin.bralley@gmail.com">Email Inquiries</a></li>
 						</ul>
 					</div>
 				</div>
@@ -147,6 +176,12 @@ const pageCtx = createPublicPageContext({
 		</footer>
 
 		<EmDashBodyEnd page={pageCtx} />
+		<script
+			is:inline
+			defer
+			src="https://static.cloudflareinsights.com/beacon.min.js"
+			data-cf-beacon='{"token":"11b79f02395c4857bf13d47f7dd30178"}'
+		></script>
 	</body>
 </html>
 
@@ -314,7 +349,7 @@ const pageCtx = createPublicPageContext({
 			display: inline-flex;
 			flex-wrap: wrap;
 			justify-content: center;
-			gap: 10px;
+			gap: 18px;
 			justify-self: end;
 		}
 
@@ -602,7 +637,8 @@ const pageCtx = createPublicPageContext({
 
 	.hero-card h1 {
 		font-size: clamp(2.6rem, 4.8vw, 4.5rem);
-		line-height: 0.95;
+		line-height: 1.05;
+		font-weight: 800;
 		letter-spacing: -0.03em;
 		text-wrap: pretty;
 	}
@@ -899,6 +935,10 @@ const pageCtx = createPublicPageContext({
 		gap: 28px;
 	}
 
+	.header-offset-shell {
+		padding-top: 132px;
+	}
+
 	.breadcrumbs {
 		display: flex;
 		flex-wrap: wrap;
@@ -1126,7 +1166,7 @@ const pageCtx = createPublicPageContext({
 			border-radius: 0.2em;
 		}
 
-		@media (max-width: 960px) {
+	@media (max-width: 960px) {
 			.nav-shell,
 			.detail-layout,
 			.submit-layout {
@@ -1147,6 +1187,10 @@ const pageCtx = createPublicPageContext({
 
 		.footer-meta {
 			justify-content: flex-start;
+		}
+
+		.header-offset-shell {
+			padding-top: 112px;
 		}
 	}
 </style>

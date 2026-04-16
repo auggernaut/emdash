@@ -4,6 +4,7 @@ import { Image, PortableText } from "emdash/ui";
 
 import Base from "../../layouts/Base.astro";
 import { getPostPath, isToolPost } from "../../lib/post-routes";
+import { buildArticlePageStructuredData } from "../../lib/structured-data.js";
 import type { PostEntry } from "../../lib/types";
 
 export const prerender = false;
@@ -62,8 +63,16 @@ function getImageUrl(image: unknown): string | null {
 
 const publishedDate = formatDate(post.data.publishedAt);
 const updatedDate = formatDate(post.data.updatedAt);
+const publishedTime = post.data.publishedAt?.toISOString() ?? null;
+const modifiedTime = post.data.updatedAt?.toISOString() ?? null;
 const image = getImageUrl(post.data.featured_image);
 const bodyHtml = post.data.body_html?.replace(LEADING_H1_PATTERN, "").trim() || null;
+const breadcrumbs = [
+	{ name: "Home", url: new URL("/", Astro.url).href },
+	{ name: "Blog", url: new URL("/blog", Astro.url).href },
+	{ name: post.data.title, url: Astro.url.href },
+];
+const structuredData = buildArticlePageStructuredData({ breadcrumbs });
 ---
 
 <Base
@@ -71,6 +80,12 @@ const bodyHtml = post.data.body_html?.replace(LEADING_H1_PATTERN, "").trim() || 
 	description={post.data.excerpt || null}
 	image={image}
 	canonical={Astro.url.href}
+	pageType="article"
+	publishedTime={publishedTime}
+	modifiedTime={modifiedTime}
+	author="TTRPG Games"
+	breadcrumbs={breadcrumbs}
+	structuredData={structuredData}
 	content={{ collection: "posts", id: post.data.id, slug }}
 >
 	<div class="stack blog-page animate-up">
@@ -135,6 +150,8 @@ const bodyHtml = post.data.body_html?.replace(LEADING_H1_PATTERN, "").trim() || 
 <style>
 	.blog-page {
 		padding-top: 132px;
+		max-width: 1020px;
+		margin: 0 auto;
 	}
 
 	.article-hero {

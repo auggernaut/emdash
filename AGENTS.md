@@ -10,11 +10,23 @@ This is a monorepo using pnpm workspaces.
 
 `CLAUDE.md` is a symlink to `AGENTS.md`. `.opencode/skills` and `.claude/skills` are symlinks to `skills/`. Don't try to sync between them.
 
+## Default Working Scope
+
+Unless the user explicitly says they mean the EmDash monorepo itself (`packages/`, `docs/`, `templates/`,
+`demos/`, release work, or core CMS code), treat ambiguous requests in this repository as referring to
+the TTRPG Games site at `sites/ttrpg-games/`.
+
+This matters for phrases like "the site", "homepage", "add a page", "update the copy", "fix this bug",
+"run the dev server", or similar shorthand. Default to `sites/ttrpg-games/` first, and only work in
+the core EmDash packages when the user clearly asks for framework/monorepo changes or the site task
+requires a supporting fix there.
+
 - **Root**: Workspace configuration and shared tooling
 - **packages/core**: Main `emdash` package - Astro integration and core APIs
 - **demos/**: Demo applications and examples (`demos/simple/` is the primary dev target)
 - **templates/**: Starter templates (blog, marketing, portfolio, starter, blank) -- contributors copy these into `demos/` to build their own sites
 - **docs/**: Public documentation site (Starlight)
+- **sites/ttrpg-games/**: Primary user site in this repo; default destination for ambiguous site work
 
 # Rules
 

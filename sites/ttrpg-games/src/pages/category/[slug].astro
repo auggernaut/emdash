@@ -2,6 +2,7 @@
 import { getEmDashCollection, getEmDashEntry } from "emdash";
 import { getDb } from "emdash/runtime";
 import Base from "../../layouts/Base.astro";
+import { buildCategoryPageStructuredData } from "../../lib/structured-data.js";
 import type {
 	CategoryFaq,
 	CategoryGameNote,
@@ -162,21 +163,19 @@ const canonical = seoRow?.seo_canonical || Astro.url.href;
 const pageImage = seoRow?.seo_image || featuredPicks[0]?.game.data.image_url || null;
 
 const breadcrumbItems = [
-	{ name: "Home", item: new URL("/", Astro.url).href },
-	{ name: "Categories", item: new URL("/categories", Astro.url).href },
-	{ name: categoryPage.data.title, item: Astro.url.href },
+	{ name: "Home", url: new URL("/", Astro.url).href },
+	{ name: "Categories", url: new URL("/categories", Astro.url).href },
+	{ name: categoryPage.data.title, url: Astro.url.href },
 ];
-
-const breadcrumbSchema = {
-	"@context": "https://schema.org",
-	"@type": "BreadcrumbList",
-	itemListElement: breadcrumbItems.map((item, index) => ({
-		"@type": "ListItem",
-		position: index + 1,
-		name: item.name,
-		item: item.item,
-	})),
-};
+const structuredData = buildCategoryPageStructuredData({
+	origin: Astro.url.origin,
+	url: canonical,
+	name: categoryPage.data.title,
+	description: pageDescription,
+	breadcrumbs: breadcrumbItems,
+	games: rankedGames,
+	faqs,
+});
 
 const heroTitle = `Best ${categoryPage.data.title} TTRPGs`;
 
@@ -256,7 +255,8 @@ function renderFaqAnswer(answer: string): string {
 	canonical={canonical}
 	image={pageImage}
 	content={categoryPage ? { collection: "category_pages", id: categoryPage.data.id, slug } : undefined}
-	structuredData={[breadcrumbSchema]}
+	breadcrumbs={breadcrumbItems}
+	structuredData={structuredData}
 >
 		<div class="stack animate-up" style="gap: 60px;">
 			<section class="hero-section category-hero">

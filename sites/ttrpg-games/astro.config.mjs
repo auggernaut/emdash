@@ -18,7 +18,7 @@ export default defineConfig({
 	integrations: [
 		react(),
 		emdash({
-			database: d1({ binding: "DB", session: "auto" }),
+			database: d1({ binding: "DB" }),
 			mcp: true,
 			plugins: [relatedGamesWidgetPlugin(), categoryPageWidgetsPlugin()],
 			storage: r2({ binding: "MEDIA" }),

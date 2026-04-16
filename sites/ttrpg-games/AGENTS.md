@@ -1,37 +1,24 @@
-This is an EmDash site -- a CMS built on Astro with a full admin UI.
+This is the TTRPG Games site inside the EmDash monorepo.
 
-## Commands
+## Default Assumption
 
-```bash
-npx emdash dev        # Start dev server (runs migrations and generates types)
-npx emdash types      # Regenerate TypeScript types from schema
-```
+When the user starts a conversation from this repository and asks to change "the site", assume they
+mean this site at `sites/ttrpg-games/`, not the EmDash framework, docs site, demos, or templates,
+unless they explicitly say otherwise.
 
-The admin UI is at `http://localhost:4321/_emdash/admin`.
+## Scope Rules
 
-## Key Files
+- Prefer changing files under `sites/ttrpg-games/`.
+- Only touch `packages/`, `docs/`, `templates/`, or other monorepo areas when the user explicitly asks
+  for framework work or the site task cannot be completed without a supporting fix there.
+- If a request is ambiguous between site content/design and core EmDash behavior, default to the site.
+- When running dev commands for site work, run them from `sites/ttrpg-games/` unless there is a clear
+  reason to work from the monorepo root.
 
-| File                     | Purpose                                                                |
-| ------------------------ | ---------------------------------------------------------------------- |
-| `astro.config.mjs`       | Astro config with `emdash()` integration, database, and storage        |
-| `src/live.config.ts`     | EmDash loader registration (boilerplate -- don't modify)               |
-| `emdash-env.d.ts`        | Generated types for collections (auto-regenerated on dev server start) |
-| `src/layouts/Base.astro` | Base layout with EmDash wiring (menus, search, page contributions)     |
-| `src/pages/`             | Astro pages -- all server-rendered                                     |
+## Site Context
 
-## Skills
-
-Agent skills are in `.agents/skills/`. Load them when working on specific tasks:
-
-- **building-emdash-site** -- Querying content, rendering Portable Text, schema design, site features (menus, widgets, search, SEO, comments, bylines). Start here.
-- **creating-plugins** -- Building EmDash plugins with hooks, storage, admin UI, API routes, and Portable Text block types.
-- **emdash-cli** -- CLI commands for content management, seeding, type generation, and visual editing flow.
-
-## Rules
-
-- For editorial work on this site, use the EmDash MCP/API surface. Do not use local SQLite files for content updates.
-- All content pages must be server-rendered (`output: "server"`). No `getStaticPaths()` for CMS content.
-- Image fields are objects (`{ src, alt }`), not strings. Use `<Image image={...} />` from `"emdash/ui"`.
-- `entry.id` is the slug (for URLs). `entry.data.id` is the database ULID (for API calls like `getEntryTerms`).
-- Always call `Astro.cache.set(cacheHint)` on pages that query content.
-- Taxonomy names in queries must match the live taxonomy definition exactly (e.g., `"category"` not `"categories"`).
+- This site is an EmDash-powered Astro app.
+- Treat it as the primary product surface for user-facing copy, SEO, content modeling, curation, and
+  frontend work in this repository.
+- In user-facing copy and SEO text, prefer `TTRPG` / `TTRPGs` over the broader `RPG` / `RPGs`
+  unless the user explicitly asks for different terminology or a quoted source requires the original wording.

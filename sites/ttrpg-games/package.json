@@ -14,9 +14,9 @@
   },
   "dependencies": {
     "@astrojs/cloudflare": "catalog:",
-    "@emdash-cms/gutenberg-to-portable-text": "workspace:*",
-    "@emdash-cms/cloudflare": "workspace:*",
     "@astrojs/react": "catalog:",
+    "@emdash-cms/cloudflare": "workspace:*",
+    "@emdash-cms/gutenberg-to-portable-text": "workspace:*",
     "astro": "catalog:",
     "better-sqlite3": "catalog:",
     "emdash": "workspace:*",

@@ -2,6 +2,7 @@
 import { getEmDashCollection, getEmDashEntry, getEntryTerms, getSeoMeta } from "emdash";
 import Base from "../../layouts/Base.astro";
 import { buildGameAgentProfile, buildGameStructuredData } from "../../lib/game-profile";
+import { buildBreadcrumbStructuredData } from "../../lib/structured-data.js";
 import type { Badge, GameEntry, RelatedGame } from "../../lib/types";
 
 const DIACRITIC_PATTERN = /[\u0300-\u036f]/g;
@@ -191,7 +192,15 @@ const agentProfile = buildGameAgentProfile({
 		},
 	origin: Astro.url.origin,
 });
-const structuredData = [buildGameStructuredData({ game, agentProfile })];
+const breadcrumbItems = [
+	{ name: "Home", url: new URL("/", Astro.url).href },
+	{ name: "Categories", url: new URL("/categories", Astro.url).href },
+	{ name: game.data.title, url: Astro.url.href },
+];
+const structuredData = [
+	buildGameStructuredData({ game, agentProfile }),
+	buildBreadcrumbStructuredData(breadcrumbItems),
+];
 const profileFacts = [
 	{ label: "Players", value: agentProfile.constraints.playerRange },
 	{ label: "Session", value: agentProfile.constraints.sessionRange },
@@ -245,6 +254,7 @@ const hasDecisionGuideContent =
 	canonical={seo.canonical}
 	image={game.data.image_url || seo.ogImage}
 	structuredData={structuredData}
+	breadcrumbs={breadcrumbItems}
 	content={{ collection: "games", id: game.data.id, slug }}
 >
 	<script is:inline type="application/json" id="game-agent-profile" set:html={JSON.stringify(agentProfile)} />

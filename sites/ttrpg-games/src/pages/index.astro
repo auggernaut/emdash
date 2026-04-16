@@ -2,16 +2,30 @@
 import { getEmDashCollection } from "emdash";
 import Base from "../layouts/Base.astro";
 import { sortRecentlyAddedGames, topRatedCardLabelFor } from "../lib/home-page-games";
-import type { Badge, CategoryPageEntry, GameEntry } from "../lib/types";
+import { isToolPost } from "../lib/post-routes";
+import { buildHomePageStructuredData, SITE_NAME } from "../lib/structured-data.js";
+import type { Badge, CategoryFaq, CategoryPageEntry, GameEntry, PostEntry } from "../lib/types";
 
 const NON_ALPHANUMERIC_PATTERN = /[^a-z0-9]/g;
 
-const { entries: rawGames, cacheHint } = await getEmDashCollection("games");
-const { entries: rawCategoryPages } = await getEmDashCollection("category_pages");
-Astro.cache.set(cacheHint);
+const [
+	{ entries: rawGames, cacheHint: gamesCacheHint },
+	{ entries: rawCategoryPages, cacheHint: categoryPagesCacheHint },
+	{ entries: rawPosts, cacheHint: postsCacheHint },
+] = await Promise.all([
+	getEmDashCollection("games"),
+	getEmDashCollection("category_pages"),
+	getEmDashCollection("posts"),
+]);
+
+Astro.cache.set(gamesCacheHint);
+Astro.cache.set(categoryPagesCacheHint);
+Astro.cache.set(postsCacheHint);
 
 const games = rawGames as unknown as GameEntry[];
 const categoryPages = rawCategoryPages as unknown as CategoryPageEntry[];
+const posts = rawPosts as unknown as PostEntry[];
+const articles = posts.filter((post) => !isToolPost(post));
 
 const rankedGames = games.toSorted((left, right) => {
 	const leftRank = left.data.rank ?? Number.MAX_SAFE_INTEGER;
@@ -54,29 +68,55 @@ const popularCategories = [
 ].slice(0, 9);
 
 const recentlyAddedGames = sortRecentlyAddedGames(games).slice(0, 12);
-
-const faqs = [
+const pageDescription =
+	"Compare TTRPGs, explore category guides, and find the game that best fits your group, campaign style, and taste.";
+const faqs: CategoryFaq[] = [
 	{
-		question: "What are tabletop RPGs?",
+		question: "What does TTRPG mean?",
 		answer:
-			"Tabletop RPGs are games where players take on characters in a fictional world and make choices together through conversation, rules, and dice. Some lean tactical, others narrative, but all revolve around collaborative play.",
+			"TTRPG stands for tabletop roleplaying game. These are games where players create characters, describe what they do, and use rules, prompts, or dice to shape what happens next. Some are tactical and combat-heavy, others are narrative, solo, GM-less, or built for short one-shots.",
 	},
 	{
-		question: "How do I choose the right TTRPG for my group?",
+		question: "What is TTRPG Games?",
 		answer:
-			"Start with the tone and play style you want. If your group likes story-first play, look for narrative-focused games. If they prefer crunchy combat or character builds, browse categories centered on tactics, skills, or progression.",
+			"TTRPG Games is a curated directory and editorial guide for TTRPG discovery. It is designed to help you compare games by genre, mechanics, tone, player count, prep load, and play style so you can quickly figure out which games actually fit your table.",
 	},
 	{
-		question: "Are these games only fantasy?",
+		question: "How do I use this site to find the right TTRPG?",
 		answer:
-			"No. The directory covers fantasy, sci-fi, horror, mystery, post-apocalyptic settings, and more, along with categories for mechanics and campaign style.",
+			"Start with either the Top Rated Games section for strong entry points or the category pages if you already know what you want, like horror, cyberpunk, rules-light, solo-friendly, or beginner-friendly play. Then open individual game pages to compare fit, complexity, prep, session length, and whether a game works best for one-shots, campaigns, or specific player counts.",
 	},
 	{
-		question: "Where should I begin if I’m new to TTRPGs?",
+		question: "How is this different from a generic best TTRPG list?",
 		answer:
-			"Use the top-rated games section for strong starting points, then browse categories to narrow by genre, complexity, or mood. Each game page gives you a quick overview and links to learn more.",
+			"Instead of pretending there is one universal best game, this site tries to help you find the best fit. It combines category guides with game-level decision data so you can compare whether something is beginner-friendly, solo-friendly, campaign-friendly, rules-light, high-prep, low-prep, or better for a particular mood or table style.",
+	},
+	{
+		question: "Can this site help me find games beyond D&D?",
+		answer:
+			"Yes. A lot of players come in looking for games like D&D, but lighter, darker, weirder, more narrative, more tactical, or easier to prep. The directory covers fantasy, sci-fi, horror, mystery, post-apocalyptic, and many other genres, along with categories that make it easier to branch out from traditional high-fantasy dungeon crawling.",
+	},
+	{
+		question: "Can I find solo, GM-less, or beginner-friendly TTRPGs here?",
+		answer:
+			"Yes. The site is not limited to traditional full-group campaigns. It is built to surface niche formats and access points too, including solo-friendly games, one-shot-friendly games, approachable entry points for new players, and categories that narrow by how much structure, prep, or improvisation a game asks from the table.",
+	},
+	{
+		question: "What does Top Rated mean on this site?",
+		answer:
+			"Top Rated highlights standout directory picks in the current catalog. It is meant as a practical starting shelf, not a claim that one game is objectively best for every group. The better next step is to use those picks as anchors, then compare nearby games by category and fit.",
+	},
+	{
+		question: "Can I submit a game to the directory?",
+		answer:
+			"Yes. If a game is missing, you can submit it for editorial review through the site’s submission form. That helps the directory keep expanding beyond the usual big names and makes it easier for players to discover interesting indie and overlooked games.",
 	},
 ];
+const structuredData = buildHomePageStructuredData({
+	origin: Astro.url.origin,
+	description: pageDescription,
+	faqs,
+});
 
 function badgesFor(game: GameEntry):     Badge[] {
 	const rawBadges: Array<Badge | null> = [
@@ -93,8 +133,9 @@ function cardCopy(game: GameEntry): string {
 ---
 
 <Base
-	title="TTRPG Games Directory"
-	description="Compare tabletop RPGs, explore category guides, and find the game that best fits your group, campaign style, and taste."
+	title={SITE_NAME}
+	description={pageDescription}
+	structuredData={structuredData}
 >
 	<div class="stack animate-up" style="gap: 80px;">
 		<section class="hero-section" style="padding: 140px 0 40px;">
@@ -102,7 +143,7 @@ function cardCopy(game: GameEntry): string {
 				<span class="eyebrow" style="color: var(--gold-accent); border-left-color: var(--gold-accent);">
 					Find your next adventure
 				</span>
-				<h1>Discover the tabletop RPG that fits your group’s soul.</h1>
+				<h1>Find the perfect TTRPG for your group.</h1>
 				<p>
 					From gritty hex-crawls to epic narrative wonders. Use our curated guides
 					to narrow the field and find a system that matches your mechanics, 
@@ -111,11 +152,15 @@ function cardCopy(game: GameEntry): string {
 				<div class="hero-stats">
 					<div class="stat-pill">
 						<strong>{games.length}</strong>
-						<span>Systems</span>
+						<span>Games</span>
 					</div>
 					<div class="stat-pill">
 						<strong>{categoryPages.length}</strong>
-						<span>Guides</span>
+						<span>Categories</span>
+					</div>
+					<div class="stat-pill">
+						<strong>{articles.length}</strong>
+						<span>Articles</span>
 					</div>
 				</div>
 				<div class="hero-actions">
@@ -126,10 +171,10 @@ function cardCopy(game: GameEntry): string {
 			<div class="hero-visual">
 				<div class="hero-image-stack">
 					<div class="hero-image-card horror">
-						<img src="/_emdash/api/media/file/ttrpg_horror_hero.png" alt="Horror TTRPG" />
+						<img src="/_emdash/api/media/file/ttrpg_wasteland_hero.png" alt="Post-apocalyptic TTRPG players planning a wasteland campaign" />
 					</div>
 					<div class="hero-image-card space">
-						<img src="/_emdash/api/media/file/ttrpg_space_hero.png" alt="Space TTRPG" />
+						<img src="/_emdash/api/media/file/ttrpg_superhero_hero.png" alt="Superhero TTRPG players gathered around a futuristic city map" />
 					</div>
 					<div class="hero-image-card cyberpunk">
 						<img src="/_emdash/api/media/file/ttrpg_cyberpunk_hero.png" alt="Cyberpunk TTRPG" />
@@ -260,8 +305,8 @@ function cardCopy(game: GameEntry): string {
 					<h2>FAQs</h2>
 				</div>
 				<p>
-					A quick guide for visitors who are new to tabletop RPGs or deciding what
-					to try next.
+					A quick guide for visitors who are deciding what this site is for, how to
+					use it, and which kinds of TTRPGs it can help them find.
 				</p>
 			</div>
 			<div class="faq-grid">
@@ -276,36 +321,64 @@ function cardCopy(game: GameEntry): string {
 			</div>
 		</section>
 
+		<section class="panel about-site-panel animate-up">
+			<div class="section-header about-site-header">
+				<div>
+					<div class="kicker">Why this exists</div>
+					<h2>About This Site</h2>
+				</div>
+			</div>
+			<div class="about-site-body">
+				<div class="about-site-content">
+					<div class="about-site-copy">
+						<p>
+							Hey there! I’m on a mission to get more folks hooked on tabletop
+							roleplay games. After diving deep into hundreds of TTRPGs to suss out
+							what makes each one tick, I’m gathering all the coolest insights in one
+							place.
+						</p>
+						<p>
+							I’m also brewing up my own game, so this site doubles as both a
+							directory and a running conversation about what makes TTRPGs
+							worth loving in the first place.
+						</p>
+					</div>
+					<div class="about-site-footer" style="display: flex; flex-wrap: wrap; align-items: center; gap: 14px; padding-top: 4px;">
+						<img
+							src="/images/aug-profile-pic.jpg"
+							alt="Portrait of Augustin Bralley"
+							loading="lazy"
+							style="width: 72px; height: 72px; display: block; flex: none; border-radius: 20px; object-fit: cover; object-position: center 18%; box-shadow: 0 10px 24px rgba(31, 26, 22, 0.14); border: 1px solid rgba(255, 255, 255, 0.75);"
+						/>
+						<div class="about-site-author-meta" style="display: grid; gap: 2px;">
+							<div class="about-site-badge" style="color: var(--muted); font-size: 0.72rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;">Curated by</div>
+							<div class="about-site-signoff" style="font-weight: 700; letter-spacing: 0.02em; font-size: 1.05rem;">Augustin Bralley</div>
+						</div>
+						<a href="https://x.com/augustinbralley" class="button-link">
+							Follow on X
+						</a>
+					</div>
+				</div>
+			</div>
+		</section>
+
 		<section id="submit-your-game" class="panel submit-panel animate-up">
-			<div class="section-header">
+			<div class="section-header submit-panel-header">
 				<div>
 					<div class="kicker">Share a recommendation</div>
 					<h2>Submit Your Game</h2>
 				</div>
-				<p>
-					Know a game that belongs in the directory? Send it our way so more
-					players can discover it.
-				</p>
 			</div>
-			<div class="submit-layout">
-				<div class="prose" style="font-size: 1rem;">
-					<p>
-						The best submissions include the game title, official website, cover
-						image, and a clear summary of what makes it worth exploring.
-					</p>
-					<p>
-						If you’re suggesting a correction, include the item name and the detail
-						that needs to be updated so it can be reviewed quickly.
-					</p>
-				</div>
-				<div class="stack" style="gap: 12px;">
-					<a href="/submit-game" class="button-link primary">
-						Open the submission form
-					</a>
-					<a href="https://x.com/augustinbralley" class="button-link">
-						Contact on X
-					</a>
-				</div>
+			<p class="submit-panel-copy">
+				New games are coming out all the time. If there’s a game you’ve played and
+				really love that isn’t in the directory yet, send it my way. I’d love to
+				review it and add it. If there are any corrections you’d like to make, use
+				this form to let me know.
+			</p>
+			<div class="submit-panel-actions">
+				<a href="/submit-game" class="button-link primary">
+					Open the submission form
+				</a>
 			</div>
 		</section>
 	</div>
@@ -407,11 +480,13 @@ function cardCopy(game: GameEntry): string {
 		.space { transform: rotate(-4deg) translate(-10px, 5px) !important; z-index: 2 !important; }
 		.cyberpunk { transform: rotate(4deg) translate(10px, -5px) !important; z-index: 3 !important; }
 		.fantasy { transform: rotate(10deg) translate(20px, -10px) !important; z-index: 4 !important; }
+		.superhero { transform: rotate(10deg) translate(20px, -10px) !important; z-index: 4 !important; }
 
 		.hero-image-stack:hover .horror { transform: rotate(-18deg) translate(-80px, 40px) scale(1.05) !important; z-index: 10 !important; }
 		.hero-image-stack:hover .space { transform: rotate(-8deg) translate(-40px, 20px) scale(1.05) !important; z-index: 11 !important; }
 		.hero-image-stack:hover .cyberpunk { transform: rotate(8deg) translate(40px, -20px) scale(1.05) !important; z-index: 12 !important; }
 		.hero-image-stack:hover .fantasy { transform: rotate(18deg) translate(80px, -40px) scale(1.05) !important; z-index: 13 !important; }
+		.hero-image-stack:hover .superhero { transform: rotate(18deg) translate(80px, -40px) scale(1.05) !important; z-index: 13 !important; }
 
 		.hero-image-stack:hover .hero-image-card {
 			box-shadow: 0 40px 80px rgba(31, 26, 22, 0.3) !important;
@@ -522,6 +597,86 @@ function cardCopy(game: GameEntry): string {
 			padding: 0 24px 24px;
 			color: var(--muted);
 			line-height: 1.7;
+		}
+
+		.submit-panel {
+			padding: 24px;
+		}
+
+		.about-site-panel {
+			display: grid;
+			gap: 20px;
+			padding: 28px;
+			background:
+				radial-gradient(circle at top left, rgba(177, 78, 44, 0.12), transparent 28%),
+				radial-gradient(circle at bottom right, rgba(196, 160, 82, 0.12), transparent 30%),
+				var(--surface);
+		}
+
+		.about-site-header {
+			gap: 16px;
+		}
+
+		.about-site-body {
+			display: block;
+		}
+
+		.about-site-badge {
+			color: var(--muted);
+			font-size: 0.72rem;
+			font-weight: 700;
+			letter-spacing: 0.12em;
+			text-transform: uppercase;
+		}
+
+		.about-site-content {
+			display: grid;
+			gap: 20px;
+		}
+
+		.about-site-copy {
+			max-width: 58rem;
+			color: var(--muted);
+			font-size: 1.05rem;
+			line-height: 1.7;
+		}
+
+		.about-site-copy p {
+			margin: 0;
+		}
+
+		.about-site-copy p + p {
+			margin-top: 16px;
+		}
+
+		.submit-panel-header {
+			align-items: start;
+			gap: 18px;
+		}
+
+		.submit-panel-header h2 {
+			margin-bottom: 12px;
+		}
+
+		.submit-panel-copy {
+			margin: 0;
+			max-width: 52rem;
+			color: var(--muted);
+			font-size: 1.02rem;
+			line-height: 1.65;
+		}
+
+		.submit-panel-actions {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 12px;
+			margin-top: 20px;
+		}
+
+		@media (max-width: 820px) {
+			.about-site-footer {
+				align-items: flex-start;
+			}
 		}
 	</style>
 </Base>

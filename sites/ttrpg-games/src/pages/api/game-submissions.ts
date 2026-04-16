@@ -2,6 +2,12 @@ import * as path from "node:path";
 
 import type { APIRoute } from "astro";
 
+import {
+	buildGameSubmissionNotificationEmail,
+	getGameSubmissionNotificationRecipient,
+	getGameSubmissionNotificationSource,
+} from "../../lib/game-submission-notifications";
+
 export const prerender = false;
 
 const MAX_IMAGE_UPLOAD_SIZE = 10 * 1024 * 1024;
@@ -236,6 +242,35 @@ export const POST: APIRoute = async ({ request, locals, cache }) => {
 
 		if (cache.enabled) {
 			await cache.invalidate({ tags: ["games"] });
+		}
+
+		const notificationRecipient = getGameSubmissionNotificationRecipient();
+		const createdItem = result.data?.item;
+		if (
+			notificationRecipient &&
+			emdash.email?.isAvailable() &&
+			createdItem &&
+			typeof createdItem.id === "string"
+		) {
+			const origin = new URL(request.url).origin;
+			const adminEditUrl = `${origin}/_emdash/admin/content/games/${encodeURIComponent(createdItem.id)}`;
+			const notification = buildGameSubmissionNotificationEmail(notificationRecipient, {
+				title,
+				description,
+				submitterName,
+				submitterEmail,
+				adminEditUrl,
+				websiteUrl,
+				imageUrl,
+				publisherOrCreator: publisherOrCreator || null,
+				submissionNotes: submissionNotes || null,
+			});
+
+			try {
+				await emdash.email.send(notification, getGameSubmissionNotificationSource());
+			} catch (error) {
+				console.error("[GAME_SUBMISSION_NOTIFICATION_ERROR]", error);
+			}
 		}
 
 		return redirectToSubmissionPage(request, new URLSearchParams({ submitted: "1" }));
