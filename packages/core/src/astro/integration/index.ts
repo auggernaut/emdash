@@ -279,6 +279,11 @@ export function emdash(config: EmDashConfig = {}): AstroIntegration {
 				printRoutesSummary(logger);
 			},
 			"astro:server:setup": ({ server, logger }) => {
+				// Local dev workaround: skip automatic startup typegen.
+				// The manual typegen endpoint still exists, but avoiding the
+				// immediate internal request makes Cloudflare dev less fragile.
+				return;
+
 				// Generate types once the server is listening.
 				// The endpoint returns the types content; we write the file here
 				// (in Node) because workerd has no real filesystem access.
