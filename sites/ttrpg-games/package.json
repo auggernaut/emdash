@@ -4,10 +4,11 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "astro dev",
+    "dev": "CLOUDFLARE_ENV=dev astro dev",
     "build": "astro build",
     "preview": "astro preview",
     "deploy": "pnpm build && wrangler deploy",
+    "db:sync:remote-to-local": "bash ./scripts/sync-d1-from-remote.sh",
     "cf:types": "wrangler types",
     "typecheck": "astro check",
     "test": "vitest run"

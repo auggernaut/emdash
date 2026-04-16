@@ -32,8 +32,40 @@
 		"enabled": true,
 	},
 	"vars": {
-		"EMDASH_GAME_SUBMISSION_NOTIFICATION_EMAIL": "augustin.bralley@gmail.com",
 		"SEOBOT_SYNC_INTERVAL_MINUTES": "1440",
+	},
+	"env": {
+		"dev": {
+			"kv_namespaces": [
+				{
+					"binding": "SESSION",
+					"id": "2e83b3f4670f4048861b07f779393186",
+				},
+			],
+			"d1_databases": [
+				{
+					"binding": "DB",
+					"database_name": "ttrpg-games",
+					"database_id": "9971c90a-4316-4d8b-9b69-e002b91dc34d",
+				},
+			],
+			"r2_buckets": [
+				{
+					"binding": "MEDIA",
+					"bucket_name": "ttrpg-games-media",
+					"remote": true,
+				},
+			],
+			"images": {
+				"binding": "IMAGES",
+			},
+			"observability": {
+				"enabled": false,
+			},
+			"vars": {
+				"SEOBOT_SYNC_INTERVAL_MINUTES": "1440",
+			},
+		},
 	},
 	// Add custom domain routing once the Worker is deployed:
 	// "routes": [
