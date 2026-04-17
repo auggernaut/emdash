@@ -3,6 +3,7 @@ import type { CategoryFaq, GameEntry } from "./types.js";
 export const SITE_NAME = "TTRPG Games Directory";
 export const SITE_FAVICON_PATH = "/favicon.svg";
 export const SITE_LOGO_PATH = "/images/logo-red-transparent-cropped.png";
+export const CATEGORY_ITEMLIST_STRUCTURED_DATA_LIMIT = 24;
 
 interface BreadcrumbItem {
 	name: string;
@@ -68,15 +69,17 @@ export function buildGameItemListStructuredData({
 	url,
 	games,
 }: GameItemListOptions): Record<string, unknown> {
+	const limitedGames = games.slice(0, CATEGORY_ITEMLIST_STRUCTURED_DATA_LIMIT);
+
 	return {
 		"@context": "https://schema.org",
 		"@type": "ItemList",
 		"@id": id,
 		name,
 		url,
-		numberOfItems: games.length,
+		numberOfItems: limitedGames.length,
 		itemListOrder: "https://schema.org/ItemListOrderAscending",
-		itemListElement: games.map((game, index) => {
+		itemListElement: limitedGames.map((game, index) => {
 			const itemUrl = new URL(`/item/${encodeURIComponent(game.id)}`, url).href;
 			return {
 				"@type": "ListItem",

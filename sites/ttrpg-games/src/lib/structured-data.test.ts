@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import {
+	CATEGORY_ITEMLIST_STRUCTURED_DATA_LIMIT,
 	buildArticlePageStructuredData,
 	buildCategoryPageStructuredData,
 	buildHomePageStructuredData,
@@ -93,6 +94,36 @@ describe("structured data builders", () => {
 					],
 				}),
 			]),
+		);
+	});
+
+	it("caps category item-list structured data to keep payloads bounded", () => {
+		const structuredData = buildCategoryPageStructuredData({
+			origin: "https://ttrpg.games",
+			url: "https://ttrpg.games/category/fantasy",
+			name: "Fantasy",
+			description: "Games for fantasy adventures.",
+			breadcrumbs: [
+				{ name: "Home", url: "https://ttrpg.games" },
+				{ name: "Categories", url: "https://ttrpg.games/categories" },
+				{ name: "Fantasy", url: "https://ttrpg.games/category/fantasy" },
+			],
+			games: Array.from({ length: CATEGORY_ITEMLIST_STRUCTURED_DATA_LIMIT + 5 }, (_, index) => ({
+				id: `game-${index + 1}`,
+				data: {
+					id: `01GAME${index + 1}`,
+					title: `Game ${index + 1}`,
+				},
+			})),
+			faqs: [],
+		});
+
+		const itemList = structuredData.find((item) => item["@type"] === "ItemList");
+		expect(itemList).toMatchObject({
+			numberOfItems: CATEGORY_ITEMLIST_STRUCTURED_DATA_LIMIT,
+		});
+		expect(Array.isArray(itemList?.itemListElement) ? itemList.itemListElement : []).toHaveLength(
+			CATEGORY_ITEMLIST_STRUCTURED_DATA_LIMIT,
 		);
 	});
 

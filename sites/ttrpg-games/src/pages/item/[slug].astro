@@ -1,12 +1,11 @@
 ---
-import { getEmDashCollection, getEmDashEntry, getEntryTerms, getSeoMeta } from "emdash";
+import { getEmDashEntry, getEntryTerms, getSeoMeta } from "emdash";
 import Base from "../../layouts/Base.astro";
 import { buildGameAgentProfile, buildGameStructuredData } from "../../lib/game-profile";
+import { resolveRelatedGameHref } from "../../lib/related-games.js";
 import { buildBreadcrumbStructuredData } from "../../lib/structured-data.js";
 import type { Badge, GameEntry, RelatedGame } from "../../lib/types";
 
-const DIACRITIC_PATTERN = /[\u0300-\u036f]/g;
-const NON_ALPHANUMERIC_PATTERN = /[^a-z0-9]/g;
 const HTML_TAG_PATTERN = /<[^>]+>/g;
 const AT_A_GLANCE_PARAGRAPH_PATTERN =
 	/^<p>\s*(?:<strong>)?\s*At-a-glance:\s*(?:<\/strong>)?\s*([\s\S]*?)<\/p>/i;
@@ -58,38 +57,14 @@ const [genres, systems, mechanics, themes, decisionTags] = await Promise.all([
 	getEntryTerms("games", game.data.id, "decision_tag"),
 ]);
 
-const { entries: rawGames } = await getEmDashCollection("games");
-const games = rawGames as unknown as GameEntry[];
-
 const relatedGames: RelatedGame[] = Array.isArray(game.data.related)
 	? game.data.related
 	: [];
 
-const normalizeLookupValue = (value: string | undefined | null) =>
-	(value ?? "")
-		.toLowerCase()
-		.normalize("NFKD")
-		.replace(DIACRITIC_PATTERN, "")
-		.replace(NON_ALPHANUMERIC_PATTERN, "");
-
-const canonicalSlugByLookup = new Map<string, string>();
-
-for (const entry of games) {
-	canonicalSlugByLookup.set(entry.id, entry.id);
-	canonicalSlugByLookup.set(normalizeLookupValue(entry.id), entry.id);
-	canonicalSlugByLookup.set(normalizeLookupValue(entry.data.title), entry.id);
-}
-
 const resolvedRelatedGames = relatedGames.map((related) => {
-	const canonicalSlug =
-		canonicalSlugByLookup.get(related.slug) ??
-		canonicalSlugByLookup.get(normalizeLookupValue(related.slug)) ??
-		canonicalSlugByLookup.get(normalizeLookupValue(related.title)) ??
-		related.slug;
-
 	return {
 		...related,
-		href: `/item/${canonicalSlug}`,
+		href: resolveRelatedGameHref(related),
 	};
 });
 

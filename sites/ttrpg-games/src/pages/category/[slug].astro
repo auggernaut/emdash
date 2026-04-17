@@ -19,13 +19,15 @@ const ESCAPE_APOSTROPHE_PATTERN = /'/g;
 const REGEX_ESCAPE_PATTERN = /[.*+?^${}()|[\]\\]/g;
 
 const { slug } = Astro.params;
-const { entry: rawCategoryPage } = await getEmDashEntry("category_pages", slug ?? "");
-const { entries: rawCategoryPages, cacheHint: categoryPagesCacheHint } =
-	await getEmDashCollection("category_pages");
-Astro.cache.set(categoryPagesCacheHint);
+const { entry: rawCategoryPage, cacheHint: categoryPageCacheHint } = await getEmDashEntry(
+	"category_pages",
+	slug ?? "",
+);
+if (categoryPageCacheHint) {
+	Astro.cache.set(categoryPageCacheHint);
+}
 
 const categoryPage = rawCategoryPage as unknown as CategoryPageEntry | null;
-const allCategoryPages = rawCategoryPages as unknown as CategoryPageEntry[];
 
 if (!slug || !categoryPage) {
 	return Astro.redirect("/404");
@@ -102,7 +104,6 @@ function normalizeRelatedCategories(value: unknown): RelatedCategoryLink[] {
 
 const gameNotes = normalizeGameNotes(categoryPage?.data.game_notes);
 const gameNotesBySlug = new Map(gameNotes.map((item) => [item.game_slug, item]));
-const categoryPagesBySlug = new Map(allCategoryPages.map((item) => [item.id, item]));
 
 function cardCopy(game: GameEntry): string {
 	return (
@@ -133,7 +134,23 @@ const featuredPicks = gameNotes
 	});
 
 const faqs = normalizeFaqs(categoryPage?.data.faqs);
-const relatedCategories = normalizeRelatedCategories(categoryPage?.data.related_categories)
+const normalizedRelatedCategories = normalizeRelatedCategories(categoryPage?.data.related_categories);
+const relatedCategorySlugs = [...new Set(normalizedRelatedCategories.map((item) => item.slug))];
+const relatedCategoryEntries = await Promise.all(
+	relatedCategorySlugs.map(async (relatedSlug) => {
+		const result = await getEmDashEntry("category_pages", relatedSlug);
+		if (result.cacheHint) {
+			Astro.cache.set(result.cacheHint);
+		}
+		return { slug: relatedSlug, entry: result.entry as CategoryPageEntry | null };
+	}),
+);
+const categoryPagesBySlug = new Map(
+	relatedCategoryEntries
+		.filter((item): item is { slug: string; entry: CategoryPageEntry } => Boolean(item.entry))
+		.map((item) => [item.slug, item.entry]),
+);
+const relatedCategories = normalizedRelatedCategories
 	.map((item) => ({
 		...item,
 		page: categoryPagesBySlug.get(item.slug),
