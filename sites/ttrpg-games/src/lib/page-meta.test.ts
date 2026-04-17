@@ -14,6 +14,17 @@ describe("resolvePageMeta", () => {
 		});
 	});
 
+	it("normalizes the home canonical to the slashless origin", () => {
+		expect(
+			resolvePageMeta({
+				url: new URL("https://www.ttrpg-games.com/"),
+			}),
+		).toEqual({
+			canonical: "https://www.ttrpg-games.com",
+			image: `https://www.ttrpg-games.com${SITE_DEFAULT_OG_IMAGE_PATH}`,
+		});
+	});
+
 	it("converts relative image paths to absolute URLs", () => {
 		expect(
 			resolvePageMeta({
@@ -34,7 +45,7 @@ describe("resolvePageMeta", () => {
 				image: "https://cdn.example.com/social.png",
 			}),
 		).toEqual({
-			canonical: "https://www.ttrpg-games.com/",
+			canonical: "https://www.ttrpg-games.com",
 			image: "https://cdn.example.com/social.png",
 		});
 	});
