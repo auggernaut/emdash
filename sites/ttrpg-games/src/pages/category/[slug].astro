@@ -258,7 +258,7 @@ function renderFaqAnswer(answer: string): string {
 	breadcrumbs={breadcrumbItems}
 	structuredData={structuredData}
 >
-		<div class="stack animate-up" style="gap: 60px;">
+		<div class="stack animate-up" style="--stack-gap: 60px; gap: var(--stack-gap);">
 			<section class="hero-section category-hero">
 				<nav class="breadcrumbs" aria-label="Breadcrumb">
 					<a href="/">Home</a>
@@ -618,5 +618,11 @@ function renderFaqAnswer(answer: string): string {
 		font-size: 0.85rem;
 		font-weight: 700;
 		color: var(--accent);
+	}
+
+	@media (max-width: 960px) {
+		.category-hero {
+			padding: 0 0 32px;
+		}
 	}
 </style>

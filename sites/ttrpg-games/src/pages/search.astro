@@ -118,7 +118,7 @@ function resultLabel(collection: string): string {
 			: "Search the TTRPG Games directory."
 	}
 >
-	<div class="stack animate-up" style="gap: 56px;">
+	<div class="stack animate-up" style="--stack-gap: 56px; gap: var(--stack-gap);">
 		<section class="hero-section search-hero">
 			<nav class="breadcrumbs" aria-label="Breadcrumb">
 				<a href="/">Home</a>
@@ -277,5 +277,11 @@ function resultLabel(collection: string): string {
 		display: grid;
 		grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
 		gap: 32px;
+	}
+
+	@media (max-width: 960px) {
+		.search-hero {
+			padding: 0 0 32px;
+		}
 	}
 </style>

@@ -26,7 +26,7 @@ const errorMessage = errorCode ? errorMessages[errorCode] ?? errorMessages.submi
 	title="Submit a Game | TTRPG Games"
 	description="Submit a tabletop RPG to the directory for editorial review."
 >
-	<div class="stack animate-up" style="gap: 56px;">
+	<div class="stack animate-up" style="--stack-gap: 56px; gap: var(--stack-gap);">
 		<section class="hero-section submit-hero">
 			<nav class="breadcrumbs" aria-label="Breadcrumb">
 				<a href="/">Home</a>
@@ -486,6 +486,10 @@ const errorMessage = errorCode ? errorMessages[errorCode] ?? errorMessages.submi
 	}
 
 	@media (max-width: 960px) {
+		.submit-hero {
+			padding: 0 0 32px;
+		}
+
 		.submission-layout {
 			grid-template-columns: 1fr;
 		}

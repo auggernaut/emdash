@@ -258,7 +258,7 @@ const hasDecisionGuideContent =
 	content={{ collection: "games", id: game.data.id, slug }}
 >
 	<script is:inline type="application/json" id="game-agent-profile" set:html={JSON.stringify(agentProfile)} />
-		<div class="stack animate-up" style="gap: 36px;">
+		<div class="stack animate-up" style="--stack-gap: 36px; gap: var(--stack-gap);">
 			<section class="hero-section detail-hero">
 				<nav class="breadcrumbs" aria-label="Breadcrumb" style="margin-bottom: 32px;">
 					<a href="/">Home</a>
@@ -815,6 +815,10 @@ const hasDecisionGuideContent =
 	}
 
 	@media (max-width: 960px) {
+		.detail-hero {
+			padding: 0 0 24px;
+		}
+
 		.detail-layout {
 			grid-template-columns: 1fr;
 			gap: 48px;

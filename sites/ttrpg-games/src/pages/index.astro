@@ -7,6 +7,7 @@ import { buildHomePageStructuredData, SITE_NAME } from "../lib/structured-data.j
 import type { Badge, CategoryFaq, CategoryPageEntry, GameEntry, PostEntry } from "../lib/types";
 
 const NON_ALPHANUMERIC_PATTERN = /[^a-z0-9]/g;
+const HERO_IMAGE_PLACEHOLDER = "data:image/gif;base64,R0lGODlhAQABAAAAACw=";
 
 const [
 	{ entries: rawGames, cacheHint: gamesCacheHint },
@@ -137,8 +138,8 @@ function cardCopy(game: GameEntry): string {
 	description={pageDescription}
 	structuredData={structuredData}
 >
-	<div class="stack animate-up" style="gap: 80px;">
-		<section class="hero-section" style="padding: 140px 0 40px;">
+	<div class="stack animate-up" style="--stack-gap: 80px; gap: var(--stack-gap);">
+		<section class="hero-section">
 			<div class="hero-content">
 				<span class="eyebrow" style="color: var(--gold-accent); border-left-color: var(--gold-accent);">
 					Find your next adventure
@@ -171,16 +172,46 @@ function cardCopy(game: GameEntry): string {
 			<div class="hero-visual">
 				<div class="hero-image-stack">
 					<div class="hero-image-card horror">
-						<img src="/_emdash/api/media/file/ttrpg_wasteland_hero.png" alt="Post-apocalyptic TTRPG players planning a wasteland campaign" />
+						<picture>
+							<source
+								media="(min-width: 961px)"
+								srcset="/_emdash/api/media/file/ttrpg_wasteland_hero.png"
+							/>
+							<img
+								src={HERO_IMAGE_PLACEHOLDER}
+								alt="Post-apocalyptic TTRPG players planning a wasteland campaign"
+							/>
+						</picture>
 					</div>
 					<div class="hero-image-card space">
-						<img src="/_emdash/api/media/file/ttrpg_superhero_hero.png" alt="Superhero TTRPG players gathered around a futuristic city map" />
+						<picture>
+							<source
+								media="(min-width: 961px)"
+								srcset="/_emdash/api/media/file/ttrpg_superhero_hero.png"
+							/>
+							<img
+								src={HERO_IMAGE_PLACEHOLDER}
+								alt="Superhero TTRPG players gathered around a futuristic city map"
+							/>
+						</picture>
 					</div>
 					<div class="hero-image-card cyberpunk">
-						<img src="/_emdash/api/media/file/ttrpg_cyberpunk_hero.png" alt="Cyberpunk TTRPG" />
+						<picture>
+							<source
+								media="(min-width: 961px)"
+								srcset="/_emdash/api/media/file/ttrpg_cyberpunk_hero.png"
+							/>
+							<img src={HERO_IMAGE_PLACEHOLDER} alt="Cyberpunk TTRPG" />
+						</picture>
 					</div>
 					<div class="hero-image-card fantasy">
-						<img src="/_emdash/api/media/file/ttrpg_hero_bg.png" alt="Fantasy TTRPG" />
+						<picture>
+							<source
+								media="(min-width: 961px)"
+								srcset="/_emdash/api/media/file/ttrpg_hero_bg.png"
+							/>
+							<img src={HERO_IMAGE_PLACEHOLDER} alt="Fantasy TTRPG" />
+						</picture>
 					</div>
 				</div>
 			</div>
@@ -389,7 +420,7 @@ function cardCopy(game: GameEntry): string {
 			grid-template-columns: 1.1fr 0.9fr;
 			gap: 60px;
 			align-items: center;
-			padding: 150px 0 80px;
+			padding: 140px 0 40px;
 			min-height: 560px;
 		}
 
@@ -475,6 +506,12 @@ function cardCopy(game: GameEntry): string {
 			object-fit: cover;
 		}
 
+		.hero-image-card picture {
+			display: block;
+			width: 100%;
+			height: 100%;
+		}
+
 		/* The Fan */
 		.horror { transform: rotate(-10deg) translate(-20px, 10px) !important; z-index: 1 !important; }
 		.space { transform: rotate(-4deg) translate(-10px, 5px) !important; z-index: 2 !important; }
@@ -496,7 +533,7 @@ function cardCopy(game: GameEntry): string {
 			.hero-section {
 				grid-template-columns: 1fr;
 				text-align: center;
-				padding: 50px 0;
+				padding: 0 0 32px;
 			}
 			.hero-content p {
 				margin-inline: auto;
@@ -505,9 +542,7 @@ function cardCopy(game: GameEntry): string {
 				justify-content: center;
 			}
 			.hero-visual {
-				order: -1;
-				max-width: 440px;
-				margin: 0 auto;
+				display: none;
 			}
 		}
 

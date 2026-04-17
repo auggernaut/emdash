@@ -21,7 +21,7 @@ const sortedCategories = categoryPages.toSorted((left, right) => {
 	title="Browse TTRPG Categories"
 	description="Browse tabletop RPG categories by genre, system, mechanics, and tone to find games that match your group."
 >
-	<div class="stack animate-up" style="gap: 56px;">
+	<div class="stack animate-up" style="--stack-gap: 56px; gap: var(--stack-gap);">
 		<section class="hero-section category-hero">
 			<nav class="breadcrumbs" aria-label="Breadcrumb">
 				<a href="/">Home</a>
@@ -174,5 +174,11 @@ const sortedCategories = categoryPages.toSorted((left, right) => {
 		-webkit-line-clamp: 3;
 		-webkit-box-orient: vertical;
 		overflow: hidden;
+	}
+
+	@media (max-width: 960px) {
+		.category-hero {
+			padding: 0 0 32px;
+		}
 	}
 </style>

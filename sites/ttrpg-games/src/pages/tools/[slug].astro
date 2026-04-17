@@ -239,4 +239,18 @@ const structuredData = buildArticlePageStructuredData({ breadcrumbs });
 		gap: 12px;
 		margin-top: 18px;
 	}
+
+	@media (max-width: 860px) {
+		.blog-page {
+			padding-top: 0;
+		}
+
+		.article-hero {
+			grid-template-columns: 1fr;
+		}
+
+		.article-hero-copy h1 {
+			max-width: none;
+		}
+	}
 </style>
