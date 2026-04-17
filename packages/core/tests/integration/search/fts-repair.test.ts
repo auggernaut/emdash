@@ -13,6 +13,7 @@ describe("FTS repair", () => {
 	let registry: SchemaRegistry;
 	let repo: ContentRepository;
 	let ftsManager: FTSManager;
+	let gameId: string;
 
 	beforeEach(async () => {
 		db = await setupTestDatabase();
@@ -39,7 +40,7 @@ describe("FTS repair", () => {
 			searchable: true,
 		});
 
-		await repo.create({
+		const created = await repo.create({
 			type: "game",
 			slug: "trail-of-cthulhu",
 			status: "published",
@@ -49,6 +50,7 @@ describe("FTS repair", () => {
 				blurb: "Investigative horror in the Cthulhu mythos.",
 			},
 		});
+		gameId = created.id;
 
 		await ftsManager.enableSearch("game");
 	});
@@ -80,5 +82,10 @@ describe("FTS repair", () => {
 
 		expect(repaired.items).toHaveLength(1);
 		expect(repaired.items[0]?.slug).toBe("trail-of-cthulhu");
+	});
+
+	it("keeps the FTS index in sync after soft delete", async () => {
+		await expect(repo.delete("game", gameId)).resolves.toBe(true);
+		await expect(ftsManager.verifyAndRepairAll()).resolves.toBe(0);
 	});
 });
