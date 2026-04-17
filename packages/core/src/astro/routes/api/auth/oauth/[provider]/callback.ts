@@ -16,6 +16,7 @@ import {
 	type RoleLevel,
 } from "@emdash-cms/auth";
 import { createKyselyAdapter } from "@emdash-cms/auth/adapters/kysely";
+import { env as cfEnv } from "cloudflare:workers";
 
 import { getPublicOrigin } from "#api/public-url.js";
 import { createOAuthStateStore } from "#auth/oauth-state-store.js";
@@ -113,11 +114,9 @@ export const GET: APIRoute = async ({ params, request, locals, session, redirect
 	}
 
 	try {
-		// Get OAuth providers from environment
-		// eslint-disable-next-line typescript-eslint(no-unsafe-type-assertion) -- locals.runtime is injected by the Cloudflare adapter at runtime; not declared on App.Locals since the adapter is optional
-		const runtimeLocals = locals as unknown as { runtime?: { env?: Record<string, unknown> } };
-		// eslint-disable-next-line typescript-eslint(no-unsafe-type-assertion) -- import.meta.env is typed as ImportMetaEnv but we need Record<string, unknown> for getOAuthConfig
-		const env = runtimeLocals.runtime?.env ?? (import.meta.env as Record<string, unknown>);
+		// Astro v6 removed locals.runtime.env on Cloudflare adapters.
+		// eslint-disable-next-line typescript-eslint(no-unsafe-type-assertion) -- Worker env lacks an index signature and import.meta.env stays the Node/test fallback
+		const env = (cfEnv ?? import.meta.env) as unknown as Record<string, unknown>;
 		const providers = getOAuthConfig(env);
 
 		if (!providers[provider]) {
