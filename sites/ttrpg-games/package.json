@@ -6,8 +6,9 @@
   "scripts": {
     "dev": "CLOUDFLARE_ENV=dev astro dev",
     "build": "astro build",
+    "build:all": "pnpm run --filter @auggernaut/ttrpg-games... build",
     "preview": "astro preview",
-    "deploy": "pnpm build && wrangler deploy",
+    "deploy": "pnpm build:all && wrangler deploy",
     "db:sync:remote-to-local": "bash ./scripts/sync-d1-from-remote.sh",
     "cf:types": "wrangler types",
     "typecheck": "astro check",
