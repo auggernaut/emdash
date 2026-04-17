@@ -18,6 +18,7 @@ Use the EmDash MCP/API surface for normal content operations.
 
 - Use MCP first for content create/update/delete, taxonomy assignment, category-page updates, and verification.
 - Use MCP/API exclusively for production content work on this site.
+- Default to the live production site unless the user explicitly asks for local dev work.
 - If the MCP/API surface cannot perform the change, stop and report the blocker instead of dropping to direct database edits.
 - For local `ttrpg-games` work, the MCP server runs from the dev site at `/_emdash/api/mcp` when enabled.
 
@@ -28,6 +29,10 @@ Use the EmDash MCP/API surface for normal content operations.
 Before changing production content:
 
 - verify you are pointed at the intended EmDash MCP/API target
+- for direct production MCP access, authenticate first with `pnpm exec emdash login --url https://<site>`
+- the CLI stores the access token in `~/.config/emdash/auth.json`; raw MCP HTTP calls need `Authorization: Bearer <token>`
+- the MCP transport is `https://<site>/_emdash/api/mcp`
+- MCP responses may be returned as `text/event-stream`, so be prepared to parse SSE-framed JSON instead of assuming a plain JSON body
 - prefer reading the existing entry through MCP before planning edits
 - confirm whether the page is already published, since draft-only MCP edits are not live
 
