@@ -1,11 +1,12 @@
 ---
 import { getEmDashCollection } from "emdash";
 import Base from "../../layouts/Base.astro";
+import { setAstroCacheHint } from "../../lib/astro-cache.js";
 import type { CategoryPageEntry } from "../../lib/types";
 
 const { entries: rawCategoryPages, cacheHint } =
 	await getEmDashCollection("category_pages");
-Astro.cache.set(cacheHint);
+setAstroCacheHint(Astro.cache, cacheHint);
 
 const categoryPages = rawCategoryPages as unknown as CategoryPageEntry[];
 

@@ -3,6 +3,7 @@ import { getEmDashCollection } from "emdash";
 import { Image } from "emdash/ui";
 
 import Base from "../layouts/Base.astro";
+import { setAstroCacheHint } from "../lib/astro-cache.js";
 import { getPostPath, isToolPost } from "../lib/post-routes";
 import type { PostEntry } from "../lib/types";
 
@@ -16,7 +17,7 @@ const { entries: rawPosts, cacheHint } = await getEmDashCollection("posts", {
 	limit: ALL_POSTS_LIMIT,
 });
 
-Astro.cache.set(cacheHint);
+setAstroCacheHint(Astro.cache, cacheHint);
 
 const allPosts = (rawPosts as unknown as PostEntry[]).filter((post) => isToolPost(post));
 const posts = allPosts.slice(0, PAGE_SIZE);

@@ -1,6 +1,7 @@
 ---
 import { getEmDashEntry, getEntryTerms, getSeoMeta } from "emdash";
 import Base from "../../layouts/Base.astro";
+import { setAstroCacheHint } from "../../lib/astro-cache.js";
 import { buildGameAgentProfile, buildGameStructuredData } from "../../lib/game-profile";
 import { resolveRelatedGameHref } from "../../lib/related-games.js";
 import { buildBreadcrumbStructuredData } from "../../lib/structured-data.js";
@@ -46,7 +47,7 @@ if (!rawGame) {
 	return Astro.redirect("/404");
 }
 
-Astro.cache.set(cacheHint);
+setAstroCacheHint(Astro.cache, cacheHint);
 
 const game = rawGame as unknown as GameEntry;
 const [genres, systems, mechanics, themes, decisionTags] = await Promise.all([

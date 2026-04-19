@@ -235,7 +235,11 @@ export const POST: APIRoute = async ({ request, locals, cache }) => {
 		}
 
 		if (cache.enabled) {
-			await cache.invalidate({ tags: ["games"] });
+			try {
+				await cache.invalidate({ tags: ["games"] });
+			} catch (error) {
+				console.warn("[CACHE_INVALIDATE_FAILED] game submission", error);
+			}
 		}
 
 		return redirectToSubmissionPage(request, new URLSearchParams({ submitted: "1" }));

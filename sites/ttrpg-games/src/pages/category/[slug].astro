@@ -2,6 +2,7 @@
 import { getEmDashCollection, getEmDashEntry } from "emdash";
 import { getDb } from "emdash/runtime";
 import Base from "../../layouts/Base.astro";
+import { setAstroCacheHint } from "../../lib/astro-cache.js";
 import { buildCategoryPageStructuredData } from "../../lib/structured-data.js";
 import type {
 	CategoryFaq,
@@ -24,7 +25,7 @@ const { entry: rawCategoryPage, cacheHint: categoryPageCacheHint } = await getEm
 	slug ?? "",
 );
 if (categoryPageCacheHint) {
-	Astro.cache.set(categoryPageCacheHint);
+	setAstroCacheHint(Astro.cache, categoryPageCacheHint);
 }
 
 const categoryPage = rawCategoryPage as unknown as CategoryPageEntry | null;
@@ -42,7 +43,7 @@ const where =
 			}
 		: undefined;
 const { entries: rawGames, cacheHint } = await getEmDashCollection("games", where ? { where } : undefined);
-Astro.cache.set(cacheHint);
+setAstroCacheHint(Astro.cache, cacheHint);
 const games = rawGames as unknown as GameEntry[];
 
 const rankedGames = games.toSorted((left, right) => {
@@ -140,7 +141,7 @@ const relatedCategoryEntries = await Promise.all(
 	relatedCategorySlugs.map(async (relatedSlug) => {
 		const result = await getEmDashEntry("category_pages", relatedSlug);
 		if (result.cacheHint) {
-			Astro.cache.set(result.cacheHint);
+			setAstroCacheHint(Astro.cache, result.cacheHint);
 		}
 		return { slug: relatedSlug, entry: result.entry as CategoryPageEntry | null };
 	}),

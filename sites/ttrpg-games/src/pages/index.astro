@@ -1,6 +1,7 @@
 ---
 import { getEmDashCollection } from "emdash";
 import Base from "../layouts/Base.astro";
+import { setAstroCacheHint } from "../lib/astro-cache.js";
 import { sortRecentlyAddedGames, topRatedCardLabelFor } from "../lib/home-page-games";
 import { isToolPost } from "../lib/post-routes";
 import { buildHomePageStructuredData, SITE_NAME } from "../lib/structured-data.js";
@@ -19,9 +20,9 @@ const [
 	getEmDashCollection("posts"),
 ]);
 
-Astro.cache.set(gamesCacheHint);
-Astro.cache.set(categoryPagesCacheHint);
-Astro.cache.set(postsCacheHint);
+setAstroCacheHint(Astro.cache, gamesCacheHint);
+setAstroCacheHint(Astro.cache, categoryPagesCacheHint);
+setAstroCacheHint(Astro.cache, postsCacheHint);
 
 const games = rawGames as unknown as GameEntry[];
 const categoryPages = rawCategoryPages as unknown as CategoryPageEntry[];

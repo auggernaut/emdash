@@ -3,6 +3,7 @@ import { getEmDashCollection, getEmDashEntry } from "emdash";
 import { Image, PortableText } from "emdash/ui";
 
 import Base from "../../layouts/Base.astro";
+import { setAstroCacheHint } from "../../lib/astro-cache.js";
 import { getPostPath, isToolPost } from "../../lib/post-routes";
 import { buildArticlePageStructuredData } from "../../lib/structured-data.js";
 import type { PostEntry } from "../../lib/types";
@@ -21,7 +22,7 @@ if (!rawPost) {
 	return Astro.redirect("/404");
 }
 
-Astro.cache.set(cacheHint);
+setAstroCacheHint(Astro.cache, cacheHint);
 
 const post = rawPost as unknown as PostEntry;
 if (!isToolPost(post)) {
