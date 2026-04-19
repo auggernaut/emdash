@@ -9,6 +9,8 @@ import type { Badge, CategoryFaq, CategoryPageEntry, GameEntry, PostEntry } from
 
 const NON_ALPHANUMERIC_PATTERN = /[^a-z0-9]/g;
 const HERO_IMAGE_PLACEHOLDER = "data:image/gif;base64,R0lGODlhAQABAAAAACw=";
+const HERO_IMAGE_SIZES = "(min-width: 1200px) 440px, 40vw";
+const HERO_IMAGE_BASE = "/home-hero";
 
 const [
 	{ entries: rawGames, cacheHint: gamesCacheHint },
@@ -171,50 +173,128 @@ function cardCopy(game: GameEntry): string {
 				</div>
 			</div>
 			<div class="hero-visual">
-				<div class="hero-image-stack">
-					<div class="hero-image-card horror">
-						<picture>
-							<source
-								media="(min-width: 961px)"
-								srcset="/_emdash/api/media/file/ttrpg_wasteland_hero.png"
-							/>
-							<img
-								src={HERO_IMAGE_PLACEHOLDER}
-								alt="Post-apocalyptic TTRPG players planning a wasteland campaign"
-							/>
-						</picture>
+					<div class="hero-image-stack">
+						<div class="hero-image-card horror">
+							<picture>
+								<source
+									media="(min-width: 961px)"
+									type="image/avif"
+									srcset={`${HERO_IMAGE_BASE}/ttrpg_wasteland_hero-512.avif 512w, ${HERO_IMAGE_BASE}/ttrpg_wasteland_hero-960.avif 960w`}
+									sizes={HERO_IMAGE_SIZES}
+								/>
+								<source
+									media="(min-width: 961px)"
+									type="image/webp"
+									srcset={`${HERO_IMAGE_BASE}/ttrpg_wasteland_hero-512.webp 512w, ${HERO_IMAGE_BASE}/ttrpg_wasteland_hero-960.webp 960w`}
+									sizes={HERO_IMAGE_SIZES}
+								/>
+								<source
+									media="(min-width: 961px)"
+									type="image/png"
+									srcset={`${HERO_IMAGE_BASE}/ttrpg_wasteland_hero.png`}
+								/>
+								<img
+									src={HERO_IMAGE_PLACEHOLDER}
+									alt="Post-apocalyptic TTRPG players planning a wasteland campaign"
+									width="1024"
+									height="1024"
+									loading="lazy"
+									decoding="async"
+									fetchpriority="low"
+								/>
+							</picture>
+						</div>
+						<div class="hero-image-card superhero">
+							<picture>
+								<source
+									media="(min-width: 961px)"
+									type="image/avif"
+									srcset={`${HERO_IMAGE_BASE}/ttrpg_superhero_hero-512.avif 512w, ${HERO_IMAGE_BASE}/ttrpg_superhero_hero-960.avif 960w`}
+									sizes={HERO_IMAGE_SIZES}
+								/>
+								<source
+									media="(min-width: 961px)"
+									type="image/webp"
+									srcset={`${HERO_IMAGE_BASE}/ttrpg_superhero_hero-512.webp 512w, ${HERO_IMAGE_BASE}/ttrpg_superhero_hero-960.webp 960w`}
+									sizes={HERO_IMAGE_SIZES}
+								/>
+								<source
+									media="(min-width: 961px)"
+									type="image/png"
+									srcset={`${HERO_IMAGE_BASE}/ttrpg_superhero_hero.png`}
+								/>
+								<img
+									src={HERO_IMAGE_PLACEHOLDER}
+									alt="Superhero TTRPG players gathered around a futuristic city map"
+									width="1024"
+									height="1024"
+									loading="lazy"
+									decoding="async"
+									fetchpriority="low"
+								/>
+							</picture>
+						</div>
+						<div class="hero-image-card cyberpunk">
+							<picture>
+								<source
+									media="(min-width: 961px)"
+									type="image/avif"
+									srcset={`${HERO_IMAGE_BASE}/ttrpg_cyberpunk_hero-512.avif 512w, ${HERO_IMAGE_BASE}/ttrpg_cyberpunk_hero-960.avif 960w`}
+									sizes={HERO_IMAGE_SIZES}
+								/>
+								<source
+									media="(min-width: 961px)"
+									type="image/webp"
+									srcset={`${HERO_IMAGE_BASE}/ttrpg_cyberpunk_hero-512.webp 512w, ${HERO_IMAGE_BASE}/ttrpg_cyberpunk_hero-960.webp 960w`}
+									sizes={HERO_IMAGE_SIZES}
+								/>
+								<source
+									media="(min-width: 961px)"
+									type="image/png"
+									srcset={`${HERO_IMAGE_BASE}/ttrpg_cyberpunk_hero.png`}
+								/>
+								<img
+									src={HERO_IMAGE_PLACEHOLDER}
+									alt="Cyberpunk TTRPG"
+									width="1024"
+									height="1024"
+									loading="lazy"
+									decoding="async"
+									fetchpriority="low"
+								/>
+							</picture>
+						</div>
+						<div class="hero-image-card fantasy">
+							<picture>
+								<source
+									media="(min-width: 961px)"
+									type="image/avif"
+									srcset={`${HERO_IMAGE_BASE}/ttrpg_hero_bg-512.avif 512w, ${HERO_IMAGE_BASE}/ttrpg_hero_bg-960.avif 960w`}
+									sizes={HERO_IMAGE_SIZES}
+								/>
+								<source
+									media="(min-width: 961px)"
+									type="image/webp"
+									srcset={`${HERO_IMAGE_BASE}/ttrpg_hero_bg-512.webp 512w, ${HERO_IMAGE_BASE}/ttrpg_hero_bg-960.webp 960w`}
+									sizes={HERO_IMAGE_SIZES}
+								/>
+								<source
+									media="(min-width: 961px)"
+									type="image/png"
+									srcset={`${HERO_IMAGE_BASE}/ttrpg_hero_bg.png`}
+								/>
+								<img
+									src={HERO_IMAGE_PLACEHOLDER}
+									alt="Fantasy TTRPG"
+									width="1024"
+									height="1024"
+									loading="eager"
+									decoding="async"
+									fetchpriority="high"
+								/>
+							</picture>
+						</div>
 					</div>
-					<div class="hero-image-card space">
-						<picture>
-							<source
-								media="(min-width: 961px)"
-								srcset="/_emdash/api/media/file/ttrpg_superhero_hero.png"
-							/>
-							<img
-								src={HERO_IMAGE_PLACEHOLDER}
-								alt="Superhero TTRPG players gathered around a futuristic city map"
-							/>
-						</picture>
-					</div>
-					<div class="hero-image-card cyberpunk">
-						<picture>
-							<source
-								media="(min-width: 961px)"
-								srcset="/_emdash/api/media/file/ttrpg_cyberpunk_hero.png"
-							/>
-							<img src={HERO_IMAGE_PLACEHOLDER} alt="Cyberpunk TTRPG" />
-						</picture>
-					</div>
-					<div class="hero-image-card fantasy">
-						<picture>
-							<source
-								media="(min-width: 961px)"
-								srcset="/_emdash/api/media/file/ttrpg_hero_bg.png"
-							/>
-							<img src={HERO_IMAGE_PLACEHOLDER} alt="Fantasy TTRPG" />
-						</picture>
-					</div>
-				</div>
 			</div>
 		</section>
 
@@ -515,16 +595,14 @@ function cardCopy(game: GameEntry): string {
 
 		/* The Fan */
 		.horror { transform: rotate(-10deg) translate(-20px, 10px) !important; z-index: 1 !important; }
-		.space { transform: rotate(-4deg) translate(-10px, 5px) !important; z-index: 2 !important; }
+		.superhero { transform: rotate(-4deg) translate(-10px, 5px) !important; z-index: 2 !important; }
 		.cyberpunk { transform: rotate(4deg) translate(10px, -5px) !important; z-index: 3 !important; }
 		.fantasy { transform: rotate(10deg) translate(20px, -10px) !important; z-index: 4 !important; }
-		.superhero { transform: rotate(10deg) translate(20px, -10px) !important; z-index: 4 !important; }
 
 		.hero-image-stack:hover .horror { transform: rotate(-18deg) translate(-80px, 40px) scale(1.05) !important; z-index: 10 !important; }
-		.hero-image-stack:hover .space { transform: rotate(-8deg) translate(-40px, 20px) scale(1.05) !important; z-index: 11 !important; }
+		.hero-image-stack:hover .superhero { transform: rotate(-8deg) translate(-40px, 20px) scale(1.05) !important; z-index: 11 !important; }
 		.hero-image-stack:hover .cyberpunk { transform: rotate(8deg) translate(40px, -20px) scale(1.05) !important; z-index: 12 !important; }
 		.hero-image-stack:hover .fantasy { transform: rotate(18deg) translate(80px, -40px) scale(1.05) !important; z-index: 13 !important; }
-		.hero-image-stack:hover .superhero { transform: rotate(18deg) translate(80px, -40px) scale(1.05) !important; z-index: 13 !important; }
 
 		.hero-image-stack:hover .hero-image-card {
 			box-shadow: 0 40px 80px rgba(31, 26, 22, 0.3) !important;
