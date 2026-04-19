@@ -6,6 +6,9 @@ describe("base layout", () => {
 	it("uses a dedicated mobile navigation drawer instead of keeping inline nav and search visible", () => {
 		const layoutSource = readFileSync(new URL("./Base.astro", import.meta.url), "utf8");
 
+		expect(layoutSource).toContain('class="brand-logo-picture"');
+		expect(layoutSource).toContain('type="image/avif"');
+		expect(layoutSource).toContain('type="image/webp"');
 		expect(layoutSource).toContain('class="mobile-nav-toggle"');
 		expect(layoutSource).toContain('class="mobile-nav-panel"');
 		expect(layoutSource).not.toContain('class="mobile-nav-heading"');

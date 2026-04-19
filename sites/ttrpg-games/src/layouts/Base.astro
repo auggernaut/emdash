@@ -44,6 +44,8 @@ const resolvedPageMeta = resolvePageMeta({
 
 const faviconHref = SITE_FAVICON_PATH;
 const logoSrc = SITE_LOGO_PATH;
+const displayLogoBase = "/images/logo-red-transparent-cropped";
+const displayLogoSizes = "(min-width: 961px) 144px, 120px";
 const primaryLinks = [
 	{ label: "Categories", url: "/categories" },
 	{ label: "Submit", url: "/submit-game" },
@@ -105,7 +107,27 @@ const pageCtx = createPublicPageContext({
 		<header class="site-header header-transparent">
 			<nav class="nav-shell">
 				<a href="/" class="brand">
-					<img class="brand-logo" src={logoSrc} alt="TTRPG Games" />
+					<picture class="brand-logo-picture">
+						<source
+							type="image/avif"
+							srcset={`${displayLogoBase}-288.avif 288w, ${displayLogoBase}-576.avif 576w`}
+							sizes={displayLogoSizes}
+						/>
+						<source
+							type="image/webp"
+							srcset={`${displayLogoBase}-288.webp 288w, ${displayLogoBase}-576.webp 576w`}
+							sizes={displayLogoSizes}
+						/>
+						<img
+							class="brand-logo"
+							src={logoSrc}
+							alt="TTRPG Games"
+							width="987"
+							height="543"
+							decoding="async"
+							fetchpriority="high"
+						/>
+					</picture>
 					<span class="brand-copy">
 						<strong>TTRPG Games Directory</strong>
 						<small>Discover your next tabletop roleplay game.</small>
@@ -172,7 +194,27 @@ const pageCtx = createPublicPageContext({
 			<div class="footer-main">
 				<div class="footer-brand">
 					<a href="/" class="brand">
-						<img class="brand-logo" src={logoSrc} alt="TTRPG Games" />
+						<picture class="brand-logo-picture">
+							<source
+								type="image/avif"
+								srcset={`${displayLogoBase}-288.avif 288w, ${displayLogoBase}-576.avif 576w`}
+								sizes={displayLogoSizes}
+							/>
+							<source
+								type="image/webp"
+								srcset={`${displayLogoBase}-288.webp 288w, ${displayLogoBase}-576.webp 576w`}
+								sizes={displayLogoSizes}
+							/>
+							<img
+								class="brand-logo"
+								src={logoSrc}
+								alt="TTRPG Games"
+								width="987"
+								height="543"
+								decoding="async"
+								loading="lazy"
+							/>
+						</picture>
 						<span class="brand-copy">
 							<strong>TTRPG Games Directory</strong>
 						</span>
@@ -380,6 +422,11 @@ const pageCtx = createPublicPageContext({
 		height: auto;
 		flex: 0 0 auto;
 		filter: drop-shadow(0 4px 10px rgba(31, 26, 22, 0.08));
+	}
+
+	.brand-logo-picture {
+		display: inline-flex;
+		flex: 0 0 auto;
 	}
 
 	.brand-copy {
