@@ -11,6 +11,8 @@ import type { PostEntry } from "../../lib/types";
 export const prerender = false;
 
 const LEADING_H1_PATTERN = /^\s*<h1\b[^>]*>[\s\S]*?<\/h1>\s*/i;
+const ALL_POSTS_LIMIT = 500;
+const RELATED_TOOLS_LIMIT = 3;
 
 const slug = Astro.params.slug;
 if (!slug) {
@@ -28,13 +30,46 @@ const post = rawPost as unknown as PostEntry;
 if (!isToolPost(post)) {
 	return Astro.redirect(`/blog/${encodeURIComponent(post.id)}`, 308);
 }
-const { entries: rawRecentPosts } = await getEmDashCollection("posts", {
+
+const { entries: rawToolPosts } = await getEmDashCollection("posts", {
 	orderBy: { published_at: "desc" },
-	limit: 4,
+	limit: ALL_POSTS_LIMIT,
 });
-const recentPosts = (rawRecentPosts as unknown as PostEntry[]).filter(
-	(entry) => entry.id !== post.id && isToolPost(entry),
-);
+const toolPosts = (rawToolPosts as unknown as PostEntry[]).filter((entry) => isToolPost(entry));
+const currentToolIndex = toolPosts.findIndex((entry) => entry.id === post.id);
+const recentPosts =
+	currentToolIndex === -1
+		? toolPosts.filter((entry) => entry.id !== post.id).slice(0, RELATED_TOOLS_LIMIT)
+		: getAdjacentToolPosts(toolPosts, currentToolIndex, RELATED_TOOLS_LIMIT);
+
+function getAdjacentToolPosts(posts: PostEntry[], index: number, limit: number): PostEntry[] {
+	const related: PostEntry[] = [];
+	let left = index - 1;
+	let right = index + 1;
+
+	if (left >= 0) {
+		related.push(posts[left]);
+		left -= 1;
+	}
+
+	if (right < posts.length && related.length < limit) {
+		related.push(posts[right]);
+		right += 1;
+	}
+
+	while (related.length < limit && (left >= 0 || right < posts.length)) {
+		if (left >= 0) {
+			related.push(posts[left]);
+			left -= 1;
+		}
+		if (right < posts.length && related.length < limit) {
+			related.push(posts[right]);
+			right += 1;
+		}
+	}
+
+	return related;
+}
 
 function formatDate(date: Date | null | undefined): string | null {
 	if (!date) return null;
@@ -127,14 +162,30 @@ const structuredData = buildArticlePageStructuredData({ breadcrumbs });
 				<section class="panel">
 					<div class="section-title-group">
 						<div class="kicker">Continue reading</div>
-						<h2>Recent posts</h2>
+						<h2>More tools</h2>
 					</div>
-					<div class="related-links">
+					<div class="grid blog-grid related-tools-grid">
 						{recentPosts.map((related) => (
-							<a href={getPostPath(related.id)} class="related-link">
-								<strong>{related.data.title}</strong>
-								<span>Read article</span>
-							</a>
+							<article class="blog-card">
+								<a href={getPostPath(related.id)} class="blog-card-link">
+									{
+										related.data.featured_image && (
+											<div class="blog-card-image">
+												<Image image={related.data.featured_image} />
+											</div>
+										)
+									}
+									<div class="card-body">
+										<div class="blog-card-meta">
+											{formatDate(related.data.publishedAt) && (
+												<span class="muted">{formatDate(related.data.publishedAt)}</span>
+											)}
+										</div>
+										<h3>{related.data.title}</h3>
+										{related.data.excerpt && <p>{related.data.excerpt}</p>}
+									</div>
+								</a>
+							</article>
 						))}
 					</div>
 				</section>
@@ -235,10 +286,74 @@ const structuredData = buildArticlePageStructuredData({ breadcrumbs });
 		display: none !important;
 	}
 
-	.related-links {
-		display: grid;
-		gap: 12px;
+	.related-tools-grid {
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+		gap: 18px;
 		margin-top: 18px;
+	}
+
+	.related-tools-grid .blog-card {
+		background: rgba(255, 248, 241, 0.94);
+		border: 1px solid rgba(111, 78, 55, 0.18);
+		border-radius: 22px;
+		overflow: hidden;
+		box-shadow: var(--shadow-soft);
+		transition:
+			transform 0.18s ease,
+			box-shadow 0.18s ease,
+			border-color 0.18s ease;
+	}
+
+	.related-tools-grid .blog-card:hover {
+		transform: translateY(-2px);
+		border-color: var(--line-strong);
+		box-shadow: 0 26px 58px rgba(39, 24, 13, 0.14);
+	}
+
+	.related-tools-grid .blog-card-link {
+		display: grid;
+		height: 100%;
+		color: inherit;
+		text-decoration: none;
+	}
+
+	.related-tools-grid .blog-card-image :global(img) {
+		width: 100%;
+		aspect-ratio: 16 / 9;
+		object-fit: cover;
+		display: block;
+	}
+
+	.related-tools-grid .card-body {
+		padding: 18px;
+	}
+
+	.related-tools-grid .blog-card h3 {
+		margin: 10px 0 0;
+		font-size: clamp(1.1rem, 0.95rem + 0.55vw, 1.45rem);
+		line-height: 1.2;
+		display: -webkit-box;
+		-webkit-line-clamp: 2;
+		-webkit-box-orient: vertical;
+		overflow: hidden;
+	}
+
+	.related-tools-grid .blog-card p {
+		margin: 12px 0 0;
+		color: var(--muted);
+		line-height: 1.55;
+		display: -webkit-box;
+		-webkit-line-clamp: 3;
+		-webkit-box-orient: vertical;
+		overflow: hidden;
+	}
+
+	.related-tools-grid .blog-card-meta {
+		display: flex;
+		gap: 10px;
+		font-size: 0.8rem;
+		text-transform: uppercase;
+		letter-spacing: 0.18em;
 	}
 
 	@media (max-width: 860px) {
@@ -252,6 +367,10 @@ const structuredData = buildArticlePageStructuredData({ breadcrumbs });
 
 		.article-hero-copy h1 {
 			max-width: none;
+		}
+
+		.related-tools-grid {
+			grid-template-columns: 1fr;
 		}
 	}
 </style>
