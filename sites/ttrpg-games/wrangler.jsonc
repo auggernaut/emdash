@@ -31,6 +31,9 @@
 	"observability": {
 		"enabled": true,
 	},
+	"placement": {
+		"mode": "smart",
+	},
 	"triggers": {
 		"crons": ["0 * * * *"],
 	},
