@@ -1,6 +1,6 @@
 {
 	"compilerOptions": {
-		"target": "ES2022",
+		"target": "ES2024",
 		"module": "preserve",
 		"moduleResolution": "bundler",
 		"strict": true,
@@ -11,6 +11,10 @@
 		"esModuleInterop": true,
 		"noUncheckedIndexedAccess": true,
 		"noImplicitOverride": true,
+		"paths": {
+			"*": ["./*"],
+			"emdash/database/instrumentation": ["../core/src/database/instrumentation.ts"]
+		},
 		"types": ["@cloudflare/workers-types", "astro/client"]
 	},
 	"include": ["src/**/*.ts", "tests/**/*.ts"]

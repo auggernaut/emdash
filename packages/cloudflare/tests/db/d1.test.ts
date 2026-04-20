@@ -15,7 +15,7 @@ import { createDialect } from "../../src/db/d1.js";
 describe("createDialect", () => {
 	it("marks the D1 adapter so transaction probing can be skipped", () => {
 		const dialect = createDialect({ binding: "DB" });
-		const adapter = dialect.createAdapter() as Record<PropertyKey, unknown>;
+		const adapter = dialect.createAdapter() as unknown as Record<PropertyKey, unknown>;
 
 		expect(adapter.constructor.name).toBe("SqliteAdapter");
 		expect(adapter[D1_ADAPTER_MARKER]).toBe(true);

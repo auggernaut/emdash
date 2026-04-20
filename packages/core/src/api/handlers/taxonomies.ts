@@ -7,6 +7,7 @@ import { ulid } from "ulidx";
 
 import { ContentRepository, TaxonomyRepository } from "../../database/repositories/index.js";
 import type { Database } from "../../database/types.js";
+import { invalidateTermCache } from "../../taxonomies/index.js";
 import type { ApiResult } from "../types.js";
 
 /** Taxonomy name validation pattern: lowercase alphanumeric + underscores, starts with letter */
@@ -374,6 +375,10 @@ export async function handleTermCreate(
 			data: input.description ? { description: input.description } : undefined,
 		});
 
+		// New term means `hasAnyTermAssignments` may flip from false->true next
+		// time an entry is tagged. Clear the cache so the next read re-probes.
+		invalidateTermCache();
+
 		return {
 			success: true,
 			data: {
@@ -493,6 +498,10 @@ export async function handleTermUpdate(
 			data: input.description !== undefined ? { description: input.description } : undefined,
 		});
 
+		// Term label/slug changes are reflected in hydrated entry.data.terms —
+		// invalidate so the next read doesn't short-circuit on a stale probe.
+		invalidateTermCache();
+
 		if (!updated) {
 			return {
 				success: false,
@@ -563,6 +572,10 @@ export async function handleTermDelete(
 				error: { code: "TERM_DELETE_ERROR", message: "Failed to delete term" },
 			};
 		}
+
+		// Deleting a term cascades to content_taxonomies; invalidate so
+		// hydration no longer sees the stale assignments.
+		invalidateTermCache();
 
 		return { success: true, data: { deleted: true } };
 	} catch {
@@ -646,6 +659,7 @@ export async function handleContentTermsSet(
 		}
 
 		await repo.setTermsForEntry(collection, entryLookup.entryId, taxonomyName, uniqueTermIds);
+		invalidateTermCache();
 		const terms = await repo.getTermsForEntry(collection, entryLookup.entryId, taxonomyName);
 
 		return {

@@ -228,8 +228,17 @@ export function ContentEditor({
 			[],
 	);
 
-	// Track portableText editor for document outline
+	// Track portableText editor for document outline — use a ref to
+	// ensure only the first portableText field claims the slot even when
+	// multiple PT fields render in the same pass.
 	const [portableTextEditor, setPortableTextEditor] = React.useState<Editor | null>(null);
+	const ptEditorClaimedRef = React.useRef(false);
+	const handlePTEditorReady = React.useCallback((editor: Editor) => {
+		if (!ptEditorClaimedRef.current) {
+			ptEditorClaimedRef.current = true;
+			setPortableTextEditor(editor);
+		}
+	}, []);
 
 	// Block sidebar state – when a block (e.g. image) requests sidebar space, this holds
 	// the panel data. When non-null the sidebar shows the block panel instead of the
@@ -339,6 +348,19 @@ export function ContentEditor({
 		pendingAutosaveStateRef.current = null;
 	}, [lastAutosaveAt]);
 
+	const hasInvalidUrls = React.useCallback(
+			(data: Record<string, unknown>) => {
+				for (const [name, field] of Object.entries(fields)) {
+					if (field.kind === "url") {
+						const val = typeof data[name] === "string" ? data[name].trim() : "";
+						if (val && !isValidUrl(val)) return true;
+					}
+				}
+			return false;
+		},
+		[fields],
+	);
+
 	React.useEffect(() => {
 		// Don't autosave for new items (no ID yet) or if autosave isn't configured
 		if (isNew || !onAutosave || !item?.id) {
@@ -357,6 +379,7 @@ export function ContentEditor({
 
 		// Schedule autosave
 		autosaveTimeoutRef.current = setTimeout(() => {
+			if (hasInvalidUrls(formDataRef.current)) return;
 			const payload = {
 				data: formDataRef.current,
 				slug: slugRef.current || undefined,
@@ -375,11 +398,22 @@ export function ContentEditor({
 				clearTimeout(autosaveTimeoutRef.current);
 			}
 		};
-	}, [currentData, isNew, onAutosave, item?.id, isDirty, isSaving, isAutosaving, activeBylines]);
+	}, [
+		currentData,
+		isNew,
+		onAutosave,
+		item?.id,
+		isDirty,
+		isSaving,
+		isAutosaving,
+		activeBylines,
+		hasInvalidUrls,
+	]);
 
 	// Cancel pending autosave on manual save
 	const handleSubmit = (e: React.FormEvent) => {
 		e.preventDefault();
+		if (hasInvalidUrls(formData)) return;
 		// Cancel pending autosave
 		if (autosaveTimeoutRef.current) {
 			clearTimeout(autosaveTimeoutRef.current);
@@ -674,7 +708,9 @@ export function ContentEditor({
 										collection={collection}
 										entry={item}
 										onEditorReady={
-											field.kind === "portableText" ? setPortableTextEditor : undefined
+											field.kind === "portableText" && name === "content"
+												? handlePTEditorReady
+												: undefined
 										}
 										minimal={isDistractionFree}
 										pluginBlocks={pluginBlocks}
@@ -1394,19 +1430,18 @@ function FieldRenderer({
 			);
 		}
 
-		case "json": {
-			const jsonString =
-				typeof value === "string" ? value : value != null ? JSON.stringify(value, null, 2) : "";
+		case "url":
 			return (
-				<JsonFieldEditor
+				<UrlFieldEditor
 					label={label}
+					labelClass={labelClass}
 					id={id}
-					value={jsonString}
+					value={typeof value === "string" ? value : ""}
 					onChange={handleChange}
 					required={field.required}
+					placeholder="https://"
 				/>
 			);
-		}
 
 		default:
 			// Default to text input
@@ -1422,65 +1457,70 @@ function FieldRenderer({
 	}
 }
 
+const URL_PROTOCOL_PATTERN = /^https?:\/\//;
+
+function isValidUrl(val: string): boolean {
+	if (!URL_PROTOCOL_PATTERN.test(val)) return false;
+	try {
+		const url = new URL(val);
+		if (url.protocol !== "http:" && url.protocol !== "https:") return false;
+		if (url.hostname.includes("..")) return false;
+		return url.hostname.includes(".") || url.hostname === "localhost";
+	} catch {
+		return false;
+	}
+}
+
 /**
- * JSON field editor with syntax validation
+ * URL field editor with validation on blur
  */
-function JsonFieldEditor({
+function UrlFieldEditor({
 	label,
+	labelClass,
 	id,
 	value,
 	onChange,
 	required,
+	placeholder,
 }: {
 	label: string;
+	labelClass?: string;
 	id: string;
 	value: string;
 	onChange: (value: unknown) => void;
 	required?: boolean;
+	placeholder?: string;
 }) {
 	const { t } = useLingui();
-	const [text, setText] = React.useState(value);
 	const [error, setError] = React.useState<string | null>(null);
 
-	// Sync from parent when value changes externally
-	React.useEffect(() => {
-		setText(value);
-		setError(null);
-	}, [value]);
-
-	const handleChange = (newText: string) => {
-		setText(newText);
-		setError(null);
-	};
-
-	const handleBlur = () => {
-		const trimmed = text.trim();
-		if (trimmed === "") {
+	const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+		const val = e.target.value.trim();
+		if (!val) {
 			setError(null);
-			onChange(null);
 			return;
 		}
-		try {
-			const parsed = JSON.parse(trimmed);
+		if (!isValidUrl(val)) {
+			setError(t`Enter a valid URL (e.g. https://example.com)`);
+		} else {
 			setError(null);
-			onChange(parsed);
-		} catch {
-			setError(t`Invalid JSON`);
 		}
 	};
 
 	return (
 		<div>
-			<InputArea
-				label={label}
+			<Input
+				label={<span className={labelClass}>{label}</span>}
 				id={id}
-				value={text}
-				onChange={(e) => handleChange(e.target.value)}
+				type="url"
+				value={value}
+				onChange={(e) => {
+					if (error) setError(null);
+					onChange(e.target.value);
+				}}
 				onBlur={handleBlur}
-				rows={8}
-				placeholder="{}"
 				required={required}
-				className="font-mono text-sm"
+				placeholder={placeholder}
 			/>
 			{error && <p className="text-sm text-kumo-danger mt-1">{error}</p>}
 		</div>

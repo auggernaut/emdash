@@ -29,6 +29,7 @@
 		"sync:upstream": "git fetch upstream && git checkout main && git rebase upstream/main && git push origin main",
 		"dev:ttrpg": "node scripts/dev-ttrpg.mjs",
 		"dev:ttrpg:site": "pnpm --filter @auggernaut/ttrpg-games dev",
+		"query-counts": "node scripts/query-counts.mjs",
 		"locale:extract": "pnpm --filter @emdash-cms/admin locale:extract",
 		"locale:compile": "pnpm --filter @emdash-cms/admin locale:compile",
 		"changeset:version": "pnpm changeset version && pnpm install --no-frozen-lockfile"
