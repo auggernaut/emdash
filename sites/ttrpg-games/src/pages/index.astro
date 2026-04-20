@@ -11,6 +11,36 @@ const NON_ALPHANUMERIC_PATTERN = /[^a-z0-9]/g;
 const HERO_IMAGE_PLACEHOLDER = "data:image/gif;base64,R0lGODlhAQABAAAAACw=";
 const HERO_IMAGE_SIZES = "(min-width: 1200px) 440px, 40vw";
 const HERO_IMAGE_BASE = "/home-hero";
+const HERO_STACK_IMAGES = [
+	{
+		name: "wasteland",
+		baseName: "ttrpg_wasteland_hero",
+		alt: "Post-apocalyptic TTRPG players planning a wasteland campaign",
+		loading: "lazy" as const,
+		fetchpriority: "low" as const,
+	},
+	{
+		name: "superhero",
+		baseName: "ttrpg_superhero_hero",
+		alt: "Superhero TTRPG players gathered around a futuristic city map",
+		loading: "lazy" as const,
+		fetchpriority: "low" as const,
+	},
+	{
+		name: "cyberpunk",
+		baseName: "ttrpg_cyberpunk_hero",
+		alt: "Cyberpunk TTRPG",
+		loading: "lazy" as const,
+		fetchpriority: "low" as const,
+	},
+	{
+		name: "fantasy",
+		baseName: "ttrpg_hero_bg",
+		alt: "Fantasy TTRPG",
+		loading: "eager" as const,
+		fetchpriority: "high" as const,
+	},
+];
 
 const [
 	{ entries: rawGames, cacheHint: gamesCacheHint },
@@ -29,7 +59,19 @@ setAstroCacheHint(Astro.cache, postsCacheHint);
 const games = rawGames as unknown as GameEntry[];
 const categoryPages = rawCategoryPages as unknown as CategoryPageEntry[];
 const posts = rawPosts as unknown as PostEntry[];
+const tools = posts.filter((post) => isToolPost(post));
 const articles = posts.filter((post) => !isToolPost(post));
+
+const shuffledHeroImages = shuffleItems(HERO_STACK_IMAGES);
+
+function shuffleItems<T>(items: readonly T[]): T[] {
+	const shuffled = [...items];
+	for (let index = shuffled.length - 1; index > 0; index -= 1) {
+		const swapIndex = Math.floor(Math.random() * (index + 1));
+		[shuffled[index], shuffled[swapIndex]] = [shuffled[swapIndex], shuffled[index]];
+	}
+	return shuffled;
+}
 
 const rankedGames = games.toSorted((left, right) => {
 	const leftRank = left.data.rank ?? Number.MAX_SAFE_INTEGER;
@@ -150,8 +192,8 @@ function cardCopy(game: GameEntry): string {
 				<h1>Find the perfect TTRPG for your group.</h1>
 				<p>
 					From gritty hex-crawls to epic narrative wonders. Use our curated guides
-					to narrow the field and find a system that matches your mechanics, 
-					mood, and campaign style.
+					to narrow the field and find a game that matches your mechanics, 
+					mood, and play style.
 				</p>
 				<div class="hero-stats">
 					<div class="stat-pill">
@@ -166,6 +208,10 @@ function cardCopy(game: GameEntry): string {
 						<strong>{articles.length}</strong>
 						<span>Articles</span>
 					</div>
+					<div class="stat-pill">
+						<strong>{tools.length}</strong>
+						<span>Tools</span>
+					</div>
 				</div>
 				<div class="hero-actions">
 					<a href="/categories" class="button-link primary">Browse all categories</a>
@@ -174,126 +220,38 @@ function cardCopy(game: GameEntry): string {
 			</div>
 			<div class="hero-visual">
 					<div class="hero-image-stack">
-						<div class="hero-image-card horror">
+						{shuffledHeroImages.map((image, index) => (
+							<div class={`hero-image-card hero-slot-${index + 1}`} data-hero-image={image.name}>
 							<picture>
 								<source
 									media="(min-width: 961px)"
 									type="image/avif"
-									srcset={`${HERO_IMAGE_BASE}/ttrpg_wasteland_hero-512.avif 512w, ${HERO_IMAGE_BASE}/ttrpg_wasteland_hero-960.avif 960w`}
+									srcset={`${HERO_IMAGE_BASE}/${image.baseName}-512.avif 512w, ${HERO_IMAGE_BASE}/${image.baseName}-960.avif 960w`}
 									sizes={HERO_IMAGE_SIZES}
 								/>
 								<source
 									media="(min-width: 961px)"
 									type="image/webp"
-									srcset={`${HERO_IMAGE_BASE}/ttrpg_wasteland_hero-512.webp 512w, ${HERO_IMAGE_BASE}/ttrpg_wasteland_hero-960.webp 960w`}
+									srcset={`${HERO_IMAGE_BASE}/${image.baseName}-512.webp 512w, ${HERO_IMAGE_BASE}/${image.baseName}-960.webp 960w`}
 									sizes={HERO_IMAGE_SIZES}
 								/>
 								<source
 									media="(min-width: 961px)"
 									type="image/png"
-									srcset={`${HERO_IMAGE_BASE}/ttrpg_wasteland_hero.png`}
+									srcset={`${HERO_IMAGE_BASE}/${image.baseName}.png`}
 								/>
 								<img
 									src={HERO_IMAGE_PLACEHOLDER}
-									alt="Post-apocalyptic TTRPG players planning a wasteland campaign"
+									alt={image.alt}
 									width="1024"
 									height="1024"
-									loading="lazy"
+									loading={image.loading}
 									decoding="async"
-									fetchpriority="low"
+									fetchpriority={image.fetchpriority}
 								/>
 							</picture>
-						</div>
-						<div class="hero-image-card superhero">
-							<picture>
-								<source
-									media="(min-width: 961px)"
-									type="image/avif"
-									srcset={`${HERO_IMAGE_BASE}/ttrpg_superhero_hero-512.avif 512w, ${HERO_IMAGE_BASE}/ttrpg_superhero_hero-960.avif 960w`}
-									sizes={HERO_IMAGE_SIZES}
-								/>
-								<source
-									media="(min-width: 961px)"
-									type="image/webp"
-									srcset={`${HERO_IMAGE_BASE}/ttrpg_superhero_hero-512.webp 512w, ${HERO_IMAGE_BASE}/ttrpg_superhero_hero-960.webp 960w`}
-									sizes={HERO_IMAGE_SIZES}
-								/>
-								<source
-									media="(min-width: 961px)"
-									type="image/png"
-									srcset={`${HERO_IMAGE_BASE}/ttrpg_superhero_hero.png`}
-								/>
-								<img
-									src={HERO_IMAGE_PLACEHOLDER}
-									alt="Superhero TTRPG players gathered around a futuristic city map"
-									width="1024"
-									height="1024"
-									loading="lazy"
-									decoding="async"
-									fetchpriority="low"
-								/>
-							</picture>
-						</div>
-						<div class="hero-image-card cyberpunk">
-							<picture>
-								<source
-									media="(min-width: 961px)"
-									type="image/avif"
-									srcset={`${HERO_IMAGE_BASE}/ttrpg_cyberpunk_hero-512.avif 512w, ${HERO_IMAGE_BASE}/ttrpg_cyberpunk_hero-960.avif 960w`}
-									sizes={HERO_IMAGE_SIZES}
-								/>
-								<source
-									media="(min-width: 961px)"
-									type="image/webp"
-									srcset={`${HERO_IMAGE_BASE}/ttrpg_cyberpunk_hero-512.webp 512w, ${HERO_IMAGE_BASE}/ttrpg_cyberpunk_hero-960.webp 960w`}
-									sizes={HERO_IMAGE_SIZES}
-								/>
-								<source
-									media="(min-width: 961px)"
-									type="image/png"
-									srcset={`${HERO_IMAGE_BASE}/ttrpg_cyberpunk_hero.png`}
-								/>
-								<img
-									src={HERO_IMAGE_PLACEHOLDER}
-									alt="Cyberpunk TTRPG"
-									width="1024"
-									height="1024"
-									loading="lazy"
-									decoding="async"
-									fetchpriority="low"
-								/>
-							</picture>
-						</div>
-						<div class="hero-image-card fantasy">
-							<picture>
-								<source
-									media="(min-width: 961px)"
-									type="image/avif"
-									srcset={`${HERO_IMAGE_BASE}/ttrpg_hero_bg-512.avif 512w, ${HERO_IMAGE_BASE}/ttrpg_hero_bg-960.avif 960w`}
-									sizes={HERO_IMAGE_SIZES}
-								/>
-								<source
-									media="(min-width: 961px)"
-									type="image/webp"
-									srcset={`${HERO_IMAGE_BASE}/ttrpg_hero_bg-512.webp 512w, ${HERO_IMAGE_BASE}/ttrpg_hero_bg-960.webp 960w`}
-									sizes={HERO_IMAGE_SIZES}
-								/>
-								<source
-									media="(min-width: 961px)"
-									type="image/png"
-									srcset={`${HERO_IMAGE_BASE}/ttrpg_hero_bg.png`}
-								/>
-								<img
-									src={HERO_IMAGE_PLACEHOLDER}
-									alt="Fantasy TTRPG"
-									width="1024"
-									height="1024"
-									loading="eager"
-									decoding="async"
-									fetchpriority="high"
-								/>
-							</picture>
-						</div>
+							</div>
+						))}
 					</div>
 			</div>
 		</section>
@@ -530,6 +488,8 @@ function cardCopy(game: GameEntry): string {
 			display: flex;
 			flex-direction: column;
 			gap: 4px;
+			align-items: center;
+			text-align: center;
 		}
 
 		.stat-pill strong {
@@ -594,15 +554,15 @@ function cardCopy(game: GameEntry): string {
 		}
 
 		/* The Fan */
-		.horror { transform: rotate(-10deg) translate(-20px, 10px) !important; z-index: 1 !important; }
-		.superhero { transform: rotate(-4deg) translate(-10px, 5px) !important; z-index: 2 !important; }
-		.cyberpunk { transform: rotate(4deg) translate(10px, -5px) !important; z-index: 3 !important; }
-		.fantasy { transform: rotate(10deg) translate(20px, -10px) !important; z-index: 4 !important; }
+		.hero-slot-1 { transform: rotate(-10deg) translate(-20px, 10px) !important; z-index: 1 !important; }
+		.hero-slot-2 { transform: rotate(-4deg) translate(-10px, 5px) !important; z-index: 2 !important; }
+		.hero-slot-3 { transform: rotate(4deg) translate(10px, -5px) !important; z-index: 3 !important; }
+		.hero-slot-4 { transform: rotate(10deg) translate(20px, -10px) !important; z-index: 4 !important; }
 
-		.hero-image-stack:hover .horror { transform: rotate(-18deg) translate(-80px, 40px) scale(1.05) !important; z-index: 10 !important; }
-		.hero-image-stack:hover .superhero { transform: rotate(-8deg) translate(-40px, 20px) scale(1.05) !important; z-index: 11 !important; }
-		.hero-image-stack:hover .cyberpunk { transform: rotate(8deg) translate(40px, -20px) scale(1.05) !important; z-index: 12 !important; }
-		.hero-image-stack:hover .fantasy { transform: rotate(18deg) translate(80px, -40px) scale(1.05) !important; z-index: 13 !important; }
+		.hero-image-stack:hover .hero-slot-1 { transform: rotate(-18deg) translate(-80px, 40px) scale(1.05) !important; z-index: 10 !important; }
+		.hero-image-stack:hover .hero-slot-2 { transform: rotate(-8deg) translate(-40px, 20px) scale(1.05) !important; z-index: 11 !important; }
+		.hero-image-stack:hover .hero-slot-3 { transform: rotate(8deg) translate(40px, -20px) scale(1.05) !important; z-index: 12 !important; }
+		.hero-image-stack:hover .hero-slot-4 { transform: rotate(18deg) translate(80px, -40px) scale(1.05) !important; z-index: 13 !important; }
 
 		.hero-image-stack:hover .hero-image-card {
 			box-shadow: 0 40px 80px rgba(31, 26, 22, 0.3) !important;
