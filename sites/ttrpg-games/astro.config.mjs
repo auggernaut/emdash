@@ -11,6 +11,16 @@ export default defineConfig({
 	output: "server",
 	trailingSlash: "never",
 	adapter: cloudflare(),
+	vite: {
+		ssr: {
+			optimizeDeps: {
+				exclude: ["@portabletext/toolkit"],
+			},
+		},
+		optimizeDeps: {
+			exclude: ["@portabletext/toolkit"],
+		},
+	},
 	image: {
 		layout: "constrained",
 		responsiveStyles: true,

@@ -1,9 +1,10 @@
 ---
-import { getEmDashCollection, getEmDashEntry } from "emdash";
+import { getEmDashCollection, getEmDashEntry, getSeoMeta } from "emdash";
 import { Image, PortableText } from "emdash/ui";
 
 import Base from "../../layouts/Base.astro";
 import { setAstroCacheHint } from "../../lib/astro-cache.js";
+import { getMediaUrl, normalizeMediaValue } from "../../lib/media.js";
 import { getPostPath, isToolPost } from "../../lib/post-routes";
 import { buildArticlePageStructuredData } from "../../lib/structured-data.js";
 import type { PostEntry } from "../../lib/types";
@@ -11,6 +12,8 @@ import type { PostEntry } from "../../lib/types";
 export const prerender = false;
 
 const LEADING_H1_PATTERN = /^\s*<h1\b[^>]*>[\s\S]*?<\/h1>\s*/i;
+const ALL_POSTS_LIMIT = 500;
+const RELATED_POSTS_LIMIT = 3;
 
 const slug = Astro.params.slug;
 if (!slug) {
@@ -28,13 +31,45 @@ const post = rawPost as unknown as PostEntry;
 if (isToolPost(post)) {
 	return Astro.redirect(`/tools/${encodeURIComponent(post.id)}`, 308);
 }
-const { entries: rawRecentPosts } = await getEmDashCollection("posts", {
+const { entries: rawPosts } = await getEmDashCollection("posts", {
 	orderBy: { published_at: "desc" },
-	limit: 4,
+	limit: ALL_POSTS_LIMIT,
 });
-const recentPosts = (rawRecentPosts as unknown as PostEntry[]).filter(
-	(entry) => entry.id !== post.id && !isToolPost(entry),
-);
+const blogPosts = (rawPosts as unknown as PostEntry[]).filter((entry) => !isToolPost(entry));
+const currentPostIndex = blogPosts.findIndex((entry) => entry.id === post.id);
+const relatedPosts =
+	currentPostIndex === -1
+		? blogPosts.filter((entry) => entry.id !== post.id).slice(0, RELATED_POSTS_LIMIT)
+		: getAdjacentPosts(blogPosts, currentPostIndex, RELATED_POSTS_LIMIT);
+
+function getAdjacentPosts(posts: PostEntry[], index: number, limit: number): PostEntry[] {
+	const related: PostEntry[] = [];
+	let left = index - 1;
+	let right = index + 1;
+
+	if (left >= 0) {
+		related.push(posts[left]);
+		left -= 1;
+	}
+
+	if (right < posts.length && related.length < limit) {
+		related.push(posts[right]);
+		right += 1;
+	}
+
+	while (related.length < limit && (left >= 0 || right < posts.length)) {
+		if (left >= 0) {
+			related.push(posts[left]);
+			left -= 1;
+		}
+		if (right < posts.length && related.length < limit) {
+			related.push(posts[right]);
+			right += 1;
+		}
+	}
+
+	return related;
+}
 
 function formatDate(date: Date | null | undefined): string | null {
 	if (!date) return null;
@@ -45,28 +80,18 @@ function formatDate(date: Date | null | undefined): string | null {
 	});
 }
 
-function getImageUrl(image: unknown): string | null {
-	if (!image || typeof image !== "object") return null;
-	const media = image as {
-		src?: string;
-		id?: string;
-		meta?: { storageKey?: string };
-	};
-	if (media.src) return media.src;
-	if (media.meta?.storageKey) {
-		return `${Astro.url.origin}/_emdash/api/media/file/${media.meta.storageKey}`;
-	}
-	if (media.id) {
-		return `${Astro.url.origin}/_emdash/api/media/file/${media.id}`;
-	}
-	return null;
-}
-
 const publishedDate = formatDate(post.data.publishedAt);
 const updatedDate = formatDate(post.data.updatedAt);
 const publishedTime = post.data.publishedAt?.toISOString() ?? null;
 const modifiedTime = post.data.updatedAt?.toISOString() ?? null;
-const image = getImageUrl(post.data.featured_image);
+const featuredImage = normalizeMediaValue(post.data.featured_image);
+const image = getMediaUrl(featuredImage, Astro.url.origin);
+const seo = getSeoMeta(rawPost, {
+	siteTitle: "TTRPG Games",
+	siteUrl: Astro.url.origin,
+	path: Astro.url.pathname,
+	defaultOgImage: image ?? undefined,
+});
 const bodyHtml = post.data.body_html?.replace(LEADING_H1_PATTERN, "").trim() || null;
 const breadcrumbs = [
 	{ name: "Home", url: new URL("/", Astro.url).href },
@@ -77,10 +102,10 @@ const structuredData = buildArticlePageStructuredData({ breadcrumbs });
 ---
 
 <Base
-	title={`${post.data.title} | TTRPG Games`}
-	description={post.data.excerpt || null}
-	image={image}
-	canonical={Astro.url.href}
+	title={seo.title}
+	description={seo.description}
+	image={seo.ogImage || image}
+	canonical={seo.canonical || Astro.url.href}
 	pageType="article"
 	publishedTime={publishedTime}
 	modifiedTime={modifiedTime}
@@ -98,7 +123,12 @@ const structuredData = buildArticlePageStructuredData({ breadcrumbs });
 			<span>{post.data.title}</span>
 		</nav>
 
-		<section class="hero-card article-hero">
+		<section class:list={["hero-card", "article-hero", { "has-hero-image": !!featuredImage }]}>
+			{featuredImage && image && (
+				<div class="article-hero-media" aria-hidden="true">
+					<img src={image} alt="" loading="eager" decoding="async" />
+				</div>
+			)}
 			<div class="article-hero-copy">
 				<div class="badges" style="margin-bottom: 18px;">
 					{publishedDate && <span class="badge">{publishedDate}</span>}
@@ -109,13 +139,6 @@ const structuredData = buildArticlePageStructuredData({ breadcrumbs });
 				<h1>{post.data.title}</h1>
 				{post.data.excerpt && <p>{post.data.excerpt}</p>}
 			</div>
-			{
-				post.data.featured_image && (
-					<div class="article-hero-image">
-						<Image image={post.data.featured_image} />
-					</div>
-				)
-			}
 		</section>
 
 		<section class="panel prose blog-article-body">
@@ -123,18 +146,36 @@ const structuredData = buildArticlePageStructuredData({ breadcrumbs });
 		</section>
 
 		{
-			recentPosts.length > 0 && (
-				<section class="panel">
-					<div class="section-title-group">
-						<div class="kicker">Continue reading</div>
-						<h2>Recent posts</h2>
+			relatedPosts.length > 0 && (
+				<section>
+					<div class="section-header">
+						<div>
+							<div class="kicker">Continue reading</div>
+							<h2>Related articles</h2>
+						</div>
 					</div>
-					<div class="related-links">
-						{recentPosts.map((related) => (
-							<a href={getPostPath(related.id)} class="related-link">
-								<strong>{related.data.title}</strong>
-								<span>Read article</span>
-							</a>
+					<div class="grid blog-grid related-posts-grid">
+						{relatedPosts.map((related) => (
+							<article class="blog-card">
+								<a href={getPostPath(related.id)} class="blog-card-link">
+									{
+										related.data.featured_image && (
+											<div class="blog-card-image">
+												<Image image={normalizeMediaValue(related.data.featured_image)} />
+											</div>
+										)
+									}
+									<div class="card-body">
+										<div class="blog-card-meta">
+											{formatDate(related.data.publishedAt) && (
+												<span class="muted">{formatDate(related.data.publishedAt)}</span>
+											)}
+										</div>
+										<h3>{related.data.title}</h3>
+										{related.data.excerpt && <p>{related.data.excerpt}</p>}
+									</div>
+								</a>
+							</article>
 						))}
 					</div>
 				</section>
@@ -156,22 +197,91 @@ const structuredData = buildArticlePageStructuredData({ breadcrumbs });
 	}
 
 	.article-hero {
+		position: relative;
 		display: grid;
-		grid-template-columns: minmax(0, 1.15fr) minmax(280px, 0.85fr);
-		gap: 28px;
-		align-items: start;
+		align-items: end;
+		min-height: clamp(360px, 56vw, 520px);
+		padding: clamp(32px, 5vw, 52px);
+		overflow: hidden;
+		isolation: isolate;
+	}
+
+	.article-hero.has-hero-image {
+		border-color: rgba(255, 255, 255, 0.08);
+		box-shadow:
+			0 26px 64px rgba(30, 18, 10, 0.24),
+			inset 0 1px 0 rgba(255, 255, 255, 0.08);
+	}
+
+	.article-hero-media {
+		position: absolute;
+		inset: 0;
+		z-index: 0;
+		overflow: hidden;
+	}
+
+	.article-hero-media::before {
+		content: "";
+		position: absolute;
+		inset: 0;
+		background:
+			linear-gradient(115deg, rgba(14, 10, 8, 0.92) 0%, rgba(14, 10, 8, 0.76) 34%, rgba(14, 10, 8, 0.4) 60%, rgba(14, 10, 8, 0.62) 100%),
+			linear-gradient(180deg, rgba(192, 112, 67, 0.16), rgba(14, 10, 8, 0.08));
+		z-index: 1;
+	}
+
+	.article-hero-media::after {
+		content: "";
+		position: absolute;
+		inset: auto -8% -36% auto;
+		width: min(46vw, 420px);
+		aspect-ratio: 1;
+		border-radius: 999px;
+		background: radial-gradient(circle, rgba(245, 177, 129, 0.22), rgba(245, 177, 129, 0) 72%);
+		pointer-events: none;
+		z-index: 2;
+	}
+
+	.article-hero-media img {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		object-position: center 28%;
+		filter: saturate(0.94) contrast(0.96) brightness(0.78);
+		transform: scale(1.035);
+	}
+
+	.article-hero-copy {
+		position: relative;
+		z-index: 3;
+		max-width: min(100%, 42rem);
+		padding: clamp(8px, 1vw, 12px) 0;
+	}
+
+	.article-hero.has-hero-image .article-hero-copy {
+		color: rgba(255, 248, 241, 0.98);
+		text-shadow: 0 1px 2px rgba(14, 10, 8, 0.28);
 	}
 
 	.article-hero-copy h1 {
-		max-width: 12ch;
+		max-width: 11ch;
+		margin-bottom: 0.6rem;
 	}
 
-	.article-hero-image :global(img) {
-		width: 100%;
-		border-radius: 18px;
-		aspect-ratio: 16 / 10;
-		object-fit: cover;
-		background: linear-gradient(145deg, #e5d7bf, #f7efe3);
+	.article-hero.has-hero-image .article-hero-copy p {
+		max-width: 32rem;
+		color: rgba(255, 244, 235, 0.82);
+		font-size: clamp(1.02rem, 0.98rem + 0.3vw, 1.14rem);
+		line-height: 1.7;
+		margin-bottom: 0;
+	}
+
+	.article-hero.has-hero-image .badge {
+		background: rgba(255, 255, 255, 0.12);
+		border: 1px solid rgba(255, 255, 255, 0.16);
+		color: rgba(255, 248, 241, 0.96);
+		backdrop-filter: blur(10px);
+		-webkit-backdrop-filter: blur(10px);
 	}
 
 	.blog-article-body {
@@ -237,27 +347,56 @@ const structuredData = buildArticlePageStructuredData({ breadcrumbs });
 		display: none !important;
 	}
 
-	.related-links {
-		display: grid;
-		gap: 12px;
-		margin-top: 18px;
+	:global(.blog-grid) {
+		grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
 	}
 
-	.related-link {
+	:global(.blog-card) {
+		border: 1px solid var(--line);
+		border-radius: var(--radius);
+		background: var(--surface);
+		box-shadow: var(--shadow-soft);
+		backdrop-filter: blur(12px);
+		-webkit-backdrop-filter: blur(12px);
+		overflow: hidden;
+		transition:
+			transform 0.18s ease,
+			box-shadow 0.18s ease,
+			border-color 0.18s ease;
+	}
+
+	:global(.blog-card:hover) {
+		transform: translateY(-3px);
+		border-color: var(--line-strong);
+		box-shadow: var(--shadow);
+	}
+
+	:global(.blog-card-link) {
+		display: grid;
+		height: 100%;
+	}
+
+	:global(.blog-card-image img) {
+		width: 100%;
+		aspect-ratio: 16 / 9;
+		object-fit: cover;
+	}
+
+	:global(.blog-card h3) {
+		margin: 10px 0 12px;
+		font-size: 1.45rem;
+		line-height: 1.15;
+	}
+
+	:global(.blog-card p) {
+		color: var(--muted);
+		line-height: 1.65;
+	}
+
+	:global(.blog-card-meta) {
 		display: flex;
 		flex-wrap: wrap;
-		align-items: center;
-		justify-content: space-between;
 		gap: 12px;
-		padding: 14px 16px;
-		border: 1px solid var(--line);
-		border-radius: 16px;
-		background: rgba(255, 253, 248, 0.7);
-	}
-
-	.related-link span {
-		color: var(--muted);
-		font-size: 0.95rem;
 	}
 
 	.article-actions {
@@ -272,11 +411,12 @@ const structuredData = buildArticlePageStructuredData({ breadcrumbs });
 		}
 
 		.article-hero {
-			grid-template-columns: 1fr;
+			min-height: clamp(320px, 76vw, 460px);
 		}
 
 		.article-hero-copy h1 {
 			max-width: none;
 		}
+
 	}
 </style>

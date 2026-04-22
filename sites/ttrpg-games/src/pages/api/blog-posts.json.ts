@@ -1,6 +1,7 @@
 import type { APIRoute } from "astro";
 import { getEmDashCollection } from "emdash";
 
+import { getMediaUrl } from "../../lib/media.js";
 import { getPostPath } from "../../lib/post-routes";
 import type { PostEntry } from "../../lib/types";
 
@@ -32,13 +33,7 @@ function getImageData(image: unknown): { src: string; alt: string } | null {
 		meta?: { storageKey?: string };
 	};
 
-	const src =
-		media.src ||
-		(typeof media.meta?.storageKey === "string" && media.meta.storageKey
-			? `/_emdash/api/media/file/${media.meta.storageKey}`
-			: typeof media.id === "string" && media.id
-				? `/_emdash/api/media/file/${media.id}`
-				: null);
+	const src = getMediaUrl(media);
 
 	if (!src) return null;
 
