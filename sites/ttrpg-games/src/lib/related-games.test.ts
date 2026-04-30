@@ -10,9 +10,7 @@ describe("resolveRelatedGameHref", () => {
 	});
 
 	it("rewrites legacy slugs through the known redirect map", () => {
-		expect(resolveRelatedGameHref({ slug: "agêratos", title: "Agêratos" })).toBe(
-			"/item/ageratos",
-		);
+		expect(resolveRelatedGameHref({ slug: "agêratos", title: "Agêratos" })).toBe("/item/ageratos");
 	});
 
 	it("falls back to a normalized title when the slug is empty", () => {

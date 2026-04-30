@@ -9,6 +9,10 @@ type MediaLike = MediaValue & {
 	};
 };
 
+function isMediaLike(value: unknown): value is MediaLike {
+	return typeof value === "object" && value !== null;
+}
+
 function normalizeMediaPath(value: string): string {
 	if (value.startsWith(DEV_STORAGE_PREFIX)) {
 		return `${MEDIA_FILE_PREFIX}${value}`;
@@ -17,21 +21,28 @@ function normalizeMediaPath(value: string): string {
 	return value;
 }
 
-export function normalizeMediaValue<T extends string | MediaLike | null | undefined>(image: T): T {
+export function normalizeMediaValue(image: string): string;
+export function normalizeMediaValue(image: MediaLike): MediaLike;
+export function normalizeMediaValue(image: null): null;
+export function normalizeMediaValue(image: undefined): undefined;
+export function normalizeMediaValue(
+	image: string | MediaLike | null | undefined,
+): string | MediaLike | null | undefined;
+export function normalizeMediaValue(
+	image: string | MediaLike | null | undefined,
+): string | MediaLike | null | undefined {
 	if (!image) {
 		return image;
 	}
 
 	if (typeof image === "string") {
-		return normalizeMediaPath(image) as T;
+		return normalizeMediaPath(image);
 	}
 
-	const media = image as MediaLike;
+	const media = image;
 	const normalizedSrc = typeof media.src === "string" ? normalizeMediaPath(media.src) : media.src;
 	const normalizedStorageKey =
-		typeof media.meta?.storageKey === "string"
-			? media.meta.storageKey
-			: media.meta?.storageKey;
+		typeof media.meta?.storageKey === "string" ? media.meta.storageKey : media.meta?.storageKey;
 
 	if (normalizedSrc === media.src && normalizedStorageKey === media.meta?.storageKey) {
 		return image;
@@ -49,11 +60,14 @@ export function normalizeMediaValue<T extends string | MediaLike | null | undefi
 		...media,
 		...(normalizedSrc ? { src: normalizedSrc } : {}),
 		...(meta ? { meta } : {}),
-	} as T;
+	};
 }
 
 export function getMediaUrl(image: unknown, origin?: string): string | null {
-	const normalized = normalizeMediaValue(image as string | MediaLike | null | undefined);
+	if (!(typeof image === "string" || image == null || isMediaLike(image))) {
+		return null;
+	}
+	const normalized = normalizeMediaValue(image);
 	if (!normalized) return null;
 
 	if (typeof normalized === "string") {

@@ -1,5 +1,5 @@
-import { createStorage as createR2Storage } from "@emdash-cms/cloudflare/storage/r2";
 import astroWorker from "@astrojs/cloudflare/entrypoints/server";
+import { createStorage as createR2Storage } from "@emdash-cms/cloudflare/storage/r2";
 import { handleContentCreate, handleContentGet } from "emdash";
 import { getDb } from "emdash/runtime";
 

@@ -12,6 +12,14 @@ vi.mock(
 	{ virtual: true },
 );
 
+vi.mock(
+	"virtual:emdash/auth-providers",
+	() => ({
+		authProviders: [{ id: "github" }],
+	}),
+	{ virtual: true },
+);
+
 import AdminWrapper from "../../../src/astro/routes/PluginRegistry.js";
 
 describe("AdminWrapper", () => {
@@ -25,6 +33,7 @@ describe("AdminWrapper", () => {
 			type: "admin-app",
 			props: {
 				pluginAdmins: [{ id: "emdash-resend" }],
+				authProviders: [{ id: "github" }],
 				locale: "en",
 				messages: {},
 			},

@@ -3,8 +3,8 @@ import { getSiteSettings } from "emdash";
 import { getDb } from "emdash/runtime";
 import { sql } from "kysely";
 
-import { latestSitemapLastmod, normalizeSitemapLastmod } from "../lib/sitemap.js";
 import { getPostPath } from "../lib/post-routes";
+import { latestSitemapLastmod, normalizeSitemapLastmod } from "../lib/sitemap.js";
 
 export const prerender = false;
 
@@ -104,8 +104,8 @@ export const GET: APIRoute = async ({ url }) => {
 		const defaultLastmod = latestUpdatedAt(games, categoryPages, posts);
 		const toolPosts = posts.filter((row) => row.slug && row.is_tool === 1);
 
-			const entries: SitemapUrlEntry[] = [
-				{ path: "/", lastmod: defaultLastmod, changefreq: "daily", priority: 1.0 },
+		const entries: SitemapUrlEntry[] = [
+			{ path: "/", lastmod: defaultLastmod, changefreq: "daily", priority: 1.0 },
 			{
 				path: "/categories",
 				lastmod: latestUpdatedAt(categoryPages),
@@ -123,30 +123,30 @@ export const GET: APIRoute = async ({ url }) => {
 						},
 					]
 				: []),
-				...categoryPages
-					.filter((row) => row.slug)
-					.map((row) => ({
-						path: `/category/${encodeURIComponent(row.slug!)}`,
-						lastmod: normalizeSitemapLastmod(row.updated_at),
-						changefreq: "weekly" as const,
-						priority: 0.7,
-					})),
-				...games
-					.filter((row) => row.slug)
-					.map((row) => ({
-						path: `/item/${encodeURIComponent(row.slug!)}`,
-						lastmod: normalizeSitemapLastmod(row.updated_at),
-						changefreq: "weekly" as const,
-						priority: 0.7,
-					})),
-				...posts
-					.filter((row) => row.slug)
-					.map((row) => ({
-						path: getPostPath(row.slug!, row.is_tool === 1),
-						lastmod: normalizeSitemapLastmod(row.updated_at),
-						changefreq: "weekly" as const,
-						priority: 0.7,
-					})),
+			...categoryPages
+				.filter((row) => row.slug)
+				.map((row) => ({
+					path: `/category/${encodeURIComponent(row.slug!)}`,
+					lastmod: normalizeSitemapLastmod(row.updated_at),
+					changefreq: "weekly" as const,
+					priority: 0.7,
+				})),
+			...games
+				.filter((row) => row.slug)
+				.map((row) => ({
+					path: `/item/${encodeURIComponent(row.slug!)}`,
+					lastmod: normalizeSitemapLastmod(row.updated_at),
+					changefreq: "weekly" as const,
+					priority: 0.7,
+				})),
+			...posts
+				.filter((row) => row.slug)
+				.map((row) => ({
+					path: getPostPath(row.slug!, row.is_tool === 1),
+					lastmod: normalizeSitemapLastmod(row.updated_at),
+					changefreq: "weekly" as const,
+					priority: 0.7,
+				})),
 		];
 
 		return new Response(buildSitemapXml(siteUrl, entries), {

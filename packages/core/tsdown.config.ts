@@ -4,13 +4,17 @@ import { readFileSync } from "node:fs";
 import { defineConfig } from "tsdown";
 
 function readPackageVersion(): string {
-	const pkg: unknown = JSON.parse(readFileSync("package.json", "utf-8"));
-	if (pkg && typeof pkg === "object" && "version" in pkg && typeof pkg.version === "string") {
-		return pkg.version;
+	const parsed: unknown = JSON.parse(readFileSync("package.json", "utf-8"));
+	if (
+		typeof parsed === "object" &&
+		parsed !== null &&
+		"version" in parsed &&
+		typeof parsed.version === "string"
+	) {
+		return parsed.version;
 	}
-	throw new Error("package.json is missing a string version");
+	throw new Error("package.json is missing a string `version` field");
 }
-
 const commit = (() => {
 	try {
 		return execSync("git rev-parse --short HEAD", { encoding: "utf-8" }).trim();

@@ -14,7 +14,11 @@ const BLOCK_TYPES = new Set([
 	"banner",
 	"meter",
 	"code",
+	"empty",
+	"accordion",
 ]);
+
+const EMPTY_SIZES = new Set(["sm", "base", "lg"]);
 
 const ELEMENT_TYPES = new Set([
 	"button",
@@ -27,7 +31,10 @@ const ELEMENT_TYPES = new Set([
 	"radio",
 	"date_input",
 	"combobox",
+	"repeater",
 ]);
+
+const REPEATER_SUB_FIELD_TYPES = new Set(["text_input", "number_input", "select", "toggle"]);
 
 const COLUMN_FORMATS = new Set(["text", "badge", "relative_time", "number", "code"]);
 
@@ -83,6 +90,10 @@ interface ValidationError {
 
 function isRecord(v: unknown): v is Record<string, unknown> {
 	return typeof v === "object" && v !== null && !Array.isArray(v);
+}
+
+function isNonNegativeInteger(value: unknown): value is number {
+	return typeof value === "number" && Number.isInteger(value) && value >= 0;
 }
 
 function validateConfirmDialog(value: unknown, path: string, errors: ValidationError[]): void {
@@ -446,6 +457,84 @@ function validateElement(value: unknown, path: string, errors: ValidationError[]
 					path: `${path}.placeholder`,
 					message: "Field 'placeholder' must be a string",
 				});
+			}
+			break;
+		}
+		case "repeater": {
+			if (!Array.isArray(value.fields)) {
+				errors.push({
+					path: `${path}.fields`,
+					message: "Required field 'fields' must be an array",
+				});
+			} else if (value.fields.length === 0) {
+				errors.push({
+					path: `${path}.fields`,
+					message: "Field 'fields' must not be empty",
+				});
+			} else {
+				for (let i = 0; i < value.fields.length; i++) {
+					const subPath = `${path}.fields[${i}]`;
+					const sub = value.fields[i];
+					if (
+						isRecord(sub) &&
+						typeof sub.type === "string" &&
+						!REPEATER_SUB_FIELD_TYPES.has(sub.type)
+					) {
+						errors.push({
+							path: `${subPath}.type`,
+							message: `Repeater sub-field type '${sub.type}' is not allowed. Expected one of: ${[...REPEATER_SUB_FIELD_TYPES].join(", ")}`,
+						});
+						continue;
+					}
+					validateElement(sub, subPath, errors);
+				}
+			}
+			if (value.item_label !== undefined && typeof value.item_label !== "string") {
+				errors.push({
+					path: `${path}.item_label`,
+					message: "Field 'item_label' must be a string",
+				});
+			}
+			let minItems: number | undefined;
+			if (value.min_items !== undefined && !isNonNegativeInteger(value.min_items)) {
+				errors.push({
+					path: `${path}.min_items`,
+					message: "Field 'min_items' must be a non-negative integer",
+				});
+			} else {
+				minItems = value.min_items;
+			}
+			let maxItems: number | undefined;
+			if (value.max_items !== undefined && !isNonNegativeInteger(value.max_items)) {
+				errors.push({
+					path: `${path}.max_items`,
+					message: "Field 'max_items' must be a non-negative integer",
+				});
+			} else {
+				maxItems = value.max_items;
+			}
+			if (minItems !== undefined && maxItems !== undefined && minItems > maxItems) {
+				errors.push({
+					path: `${path}.min_items`,
+					message: "Field 'min_items' must be less than or equal to 'max_items'",
+				});
+			}
+			if (value.initial_value !== undefined) {
+				if (!Array.isArray(value.initial_value)) {
+					errors.push({
+						path: `${path}.initial_value`,
+						message: "Field 'initial_value' must be an array",
+					});
+				} else {
+					for (let i = 0; i < value.initial_value.length; i++) {
+						if (!isRecord(value.initial_value[i])) {
+							errors.push({
+								path: `${path}.initial_value[${i}]`,
+								message: "Each initial_value entry must be an object",
+							});
+						}
+					}
+				}
 			}
 			break;
 		}
@@ -992,6 +1081,73 @@ function validateBlock(value: unknown, path: string, errors: ValidationError[]):
 				errors.push({
 					path: `${path}.variant`,
 					message: `Field 'variant' must be one of: ${[...BANNER_VARIANTS].join(", ")}`,
+				});
+			}
+			break;
+		}
+		case "empty": {
+			if (typeof value.title !== "string") {
+				errors.push({
+					path: `${path}.title`,
+					message: "Required field 'title' must be a string",
+				});
+			}
+			if (value.description !== undefined && typeof value.description !== "string") {
+				errors.push({
+					path: `${path}.description`,
+					message: "Field 'description' must be a string if provided",
+				});
+			}
+			if (value.command_line !== undefined && typeof value.command_line !== "string") {
+				errors.push({
+					path: `${path}.command_line`,
+					message: "Field 'command_line' must be a string if provided",
+				});
+			}
+			if (
+				value.size !== undefined &&
+				(typeof value.size !== "string" || !EMPTY_SIZES.has(value.size))
+			) {
+				errors.push({
+					path: `${path}.size`,
+					message: `Field 'size' must be one of: ${[...EMPTY_SIZES].join(", ")}`,
+				});
+			}
+			if (value.actions !== undefined) {
+				if (!Array.isArray(value.actions)) {
+					errors.push({
+						path: `${path}.actions`,
+						message: "Field 'actions' must be an array if provided",
+					});
+				} else {
+					for (let i = 0; i < value.actions.length; i++) {
+						validateElement(value.actions[i], `${path}.actions[${i}]`, errors);
+					}
+				}
+			}
+			break;
+		}
+		case "accordion": {
+			if (typeof value.label !== "string") {
+				errors.push({
+					path: `${path}.label`,
+					message: "Required field 'label' must be a string",
+				});
+			}
+			if (!Array.isArray(value.blocks)) {
+				errors.push({
+					path: `${path}.blocks`,
+					message: "Required field 'blocks' must be an array",
+				});
+			} else {
+				for (let i = 0; i < value.blocks.length; i++) {
+					validateBlock(value.blocks[i], `${path}.blocks[${i}]`, errors);
+				}
+			}
+			if (value.default_open !== undefined && typeof value.default_open !== "boolean") {
+				errors.push({
+					path: `${path}.default_open`,
+					message: "Field 'default_open' must be a boolean if provided",
 				});
 			}
 			break;

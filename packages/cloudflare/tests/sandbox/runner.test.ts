@@ -1,7 +1,6 @@
+import type { PluginManifest } from "emdash";
 import type { Kysely } from "kysely";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-
-import type { PluginManifest } from "emdash";
 
 const { loaderGet, pluginBridgeFactory } = vi.hoisted(() => ({
 	loaderGet: vi.fn(),
@@ -74,7 +73,7 @@ describe("CloudflareSandboxRunner", () => {
 		expect(capturedConfig).toBeDefined();
 		expect(capturedConfig?.compatibilityDate).toBe("2026-04-01");
 		expect(capturedConfig?.modules).toMatchObject({
-			emdash: { js: 'export const definePlugin = (d) => d;\n' },
+			emdash: { js: "export const definePlugin = (d) => d;\n" },
 		});
 	});
 });

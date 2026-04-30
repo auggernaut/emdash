@@ -1,10 +1,10 @@
 import type { Kysely } from "kysely";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
+import { handleContentTermsSet } from "../../../src/api/handlers/taxonomies.js";
 import { ContentRepository } from "../../../src/database/repositories/content.js";
 import { TaxonomyRepository } from "../../../src/database/repositories/taxonomy.js";
 import type { Database } from "../../../src/database/types.js";
-import { handleContentTermsSet } from "../../../src/api/handlers/taxonomies.js";
 import { setupTestDatabaseWithCollections, teardownTestDatabase } from "../../utils/test-db.js";
 
 // Mock loader.getDb so the runtime taxonomy functions read from our test db.

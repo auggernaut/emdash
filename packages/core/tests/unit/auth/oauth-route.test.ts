@@ -33,7 +33,9 @@ describe("oauth provider route", () => {
 	});
 
 	it("uses the Cloudflare worker env when starting the OAuth flow", async () => {
-		const redirect = vi.fn((location: string) => new Response(null, { status: 302, headers: { Location: location } }));
+		const redirect = vi.fn(
+			(location: string) => new Response(null, { status: 302, headers: { Location: location } }),
+		);
 
 		const context = {
 			params: { provider: "github" },

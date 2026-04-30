@@ -15,8 +15,10 @@ describe("home page", () => {
 		expect(pageSource).toContain('media="(min-width: 961px)"');
 		expect(pageSource).toContain('type="image/avif"');
 		expect(pageSource).toContain('type="image/webp"');
-		expect(pageSource).toContain('fetchpriority="high"');
-		expect(pageSource).toContain("ttrpg_wasteland_hero-512.avif");
+		expect(pageSource).toContain('fetchpriority: "high" as const');
+		expect(pageSource).toContain("fetchpriority={image.fetchpriority}");
+		expect(pageSource).toContain('baseName: "ttrpg_wasteland_hero"');
+		expect(pageSource).toContain("${image.baseName}-512.avif");
 		expect(pageSource).toContain("const HERO_IMAGE_PLACEHOLDER");
 		expect(pageSource).toContain('const HERO_IMAGE_BASE = "/home-hero"');
 		expect(pageSource).toContain("display: none;");

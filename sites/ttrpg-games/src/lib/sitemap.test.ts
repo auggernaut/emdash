@@ -8,9 +8,7 @@ describe("normalizeSitemapLastmod", () => {
 	});
 
 	it("preserves ISO 8601 timestamps", () => {
-		expect(normalizeSitemapLastmod("2026-04-14T17:27:10.182Z")).toBe(
-			"2026-04-14T17:27:10.182Z",
-		);
+		expect(normalizeSitemapLastmod("2026-04-14T17:27:10.182Z")).toBe("2026-04-14T17:27:10.182Z");
 	});
 
 	it("falls back to a valid date when only a date prefix is usable", () => {
