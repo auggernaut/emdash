@@ -2,6 +2,7 @@
 import { EmDashHead, EmDashBodyStart, EmDashBodyEnd } from "emdash/ui";
 import { createPublicPageContext, safeJsonLdSerialize } from "emdash/page";
 import LiveSearch from "emdash/ui/search";
+import { markdownAlternatePathForPathname } from "../lib/markdown.js";
 import { resolvePageMeta } from "../lib/page-meta.js";
 import { shouldBlockSearchIndexing } from "../lib/search-indexing.js";
 import { SITE_FAVICON_PATH, SITE_LOGO_PATH, SITE_NAME } from "../lib/structured-data.js";
@@ -43,6 +44,7 @@ const resolvedPageMeta = resolvePageMeta({
 });
 
 const faviconHref = SITE_FAVICON_PATH;
+const markdownAlternatePath = markdownAlternatePathForPathname(Astro.url.pathname);
 const logoSrc = SITE_LOGO_PATH;
 const displayLogoBase = "/images/logo-red-transparent-cropped";
 const displayLogoSizes = "(min-width: 961px) 144px, 120px";
@@ -87,6 +89,7 @@ const pageCtx = createPublicPageContext({
 			<title>{title}</title>
 			<link rel="icon" type="image/svg+xml" href={faviconHref} />
 			<link rel="apple-touch-icon" href={logoSrc} />
+			{markdownAlternatePath && <link rel="alternate" type="text/markdown" href={markdownAlternatePath} />}
 			{blockSearchIndexing && <meta name="robots" content="noindex, nofollow, noarchive" />}
 			{
 				structuredData.map((item) => (
