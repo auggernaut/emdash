@@ -1,5 +1,10 @@
 import { defineMiddleware } from "astro:middleware";
 
+import {
+	buildAgentDiscoveryLinkHeader,
+	shouldAttachAgentDiscoveryLinkHeader,
+} from "./lib/agent-discovery.js";
+
 const TRAILING_SLASH_PATTERN = /\/+$/;
 
 export const onRequest = defineMiddleware(async (context, next) => {
@@ -14,5 +19,16 @@ export const onRequest = defineMiddleware(async (context, next) => {
 		return context.redirect(normalizedUrl.toString(), 308);
 	}
 
-	return next();
+	const response = await next();
+
+	if (
+		shouldAttachAgentDiscoveryLinkHeader(
+			context.request.method,
+			response.headers.get("Content-Type"),
+		)
+	) {
+		response.headers.append("Link", buildAgentDiscoveryLinkHeader());
+	}
+
+	return response;
 });
