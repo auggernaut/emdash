@@ -35,6 +35,7 @@ export function createMarkdownResponse(
 	const headers = new Headers(options.headers);
 	headers.set("Content-Type", "text/markdown; charset=utf-8");
 	headers.set("Cache-Control", headers.get("Cache-Control") ?? "public, max-age=3600");
+	headers.set("X-Robots-Tag", headers.get("X-Robots-Tag") ?? "noindex");
 
 	return new Response(body, {
 		status: options.status ?? 200,
