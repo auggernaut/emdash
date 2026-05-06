@@ -19,6 +19,7 @@ describe("preview search indexing", () => {
 				"",
 				"# Disallow admin and API routes",
 				"Disallow: /_emdash/",
+				"Content-Signal: ai-train=no, search=yes, ai-input=yes",
 				"",
 				"Sitemap: https://www.ttrpg-games.com/sitemap.xml",
 			].join("\n"),
