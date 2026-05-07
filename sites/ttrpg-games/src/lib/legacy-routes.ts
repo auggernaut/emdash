@@ -34,6 +34,14 @@ export const LEGACY_ITEM_SLUG_REDIRECTS = new Map<string, string>([
 
 export const LEGACY_CATEGORY_PATH_REDIRECTS = new Map<string, string>([
 	["forged-in-the-dark", "/category/forged-in-the-dark-fitd"],
+	["pbta", "/category/powered-by-the-apocalypse-pbta"],
+	["powered-by-the-apocalypse", "/category/powered-by-the-apocalypse-pbta"],
+	["solo", "/category/solo-play"],
+	["solo-rpgs", "/category/solo-play"],
+	["solo-ttrpgs", "/category/solo-play"],
+	["superhero", "/category/superheroes"],
+	["superhero-rpg", "/category/superheroes"],
+	["superhero-ttrpg", "/category/superheroes"],
 ]);
 
 export const LEGACY_BLOG_SLUG_REDIRECTS = new Map<string, string>([
