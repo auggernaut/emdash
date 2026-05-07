@@ -68,7 +68,7 @@ function formatDate(date: Date | null | undefined): string | null {
 					<div class="grid blog-grid" id="tools-grid">
 						{posts.map((post) => (
 							<article class="blog-card">
-								<a href={getPostPath(post.id)} class="blog-card-link">
+								<a href={getPostPath(post)} class="blog-card-link">
 									{
 										post.data.featured_image && (
 											<div class="blog-card-image">

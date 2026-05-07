@@ -3,6 +3,7 @@ import { getEmDashCollection, getEmDashEntry } from "emdash";
 import { getDb } from "emdash/runtime";
 import Base from "../../layouts/Base.astro";
 import { setAstroCacheHint } from "../../lib/astro-cache.js";
+import { normalizeInternalHtmlLinks } from "../../lib/html-links.js";
 import { getLegacyCategoryRedirectPath } from "../../lib/legacy-routes.js";
 import { buildCategoryPageStructuredData } from "../../lib/structured-data.js";
 import type {
@@ -125,7 +126,7 @@ function cardCopy(game: GameEntry): string {
 	);
 }
 
-const categoryBodyHtml = categoryPage?.data.body_html || null;
+const categoryBodyHtml = normalizeInternalHtmlLinks(categoryPage?.data.body_html);
 
 const featuredPicks = gameNotes
 	.filter((item) => item.featured)

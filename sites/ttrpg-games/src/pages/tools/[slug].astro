@@ -4,6 +4,7 @@ import { Image, PortableText } from "emdash/ui";
 
 import Base from "../../layouts/Base.astro";
 import { setAstroCacheHint } from "../../lib/astro-cache.js";
+import { normalizeInternalHtmlLinks } from "../../lib/html-links.js";
 import { getPostPath, isToolPost } from "../../lib/post-routes";
 import { buildArticlePageStructuredData } from "../../lib/structured-data.js";
 import type { PostEntry } from "../../lib/types";
@@ -36,6 +37,7 @@ const { entries: rawToolPosts } = await getEmDashCollection("posts", {
 	limit: ALL_POSTS_LIMIT,
 });
 const toolPosts = (rawToolPosts as unknown as PostEntry[]).filter((entry) => isToolPost(entry));
+const toolSlugs = new Set(toolPosts.map((entry) => entry.id));
 const currentToolIndex = toolPosts.findIndex((entry) => entry.id === post.id);
 const recentPosts =
 	currentToolIndex === -1
@@ -102,7 +104,10 @@ const updatedDate = formatDate(post.data.updatedAt);
 const publishedTime = post.data.publishedAt?.toISOString() ?? null;
 const modifiedTime = post.data.updatedAt?.toISOString() ?? null;
 const image = getImageUrl(post.data.featured_image);
-const bodyHtml = post.data.body_html?.replace(LEADING_H1_PATTERN, "").trim() || null;
+const bodyHtml = normalizeInternalHtmlLinks(
+	post.data.body_html?.replace(LEADING_H1_PATTERN, "").trim(),
+	{ toolSlugs },
+);
 const breadcrumbs = [
 	{ name: "Home", url: new URL("/", Astro.url).href },
 	{ name: "Tools", url: new URL("/tools", Astro.url).href },
@@ -167,7 +172,7 @@ const structuredData = buildArticlePageStructuredData({ breadcrumbs });
 					<div class="grid blog-grid related-tools-grid">
 						{recentPosts.map((related) => (
 							<article class="blog-card">
-								<a href={getPostPath(related.id)} class="blog-card-link">
+								<a href={getPostPath(related)} class="blog-card-link">
 									{
 										related.data.featured_image && (
 											<div class="blog-card-image">

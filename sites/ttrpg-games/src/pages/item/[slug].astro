@@ -3,6 +3,7 @@ import { getEmDashEntry, getEntryTerms, getSeoMeta } from "emdash";
 import Base from "../../layouts/Base.astro";
 import { setAstroCacheHint } from "../../lib/astro-cache.js";
 import { buildGameAgentProfile, buildGameStructuredData } from "../../lib/game-profile";
+import { normalizeInternalHtmlLinks } from "../../lib/html-links.js";
 import { getLegacyItemRedirectPath, resolveCategoryHref } from "../../lib/legacy-routes.js";
 import { resolveRelatedGameHref } from "../../lib/related-games.js";
 import { buildBreadcrumbStructuredData } from "../../lib/structured-data.js";
@@ -148,7 +149,9 @@ const atAGlanceMarkup = atAGlance
 		? atAGlance
 		: `<p>${escapeHtml(atAGlance).replace(NEWLINE_PATTERN, "<br />")}</p>`
 	: null;
-const bodyHtml = atAGlance ? stripLeadingAtAGlance(game.data.body_html) : game.data.body_html;
+const bodyHtml = normalizeInternalHtmlLinks(
+	atAGlance ? stripLeadingAtAGlance(game.data.body_html) : game.data.body_html,
+);
 const facetGroups = [
 	{ label: "Genres", terms: genres, linkToCategory: true },
 	{ label: "Systems", terms: systems, linkToCategory: true },

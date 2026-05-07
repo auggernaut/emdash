@@ -4,6 +4,7 @@ import { Image, PortableText } from "emdash/ui";
 
 import Base from "../../layouts/Base.astro";
 import { setAstroCacheHint } from "../../lib/astro-cache.js";
+import { normalizeInternalHtmlLinks } from "../../lib/html-links.js";
 import { getLegacyBlogRedirectPath } from "../../lib/legacy-routes.js";
 import { getMediaUrl, normalizeMediaValue } from "../../lib/media.js";
 import { getPostPath, isToolPost } from "../../lib/post-routes";
@@ -41,6 +42,9 @@ const { entries: rawPosts } = await getEmDashCollection("posts", {
 	orderBy: { published_at: "desc" },
 	limit: ALL_POSTS_LIMIT,
 });
+const toolSlugs = new Set(
+	(rawPosts as unknown as PostEntry[]).filter((entry) => isToolPost(entry)).map((entry) => entry.id),
+);
 const blogPosts = (rawPosts as unknown as PostEntry[]).filter((entry) => !isToolPost(entry));
 const currentPostIndex = blogPosts.findIndex((entry) => entry.id === post.id);
 const relatedPosts =
@@ -98,7 +102,10 @@ const seo = getSeoMeta(rawPost, {
 	path: Astro.url.pathname,
 	defaultOgImage: image ?? undefined,
 });
-const bodyHtml = post.data.body_html?.replace(LEADING_H1_PATTERN, "").trim() || null;
+const bodyHtml = normalizeInternalHtmlLinks(
+	post.data.body_html?.replace(LEADING_H1_PATTERN, "").trim(),
+	{ toolSlugs },
+);
 const breadcrumbs = [
 	{ name: "Home", url: new URL("/", Astro.url).href },
 	{ name: "Blog", url: new URL("/blog", Astro.url).href },
