@@ -3,13 +3,13 @@ import { getEmDashCollection } from "emdash";
 
 import { categorySummaryLine, compactMarkdown, listSection } from "../lib/markdown-content.js";
 import { createMarkdownResponse } from "../lib/markdown.js";
-import type { CategoryPageEntry } from "../lib/types.js";
+import { filterCategoryPageEntries } from "../lib/types.js";
 
 export const prerender = false;
 
 export const GET: APIRoute = async ({ url }) => {
 	const { entries } = await getEmDashCollection("category_pages");
-	const categories = (entries as unknown as CategoryPageEntry[]).toSorted((left, right) => {
+	const categories = filterCategoryPageEntries(entries).toSorted((left, right) => {
 		if (left.data.type !== right.data.type) return left.data.type.localeCompare(right.data.type);
 		return left.data.title.localeCompare(right.data.title);
 	});

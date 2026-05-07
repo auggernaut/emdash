@@ -9,7 +9,7 @@ import {
 } from "../../lib/markdown-content.js";
 import { createMarkdownResponse } from "../../lib/markdown.js";
 import { isToolPost } from "../../lib/post-routes.js";
-import type { PostEntry } from "../../lib/types.js";
+import { isPostEntry } from "../../lib/types.js";
 
 export const prerender = false;
 
@@ -18,8 +18,8 @@ export const GET: APIRoute = async ({ params, url }) => {
 	if (!slug) return createMarkdownResponse("# Article Not Found\n", { status: 404 });
 
 	const { entry } = await getEmDashEntry("posts", slug);
-	const post = entry as unknown as PostEntry | null;
-	if (!post) return createMarkdownResponse("# Article Not Found\n", { status: 404 });
+	if (!isPostEntry(entry)) return createMarkdownResponse("# Article Not Found\n", { status: 404 });
+	const post = entry;
 	if (isToolPost(post)) {
 		return Response.redirect(new URL(`/tools/${encodeURIComponent(post.id)}.md`, url).href, 308);
 	}

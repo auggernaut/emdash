@@ -8,7 +8,7 @@ import {
 	section,
 } from "../../lib/markdown-content.js";
 import { createMarkdownResponse, htmlToMarkdown } from "../../lib/markdown.js";
-import type { CategoryPageEntry, GameEntry } from "../../lib/types.js";
+import { filterGameEntries, isCategoryPageEntry } from "../../lib/types.js";
 
 export const prerender = false;
 
@@ -17,8 +17,10 @@ export const GET: APIRoute = async ({ params, url }) => {
 	if (!slug) return createMarkdownResponse("# Category Not Found\n", { status: 404 });
 
 	const { entry } = await getEmDashEntry("category_pages", slug);
-	const category = entry as unknown as CategoryPageEntry | null;
-	if (!category) return createMarkdownResponse("# Category Not Found\n", { status: 404 });
+	if (!isCategoryPageEntry(entry)) {
+		return createMarkdownResponse("# Category Not Found\n", { status: 404 });
+	}
+	const category = entry;
 
 	const sourceTaxonomy = category.data.source_taxonomy ?? null;
 	const sourceTermSlug = category.data.source_term_slug ?? null;
@@ -29,7 +31,7 @@ export const GET: APIRoute = async ({ params, url }) => {
 				}
 			: undefined;
 	const { entries } = await getEmDashCollection("games", where ? { where } : undefined);
-	const games = (entries as unknown as GameEntry[]).toSorted((left, right) => {
+	const games = filterGameEntries(entries).toSorted((left, right) => {
 		const leftRank = left.data.rank ?? Number.MAX_SAFE_INTEGER;
 		const rightRank = right.data.rank ?? Number.MAX_SAFE_INTEGER;
 		if (leftRank !== rightRank) return leftRank - rightRank;

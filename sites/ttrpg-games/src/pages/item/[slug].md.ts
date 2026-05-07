@@ -4,7 +4,7 @@ import { getEmDashEntry, getEntryTerms } from "emdash";
 import { buildGameAgentProfile } from "../../lib/game-profile.js";
 import { compactMarkdown, listSection, section } from "../../lib/markdown-content.js";
 import { createMarkdownResponse, htmlToMarkdown, markdownList } from "../../lib/markdown.js";
-import type { GameEntry } from "../../lib/types.js";
+import { isGameEntry } from "../../lib/types.js";
 
 export const prerender = false;
 
@@ -13,8 +13,8 @@ export const GET: APIRoute = async ({ params, url }) => {
 	if (!slug) return createMarkdownResponse("# Game Not Found\n", { status: 404 });
 
 	const { entry } = await getEmDashEntry("games", slug);
-	const game = entry as unknown as GameEntry | null;
-	if (!game) return createMarkdownResponse("# Game Not Found\n", { status: 404 });
+	if (!isGameEntry(entry)) return createMarkdownResponse("# Game Not Found\n", { status: 404 });
+	const game = entry;
 
 	const [genres, systems, mechanics, themes, decisionTags] = await Promise.all([
 		getEntryTerms("games", game.data.id, "genre"),

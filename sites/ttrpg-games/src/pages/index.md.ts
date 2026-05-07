@@ -11,7 +11,7 @@ import {
 } from "../lib/markdown-content.js";
 import { createMarkdownResponse } from "../lib/markdown.js";
 import { getPostPath, isToolPost } from "../lib/post-routes.js";
-import type { CategoryPageEntry, GameEntry, PostEntry } from "../lib/types.js";
+import { filterCategoryPageEntries, filterGameEntries, filterPostEntries } from "../lib/types.js";
 
 export const prerender = false;
 
@@ -23,9 +23,9 @@ export const GET: APIRoute = async ({ url }) => {
 			getEmDashCollection("posts", { orderBy: { published_at: "desc" }, limit: 500 }),
 		]);
 
-	const games = rawGames as unknown as GameEntry[];
-	const categories = rawCategoryPages as unknown as CategoryPageEntry[];
-	const posts = rawPosts as unknown as PostEntry[];
+	const games = filterGameEntries(rawGames);
+	const categories = filterCategoryPageEntries(rawCategoryPages);
+	const posts = filterPostEntries(rawPosts);
 	const articles = posts.filter((post) => !isToolPost(post));
 	const tools = posts.filter((post) => isToolPost(post));
 	const topRatedGames = games.filter((game) => game.data.is_top_rated).slice(0, 10);

@@ -55,6 +55,37 @@ export const LEGACY_BLOG_SLUG_REDIRECTS = new Map<string, string>([
 	],
 ]);
 
+export const LEGACY_EXACT_PATH_REDIRECTS = new Map<string, string>([
+	["/best-ttrpgs", "/blog/best-ttrpgs"],
+	["/best-ttrpg-games", "/blog/best-ttrpgs"],
+	["/best-tabletop-rpg-games", "/blog/best-ttrpgs"],
+	["/best-tabletop-rpgs", "/blog/best-ttrpgs"],
+	["/tabletop-rpg-games", "/blog/best-ttrpgs"],
+	["/ttrpgs", "/blog/best-ttrpgs"],
+	["/best-indie-ttrpgs", "/blog/best-ttrpgs"],
+	["/best-solo-ttrpgs", "/blog/best-ttrpgs"],
+	["/best-sci-fi-ttrpgs", "/blog/best-ttrpgs"],
+	["/best-scifi-ttrpgs", "/blog/best-ttrpgs"],
+	["/best-sci-fi-rpgs", "/blog/best-ttrpgs"],
+	["/best-scifi-rpgs", "/blog/best-ttrpgs"],
+	["/solo-ttrpg", "/blog/solo-ttrpg-games-complete-guide-to-playing-alone"],
+	["/solo-ttrpgs", "/category/solo-play"],
+	["/cain-rpg", "/item/cain"],
+	["/cain-ttrpg", "/item/cain"],
+	["/cairn-2e", "/item/cairn-2e"],
+	["/cairn-rpg", "/item/cairn-2e"],
+	["/root-rpg", "/item/rootrpg"],
+	["/root-ttrpg", "/item/rootrpg"],
+	["/worlds-without-number", "/item/worlds-without-number"],
+	["/worlds-without-number-rpg", "/item/worlds-without-number"],
+	["/cyberpunk-red", "/item/cyberpunkred"],
+	["/cyberpunk-ttrpg", "/category/cyberpunk"],
+	["/cyberpunk-ttrpgs", "/category/cyberpunk"],
+	["/nsr-rpg", "/category/new-school-revolution"],
+	["/ttrpg-dice-system", "/blog/ultimate-guide-to-dice-based-resolution-systems"],
+	["/ttrpg-dice-systems", "/blog/ultimate-guide-to-dice-based-resolution-systems"],
+]);
+
 const TRAILING_SLASH_PATTERN = /\/+$/;
 const ITEM_PATH_PATTERN = /^\/item\/([^/]+)$/;
 const CATEGORY_PATH_PATTERN = /^\/category\/([^/]+)$/;
@@ -99,6 +130,9 @@ export function getLegacyRedirectPathForPathname(pathname: string): string | nul
 
 	const normalizedPathname =
 		pathname.length > 1 ? pathname.replace(TRAILING_SLASH_PATTERN, "") : pathname;
+	const exactRedirectPath = LEGACY_EXACT_PATH_REDIRECTS.get(normalizedPathname);
+	if (exactRedirectPath) return exactRedirectPath;
+
 	const itemMatch = ITEM_PATH_PATTERN.exec(normalizedPathname);
 	if (itemMatch?.[1]) {
 		const redirectPath = getLegacyItemRedirectPath(decodePathSegment(itemMatch[1]));

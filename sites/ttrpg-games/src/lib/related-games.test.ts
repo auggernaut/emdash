@@ -44,9 +44,7 @@ describe("legacy route redirects", () => {
 		expect(getLegacyCategoryRedirectPath("forged-in-the-dark")).toBe(
 			"/category/forged-in-the-dark-fitd",
 		);
-		expect(getLegacyCategoryRedirectPath("pbta")).toBe(
-			"/category/powered-by-the-apocalypse-pbta",
-		);
+		expect(getLegacyCategoryRedirectPath("pbta")).toBe("/category/powered-by-the-apocalypse-pbta");
 		expect(getLegacyCategoryRedirectPath("solo-rpgs")).toBe("/category/solo-play");
 		expect(getLegacyCategoryRedirectPath("superhero-rpg")).toBe("/category/superheroes");
 		expect(resolveCategoryHref("year-zero-engine")).toBe("/category/year-zero-engine");
@@ -63,6 +61,9 @@ describe("legacy route redirects", () => {
 
 	it("matches legacy route redirects from trailing-slash pathnames", () => {
 		expect(getLegacyRedirectPathForPathname("/item/alien/")).toBe("/item/alienrpg");
+		expect(getLegacyRedirectPathForPathname("/best-tabletop-rpg-games/")).toBe("/blog/best-ttrpgs");
+		expect(getLegacyRedirectPathForPathname("/cain-ttrpg/")).toBe("/item/cain");
+		expect(getLegacyRedirectPathForPathname("/cyberpunk-ttrpg/")).toBe("/category/cyberpunk");
 		expect(getLegacyRedirectPathForPathname("/category/year-zero-engine/")).toBe(
 			"/category/year-zero-engine",
 		);

@@ -91,6 +91,28 @@ export interface GameEntry {
 	data: GameData;
 }
 
+function isRecord(value: unknown): value is Record<string, unknown> {
+	return typeof value === "object" && value !== null;
+}
+
+export function isGameEntry<T extends { id: unknown; data: unknown }>(
+	value: T,
+): value is T & GameEntry;
+export function isGameEntry(value: unknown): value is GameEntry;
+export function isGameEntry(value: unknown): value is GameEntry {
+	if (!isRecord(value) || typeof value.id !== "string" || !isRecord(value.data)) {
+		return false;
+	}
+
+	return typeof value.data.id === "string" && typeof value.data.title === "string";
+}
+
+export function filterGameEntries<T extends { id: unknown; data: unknown }>(
+	entries: T[],
+): Array<T & GameEntry> {
+	return entries.filter((entry): entry is T & GameEntry => isGameEntry(entry));
+}
+
 export interface CategoryPageData {
 	id: string;
 	title: string;
@@ -107,6 +129,28 @@ export interface CategoryPageData {
 export interface CategoryPageEntry {
 	id: string;
 	data: CategoryPageData;
+}
+
+export function isCategoryPageEntry<T extends { id: unknown; data: unknown }>(
+	value: T,
+): value is T & CategoryPageEntry;
+export function isCategoryPageEntry(value: unknown): value is CategoryPageEntry;
+export function isCategoryPageEntry(value: unknown): value is CategoryPageEntry {
+	if (!isRecord(value) || typeof value.id !== "string" || !isRecord(value.data)) {
+		return false;
+	}
+
+	return (
+		typeof value.data.id === "string" &&
+		typeof value.data.title === "string" &&
+		typeof value.data.type === "string"
+	);
+}
+
+export function filterCategoryPageEntries<T extends { id: unknown; data: unknown }>(
+	entries: T[],
+): Array<T & CategoryPageEntry> {
+	return entries.filter((entry): entry is T & CategoryPageEntry => isCategoryPageEntry(entry));
 }
 
 export interface Badge {
@@ -130,4 +174,22 @@ export interface PostData {
 export interface PostEntry {
 	id: string;
 	data: PostData;
+}
+
+export function isPostEntry<T extends { id: unknown; data: unknown }>(
+	value: T,
+): value is T & PostEntry;
+export function isPostEntry(value: unknown): value is PostEntry;
+export function isPostEntry(value: unknown): value is PostEntry {
+	if (!isRecord(value) || typeof value.id !== "string" || !isRecord(value.data)) {
+		return false;
+	}
+
+	return typeof value.data.id === "string" && typeof value.data.title === "string";
+}
+
+export function filterPostEntries<T extends { id: unknown; data: unknown }>(
+	entries: T[],
+): Array<T & PostEntry> {
+	return entries.filter((entry): entry is T & PostEntry => isPostEntry(entry));
 }
