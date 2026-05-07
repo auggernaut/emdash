@@ -44,7 +44,7 @@ describe("legacy route redirects", () => {
 		expect(getLegacyCategoryRedirectPath("forged-in-the-dark")).toBe(
 			"/category/forged-in-the-dark-fitd",
 		);
-		expect(resolveCategoryHref("year-zero-engine")).toBe("/search?q=Year%20Zero%20Engine");
+		expect(resolveCategoryHref("year-zero-engine")).toBe("/category/year-zero-engine");
 	});
 
 	it("redirects legacy blog slugs to their current articles", () => {
@@ -59,7 +59,7 @@ describe("legacy route redirects", () => {
 	it("matches legacy route redirects from trailing-slash pathnames", () => {
 		expect(getLegacyRedirectPathForPathname("/item/alien/")).toBe("/item/alienrpg");
 		expect(getLegacyRedirectPathForPathname("/category/year-zero-engine/")).toBe(
-			"/search?q=Year%20Zero%20Engine",
+			"/category/year-zero-engine",
 		);
 		expect(
 			getLegacyRedirectPathForPathname(

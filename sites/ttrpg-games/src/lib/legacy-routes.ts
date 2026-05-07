@@ -34,7 +34,6 @@ export const LEGACY_ITEM_SLUG_REDIRECTS = new Map<string, string>([
 
 export const LEGACY_CATEGORY_PATH_REDIRECTS = new Map<string, string>([
 	["forged-in-the-dark", "/category/forged-in-the-dark-fitd"],
-	["year-zero-engine", "/search?q=Year%20Zero%20Engine"],
 ]);
 
 export const LEGACY_BLOG_SLUG_REDIRECTS = new Map<string, string>([
