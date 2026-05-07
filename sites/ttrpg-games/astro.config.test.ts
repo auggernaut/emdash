@@ -7,6 +7,7 @@ describe("ttrpg-games Astro config", () => {
 		expect(astroConfig.experimental?.cache?.provider).toMatchObject({
 			entrypoint: "@emdash-cms/cloudflare/cache",
 			config: {
+				cacheName: "ttrpg-games-public-v2",
 				zoneIdEnvVar: "CF_ZONE_ID",
 				apiTokenEnvVar: "CF_CACHE_PURGE_TOKEN",
 			},

@@ -37,6 +37,7 @@ export default defineConfig({
 	experimental: {
 		cache: {
 			provider: cloudflareCache({
+				cacheName: "ttrpg-games-public-v2",
 				zoneIdEnvVar: "CF_ZONE_ID",
 				apiTokenEnvVar: "CF_CACHE_PURGE_TOKEN",
 			}),
