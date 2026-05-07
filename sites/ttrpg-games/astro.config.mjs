@@ -9,7 +9,7 @@ import { relatedGamesWidgetPlugin } from "./src/plugins/related-widget/index.ts"
 
 export default defineConfig({
 	output: "server",
-	trailingSlash: "never",
+	trailingSlash: "ignore",
 	adapter: cloudflare(),
 	vite: {
 		ssr: {

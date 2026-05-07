@@ -3,6 +3,7 @@ import { getEmDashCollection, getEmDashEntry } from "emdash";
 import { getDb } from "emdash/runtime";
 import Base from "../../layouts/Base.astro";
 import { setAstroCacheHint } from "../../lib/astro-cache.js";
+import { getLegacyCategoryRedirectPath } from "../../lib/legacy-routes.js";
 import { buildCategoryPageStructuredData } from "../../lib/structured-data.js";
 import type {
 	CategoryFaq,
@@ -20,9 +21,18 @@ const ESCAPE_APOSTROPHE_PATTERN = /'/g;
 const REGEX_ESCAPE_PATTERN = /[.*+?^${}()|[\]\\]/g;
 
 const { slug } = Astro.params;
+if (!slug) {
+	return Astro.redirect("/404");
+}
+
+const legacyRedirectPath = getLegacyCategoryRedirectPath(slug);
+if (legacyRedirectPath) {
+	return Astro.redirect(legacyRedirectPath, 308);
+}
+
 const { entry: rawCategoryPage, cacheHint: categoryPageCacheHint } = await getEmDashEntry(
 	"category_pages",
-	slug ?? "",
+	slug,
 );
 if (categoryPageCacheHint) {
 	setAstroCacheHint(Astro.cache, categoryPageCacheHint);
@@ -30,7 +40,7 @@ if (categoryPageCacheHint) {
 
 const categoryPage = rawCategoryPage as unknown as CategoryPageEntry | null;
 
-if (!slug || !categoryPage) {
+if (!categoryPage) {
 	return Astro.redirect("/404");
 }
 

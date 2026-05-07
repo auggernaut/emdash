@@ -4,6 +4,7 @@ import {
 	buildAgentDiscoveryLinkHeader,
 	shouldAttachAgentDiscoveryLinkHeader,
 } from "./lib/agent-discovery.js";
+import { getLegacyRedirectPathForPathname } from "./lib/legacy-routes.js";
 import {
 	appendVary,
 	buildMarkdownAlternateLink,
@@ -11,18 +12,15 @@ import {
 	prefersMarkdown,
 } from "./lib/markdown.js";
 
-const TRAILING_SLASH_PATTERN = /\/+$/;
-
 export const onRequest = defineMiddleware(async (context, next) => {
-	if (
-		(context.request.method === "GET" || context.request.method === "HEAD") &&
-		context.url.pathname.length > 1 &&
-		context.url.pathname.endsWith("/") &&
-		!context.url.pathname.startsWith("/_emdash/")
-	) {
-		const normalizedUrl = new URL(context.url);
-		normalizedUrl.pathname = normalizedUrl.pathname.replace(TRAILING_SLASH_PATTERN, "");
-		return context.redirect(normalizedUrl.toString(), 308);
+	if (context.request.method === "GET" || context.request.method === "HEAD") {
+		const legacyRedirectPath = getLegacyRedirectPathForPathname(context.url.pathname);
+		if (legacyRedirectPath) {
+			const redirectPath = legacyRedirectPath.includes("?")
+				? legacyRedirectPath
+				: `${legacyRedirectPath}${context.url.search}`;
+			return context.redirect(redirectPath, 308);
+		}
 	}
 
 	const markdownAlternatePath = markdownAlternatePathForPathname(context.url.pathname);

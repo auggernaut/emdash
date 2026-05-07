@@ -3,6 +3,7 @@ import { getEmDashEntry, getEntryTerms, getSeoMeta } from "emdash";
 import Base from "../../layouts/Base.astro";
 import { setAstroCacheHint } from "../../lib/astro-cache.js";
 import { buildGameAgentProfile, buildGameStructuredData } from "../../lib/game-profile";
+import { getLegacyItemRedirectPath, resolveCategoryHref } from "../../lib/legacy-routes.js";
 import { resolveRelatedGameHref } from "../../lib/related-games.js";
 import { buildBreadcrumbStructuredData } from "../../lib/structured-data.js";
 import type { Badge, GameEntry, RelatedGame } from "../../lib/types";
@@ -28,7 +29,6 @@ const ESCAPE_LT_PATTERN = /</g;
 const ESCAPE_GT_PATTERN = />/g;
 const ESCAPE_QUOTE_PATTERN = /"/g;
 const ESCAPE_APOSTROPHE_PATTERN = /'/g;
-const LEGACY_ITEM_SLUG_REDIRECTS = new Map([["agêratos", "ageratos"]]);
 
 const { slug } = Astro.params;
 
@@ -36,9 +36,9 @@ if (!slug) {
 	return Astro.redirect("/404");
 }
 
-const redirectedSlug = LEGACY_ITEM_SLUG_REDIRECTS.get(slug);
-if (redirectedSlug) {
-	return Astro.redirect(`/item/${encodeURIComponent(redirectedSlug)}`, 308);
+const legacyRedirectPath = getLegacyItemRedirectPath(slug);
+if (legacyRedirectPath) {
+	return Astro.redirect(legacyRedirectPath, 308);
 }
 
 const { entry: rawGame, cacheHint } = await getEmDashEntry("games", slug);
@@ -279,7 +279,7 @@ const hasDecisionGuideContent =
 												<div class="term-list">
 													{group.terms.map((term) =>
 														group.linkToCategory ? (
-															<a class="term-pill" href={`/category/${term.slug}`}>
+															<a class="term-pill" href={resolveCategoryHref(term.slug)}>
 																{term.label}
 															</a>
 														) : (

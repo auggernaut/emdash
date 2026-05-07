@@ -1,5 +1,14 @@
 ---
 import Base from "../layouts/Base.astro";
+import { getLegacyRedirectPathForPathname } from "../lib/legacy-routes.js";
+
+const legacyRedirectPath = getLegacyRedirectPathForPathname(Astro.url.pathname);
+if (legacyRedirectPath) {
+	return Astro.redirect(
+		legacyRedirectPath.includes("?") ? legacyRedirectPath : `${legacyRedirectPath}${Astro.url.search}`,
+		308,
+	);
+}
 ---
 
 <Base

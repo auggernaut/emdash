@@ -1,8 +1,8 @@
+import { resolveItemHref } from "./legacy-routes.js";
 import type { RelatedGame } from "./types.js";
 
 const DIACRITIC_PATTERN = /[\u0300-\u036f]/g;
 const NON_ALPHANUMERIC_PATTERN = /[^a-z0-9]/g;
-const LEGACY_ITEM_SLUG_REDIRECTS = new Map([["agêratos", "ageratos"]]);
 
 function normalizeLookupValue(value: string | undefined | null): string {
 	return (value ?? "")
@@ -14,6 +14,5 @@ function normalizeLookupValue(value: string | undefined | null): string {
 
 export function resolveRelatedGameHref(related: Pick<RelatedGame, "slug" | "title">): string {
 	const fallbackSlug = related.slug.trim() || normalizeLookupValue(related.title);
-	const canonicalSlug = LEGACY_ITEM_SLUG_REDIRECTS.get(fallbackSlug) ?? fallbackSlug;
-	return `/item/${encodeURIComponent(canonicalSlug)}`;
+	return resolveItemHref(fallbackSlug);
 }

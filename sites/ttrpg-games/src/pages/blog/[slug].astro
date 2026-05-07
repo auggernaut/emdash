@@ -4,6 +4,7 @@ import { Image, PortableText } from "emdash/ui";
 
 import Base from "../../layouts/Base.astro";
 import { setAstroCacheHint } from "../../lib/astro-cache.js";
+import { getLegacyBlogRedirectPath } from "../../lib/legacy-routes.js";
 import { getMediaUrl, normalizeMediaValue } from "../../lib/media.js";
 import { getPostPath, isToolPost } from "../../lib/post-routes";
 import { buildArticlePageStructuredData } from "../../lib/structured-data.js";
@@ -18,6 +19,11 @@ const RELATED_POSTS_LIMIT = 3;
 const slug = Astro.params.slug;
 if (!slug) {
 	return Astro.redirect("/404");
+}
+
+const legacyRedirectPath = getLegacyBlogRedirectPath(slug);
+if (legacyRedirectPath) {
+	return Astro.redirect(legacyRedirectPath, 308);
 }
 
 const { entry: rawPost, cacheHint } = await getEmDashEntry("posts", slug);
