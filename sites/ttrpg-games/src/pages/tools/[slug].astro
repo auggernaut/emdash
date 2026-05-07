@@ -1,9 +1,10 @@
 ---
-import { getEmDashCollection, getEmDashEntry } from "emdash";
+import { getEmDashCollection, getEmDashEntry, getSeoMeta } from "emdash";
 import { Image, PortableText } from "emdash/ui";
 
 import Base from "../../layouts/Base.astro";
 import { setAstroCacheHint } from "../../lib/astro-cache.js";
+import { getContentSeo } from "../../lib/content-seo.js";
 import { normalizeInternalHtmlLinks } from "../../lib/html-links.js";
 import { getPostPath, isToolPost } from "../../lib/post-routes";
 import { buildArticlePageStructuredData } from "../../lib/structured-data.js";
@@ -104,9 +105,16 @@ const updatedDate = formatDate(post.data.updatedAt);
 const publishedTime = post.data.publishedAt?.toISOString() ?? null;
 const modifiedTime = post.data.updatedAt?.toISOString() ?? null;
 const image = getImageUrl(post.data.featured_image);
+const contentSeo = await getContentSeo("posts", post.data.id);
+const seo = getSeoMeta({ ...rawPost, seo: contentSeo ?? undefined }, {
+	siteTitle: "TTRPG Games",
+	siteUrl: Astro.url.origin,
+	path: Astro.url.pathname,
+	defaultOgImage: image ?? undefined,
+});
 const bodyHtml = normalizeInternalHtmlLinks(
 	post.data.body_html?.replace(LEADING_H1_PATTERN, "").trim(),
-	{ toolSlugs },
+	{ imageAlt: post.data.title, toolSlugs },
 );
 const breadcrumbs = [
 	{ name: "Home", url: new URL("/", Astro.url).href },
@@ -117,10 +125,10 @@ const structuredData = buildArticlePageStructuredData({ breadcrumbs });
 ---
 
 <Base
-	title={`${post.data.title} | TTRPG Games`}
-	description={post.data.excerpt || null}
-	image={image}
-	canonical={Astro.url.href}
+	title={seo.title}
+	description={seo.description}
+	image={seo.ogImage || image}
+	canonical={seo.canonical || Astro.url.href}
 	pageType="article"
 	publishedTime={publishedTime}
 	modifiedTime={modifiedTime}
@@ -152,7 +160,7 @@ const structuredData = buildArticlePageStructuredData({ breadcrumbs });
 			{
 				post.data.featured_image && (
 					<div class="article-hero-image">
-						<Image image={post.data.featured_image} />
+						<Image image={post.data.featured_image} alt={post.data.title} />
 					</div>
 				)
 			}
@@ -176,7 +184,7 @@ const structuredData = buildArticlePageStructuredData({ breadcrumbs });
 									{
 										related.data.featured_image && (
 											<div class="blog-card-image">
-												<Image image={related.data.featured_image} />
+												<Image image={related.data.featured_image} alt={related.data.title} />
 											</div>
 										)
 									}

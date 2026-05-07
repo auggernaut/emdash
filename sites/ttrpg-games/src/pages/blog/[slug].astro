@@ -4,6 +4,7 @@ import { Image, PortableText } from "emdash/ui";
 
 import Base from "../../layouts/Base.astro";
 import { setAstroCacheHint } from "../../lib/astro-cache.js";
+import { getContentSeo } from "../../lib/content-seo.js";
 import { normalizeInternalHtmlLinks } from "../../lib/html-links.js";
 import { getLegacyBlogRedirectPath } from "../../lib/legacy-routes.js";
 import { getMediaUrl, normalizeMediaValue } from "../../lib/media.js";
@@ -96,7 +97,8 @@ const publishedTime = post.data.publishedAt?.toISOString() ?? null;
 const modifiedTime = post.data.updatedAt?.toISOString() ?? null;
 const featuredImage = normalizeMediaValue(post.data.featured_image);
 const image = getMediaUrl(featuredImage, Astro.url.origin);
-const seo = getSeoMeta(rawPost, {
+const contentSeo = await getContentSeo("posts", post.data.id);
+const seo = getSeoMeta({ ...rawPost, seo: contentSeo ?? undefined }, {
 	siteTitle: "TTRPG Games",
 	siteUrl: Astro.url.origin,
 	path: Astro.url.pathname,
@@ -104,7 +106,7 @@ const seo = getSeoMeta(rawPost, {
 });
 const bodyHtml = normalizeInternalHtmlLinks(
 	post.data.body_html?.replace(LEADING_H1_PATTERN, "").trim(),
-	{ toolSlugs },
+	{ imageAlt: post.data.title, toolSlugs },
 );
 const breadcrumbs = [
 	{ name: "Home", url: new URL("/", Astro.url).href },
@@ -138,8 +140,8 @@ const structuredData = buildArticlePageStructuredData({ breadcrumbs });
 
 		<section class:list={["hero-card", "article-hero", { "has-hero-image": !!featuredImage }]}>
 			{featuredImage && image && (
-				<div class="article-hero-media" aria-hidden="true">
-					<img src={image} alt="" loading="eager" decoding="async" />
+				<div class="article-hero-media">
+					<img src={image} alt={post.data.title} loading="eager" decoding="async" />
 				</div>
 			)}
 			<div class="article-hero-copy">
@@ -174,7 +176,7 @@ const structuredData = buildArticlePageStructuredData({ breadcrumbs });
 									{
 										related.data.featured_image && (
 											<div class="blog-card-image">
-												<Image image={normalizeMediaValue(related.data.featured_image)} />
+												<Image image={normalizeMediaValue(related.data.featured_image)} alt={related.data.title} />
 											</div>
 										)
 									}

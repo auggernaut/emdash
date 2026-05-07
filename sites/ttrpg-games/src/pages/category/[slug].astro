@@ -1,8 +1,8 @@
 ---
 import { getEmDashCollection, getEmDashEntry } from "emdash";
-import { getDb } from "emdash/runtime";
 import Base from "../../layouts/Base.astro";
 import { setAstroCacheHint } from "../../lib/astro-cache.js";
+import { getContentSeo } from "../../lib/content-seo.js";
 import { normalizeInternalHtmlLinks } from "../../lib/html-links.js";
 import { getLegacyCategoryRedirectPath } from "../../lib/legacy-routes.js";
 import { buildCategoryPageStructuredData } from "../../lib/structured-data.js";
@@ -126,7 +126,9 @@ function cardCopy(game: GameEntry): string {
 	);
 }
 
-const categoryBodyHtml = normalizeInternalHtmlLinks(categoryPage?.data.body_html);
+const categoryBodyHtml = normalizeInternalHtmlLinks(categoryPage?.data.body_html, {
+	imageAlt: categoryPage?.data.title,
+});
 
 const featuredPicks = gameNotes
 	.filter((item) => item.featured)
@@ -171,25 +173,17 @@ const relatedCategories = normalizedRelatedCategories
 		(item): item is RelatedCategoryLink & { page: CategoryPageEntry } => Boolean(item.page),
 	);
 
-const db = await getDb();
-const seoRow = categoryPage
-	? await db
-			.selectFrom("_emdash_seo")
-			.select(["seo_title", "seo_description", "seo_image", "seo_canonical"])
-			.where("collection", "=", "category_pages")
-			.where("content_id", "=", categoryPage.data.id)
-			.executeTakeFirst()
-	: null;
+const seo = await getContentSeo("category_pages", categoryPage.data.id);
 
-const pageTitle = seoRow?.seo_title
-	? `${seoRow.seo_title} | TTRPG Games Directory`
-	: `${categoryPage.data.title} RPGs | TTRPG Games Directory`;
+const pageTitle = seo?.title
+	? `${seo.title} | TTRPG Games`
+	: `${categoryPage.data.title} RPGs | TTRPG Games`;
 const pageDescription =
-	seoRow?.seo_description ||
+	seo?.description ||
 	categoryPage?.data.description ||
 	`Browse tabletop RPGs tagged ${categoryPage.data.title}.`;
-const canonical = seoRow?.seo_canonical || Astro.url.href;
-const pageImage = seoRow?.seo_image || featuredPicks[0]?.game.data.image_url || null;
+const canonical = seo?.canonical || Astro.url.href;
+const pageImage = seo?.image || featuredPicks[0]?.game.data.image_url || null;
 
 const breadcrumbItems = [
 	{ name: "Home", url: new URL("/", Astro.url).href },

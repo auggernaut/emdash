@@ -2,6 +2,7 @@
 import { getEmDashEntry, getEntryTerms, getSeoMeta } from "emdash";
 import Base from "../../layouts/Base.astro";
 import { setAstroCacheHint } from "../../lib/astro-cache.js";
+import { getContentSeo } from "../../lib/content-seo.js";
 import { buildGameAgentProfile, buildGameStructuredData } from "../../lib/game-profile";
 import { normalizeInternalHtmlLinks } from "../../lib/html-links.js";
 import { getLegacyItemRedirectPath, resolveCategoryHref } from "../../lib/legacy-routes.js";
@@ -70,8 +71,9 @@ const resolvedRelatedGames = relatedGames.map((related) => {
 	};
 });
 
-const seo = getSeoMeta(game, {
-	siteTitle: "TTRPG Games Directory",
+const contentSeo = await getContentSeo("games", game.data.id);
+const seo = getSeoMeta({ ...game, seo: contentSeo ?? undefined }, {
+	siteTitle: "TTRPG Games",
 	siteUrl: Astro.url.origin,
 	path: `/item/${slug}`,
 });
@@ -151,6 +153,7 @@ const atAGlanceMarkup = atAGlance
 	: null;
 const bodyHtml = normalizeInternalHtmlLinks(
 	atAGlance ? stripLeadingAtAGlance(game.data.body_html) : game.data.body_html,
+	{ imageAlt: game.data.title },
 );
 const facetGroups = [
 	{ label: "Genres", terms: genres, linkToCategory: true },

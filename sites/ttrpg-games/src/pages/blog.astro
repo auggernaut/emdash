@@ -36,7 +36,7 @@ function formatDate(date: Date | null | undefined): string | null {
 
 <Base
 	title="Blog | TTRPG Games"
-	description="Editorial guides, recommendation roundups, and longer-form tabletop RPG writing from TTRPG Games."
+	description="Read tabletop RPG guides, comparisons, and recommendation roundups for finding games by genre, system, play style, and table fit."
 >
 	<div class="stack blog-shell animate-up">
 		<section class="hero-card blog-hero">
@@ -78,7 +78,7 @@ function formatDate(date: Date | null | undefined): string | null {
 									{
 										post.data.featured_image && (
 											<div class="blog-card-image">
-												<Image image={normalizeMediaValue(post.data.featured_image)} />
+												<Image image={normalizeMediaValue(post.data.featured_image)} alt={post.data.title} />
 											</div>
 										)
 									}
