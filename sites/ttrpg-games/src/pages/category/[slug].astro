@@ -20,6 +20,16 @@ const ESCAPE_GT_PATTERN = />/g;
 const ESCAPE_QUOTE_PATTERN = /"/g;
 const ESCAPE_APOSTROPHE_PATTERN = /'/g;
 const REGEX_ESCAPE_PATTERN = /[.*+?^${}()|[\]\\]/g;
+const CATEGORY_PARENTHESES_PATTERN = /\s*\([^)]*\)/g;
+const CATEGORY_FAQ_ALIASES: Record<string, string[]> = {
+	"beginner-friendly": ["beginner-friendly"],
+	"low-prep": ["low-prep", "low prep"],
+	"new-school-revolution": ["NSR", "New School Revolution"],
+	"old-school-renaissance-osr": ["OSR", "Old-School Renaissance"],
+	"one-shot-friendly": ["one-shot-friendly", "one-shot", "one-shots"],
+	"rules-medium": ["rules-medium", "rules medium"],
+	"solo-play": ["solo play"],
+};
 
 const { slug } = Astro.params;
 if (!slug) {
@@ -222,8 +232,36 @@ const faqLinkableGames = rankedGames
 	.toSorted((left, right) => right.data.title.length - left.data.title.length)
 	.map((game) => ({
 		href: `/item/${game.id}`,
+		label: game.data.title,
 		pattern: new RegExp(`\\b${escapeRegExp(game.data.title)}\\b`, "gi"),
 	}));
+
+const faqLinkableCategories = [
+	...relatedCategories.flatMap((category) => {
+		const href = `/category/${category.slug}`;
+		const title = category.page.data.title;
+		const titleWithoutParenthetical = title.replace(CATEGORY_PARENTHESES_PATTERN, "").trim();
+		const labels = [
+			title,
+			titleWithoutParenthetical,
+			...(CATEGORY_FAQ_ALIASES[category.slug] ?? []),
+		].filter((label, index, allLabels) => label && allLabels.indexOf(label) === index);
+		return labels.map((label) => ({
+			href,
+			label,
+			pattern: new RegExp(`\\b${escapeRegExp(label)}\\b`, "gi"),
+		}));
+	}),
+	...(CATEGORY_FAQ_ALIASES["rules-medium"] ?? []).map((label) => ({
+		href: "/category/rules-medium",
+		label,
+		pattern: new RegExp(`\\b${escapeRegExp(label)}\\b`, "gi"),
+	})),
+].toSorted((left, right) => right.label.length - left.label.length);
+
+const faqLinkables = [...faqLinkableGames, ...faqLinkableCategories].toSorted(
+	(left, right) => right.label.length - left.label.length,
+);
 
 function renderFaqAnswer(answer: string): string {
 	let html = "";
@@ -239,14 +277,14 @@ function renderFaqAnswer(answer: string): string {
 			  }
 			| undefined;
 
-		for (const game of faqLinkableGames) {
-			game.pattern.lastIndex = 0;
+		for (const linkable of faqLinkables) {
+			linkable.pattern.lastIndex = 0;
 			const segment = answer.slice(cursor);
-			const match = game.pattern.exec(segment);
+			const match = linkable.pattern.exec(segment);
 			if (!match || match.index === undefined) continue;
 
 			const candidate = {
-				href: game.href,
+				href: linkable.href,
 				index: cursor + match.index,
 				length: match[0].length,
 				text: match[0],
