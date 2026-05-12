@@ -1139,6 +1139,18 @@ const pageCtx = createPublicPageContext({
 		padding-left: 1.3rem;
 	}
 
+	.prose a {
+		color: var(--accent-strong);
+		font-weight: 650;
+		text-decoration: underline;
+		text-decoration-thickness: 1.5px;
+		text-underline-offset: 0.16em;
+	}
+
+	.prose a:hover {
+		color: var(--ink);
+	}
+
 	.faq-grid {
 		display: grid;
 		gap: 14px;
@@ -1212,6 +1224,7 @@ const pageCtx = createPublicPageContext({
 	.faq-answer a {
 		color: var(--accent-strong);
 		font-weight: 600;
+		text-decoration: underline;
 		text-decoration-thickness: 1.5px;
 		text-underline-offset: 0.16em;
 	}
