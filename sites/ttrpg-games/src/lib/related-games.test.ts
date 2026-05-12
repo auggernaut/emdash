@@ -45,6 +45,7 @@ describe("legacy route redirects", () => {
 			"/category/forged-in-the-dark-fitd",
 		);
 		expect(getLegacyCategoryRedirectPath("pbta")).toBe("/category/powered-by-the-apocalypse-pbta");
+		expect(getLegacyCategoryRedirectPath("rules-light")).toBe("/category/rules-lite");
 		expect(getLegacyCategoryRedirectPath("solo-rpgs")).toBe("/category/solo-play");
 		expect(getLegacyCategoryRedirectPath("superhero-rpg")).toBe("/category/superheroes");
 		expect(resolveCategoryHref("year-zero-engine")).toBe("/category/year-zero-engine");

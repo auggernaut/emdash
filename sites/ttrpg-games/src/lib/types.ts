@@ -119,6 +119,7 @@ export interface CategoryPageData {
 	type: string;
 	description?: string | null;
 	body_html?: string | null;
+	comparison_html?: string | null;
 	source_taxonomy?: string | null;
 	source_term_slug?: string | null;
 	game_notes?: CategoryGameNote[] | null;

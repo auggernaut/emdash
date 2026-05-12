@@ -36,6 +36,7 @@ export const LEGACY_CATEGORY_PATH_REDIRECTS = new Map<string, string>([
 	["forged-in-the-dark", "/category/forged-in-the-dark-fitd"],
 	["pbta", "/category/powered-by-the-apocalypse-pbta"],
 	["powered-by-the-apocalypse", "/category/powered-by-the-apocalypse-pbta"],
+	["rules-light", "/category/rules-lite"],
 	["solo", "/category/solo-play"],
 	["solo-rpgs", "/category/solo-play"],
 	["solo-ttrpgs", "/category/solo-play"],

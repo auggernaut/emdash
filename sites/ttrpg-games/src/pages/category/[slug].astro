@@ -129,6 +129,9 @@ function cardCopy(game: GameEntry): string {
 const categoryBodyHtml = normalizeInternalHtmlLinks(categoryPage?.data.body_html, {
 	imageAlt: categoryPage?.data.title,
 });
+const comparisonHtml = normalizeInternalHtmlLinks(categoryPage?.data.comparison_html, {
+	imageAlt: categoryPage?.data.title,
+});
 
 const featuredPicks = gameNotes
 	.filter((item) => item.featured)
@@ -348,6 +351,20 @@ function renderFaqAnswer(answer: string): string {
 			}
 
 			{
+				comparisonHtml && (
+					<section class="comparison-section">
+						<div class="section-header">
+							<div class="section-title-group">
+								<div class="kicker" style="color: var(--gold-accent);">Compare</div>
+								<h2>How to choose</h2>
+							</div>
+						</div>
+						<div class="prose comparison-prose" set:html={comparisonHtml} />
+					</section>
+				)
+			}
+
+			{
 				faqs.length > 0 && (
 					<section class="faq-section">
 						<div class="section-header">
@@ -556,6 +573,22 @@ function renderFaqAnswer(answer: string): string {
 		font-size: 1rem;
 		line-height: 1.6;
 		color: var(--muted);
+	}
+
+	.comparison-section {
+		max-width: 1040px;
+	}
+
+	.comparison-prose {
+		background: var(--surface-glass);
+		border: 1px solid var(--line);
+		border-radius: 24px;
+		padding: 28px;
+		overflow-x: auto;
+	}
+
+	.comparison-prose :global(table) {
+		min-width: 720px;
 	}
 
 	.category-card {
