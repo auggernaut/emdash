@@ -79,3 +79,9 @@ examples/wp-theme-unit-test/
 
 .perf-query-counts
 query-counts-out/
+
+# TTRPG one-off Cloudinary to R2 migration artifacts
+sites/ttrpg-games/reports/cloudinary-to-r2-*
+sites/ttrpg-games/reports/related-image-url-repair-*
+sites/ttrpg-games/reports/revision-image-url-repair-*
+scripts/ttrpg-r2-upload-worker.mjs

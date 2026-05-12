@@ -82,22 +82,22 @@ Write it like a real directory review:
 
 The body should add depth that the structured data does not already provide.
 
-### 5. Use the best cover image and move it to Cloudinary
+### 5. Use the best cover image and move it to EmDash media on R2
 
-Do not leave third-party hotlinked art in place if a Cloudinary-hosted copy is expected.
+Do not leave third-party hotlinked art in place if an EmDash media copy is expected.
 
 Image workflow:
 
 - find the best available cover or representative official image
 - prefer official publisher/store assets over random reposts
-- upload it to the project’s Cloudinary account
-- store the Cloudinary URL in the game entry
+- upload it to the project’s EmDash media library backed by Cloudflare R2
+- store the `/_emdash/api/media/file/...` URL in the game entry
 
 For this site:
 
-- game cover images belong on Cloudinary
-- EmDash media storage is not the canonical home for directory cover art
-- if you temporarily use EmDash media to test MCP upload behavior, move the final cover back to Cloudinary before treating the work as complete
+- game cover images belong in EmDash media storage on Cloudflare R2
+- Cloudinary is not the canonical home for directory cover art
+- do not add new `res.cloudinary.com` cover URLs
 
 If the official source is blocked or unusable, choose the best stable fallback and note that choice in your summary to the user.
 
@@ -175,7 +175,7 @@ For reconciliation work:
 - Be strict with taxonomy meaning. If a category is editorially narrow, keep it narrow.
 - Related-game blurbs should be comparative.
 - `body_html` should be richer than the structured fields.
-- Images should end up on Cloudinary.
+- Images should end up in EmDash media storage on Cloudflare R2.
 - Reviews should reflect user sentiment from DriveThruRPG first, then fallback sources if needed.
 - DriveThruRPG links should include `affiliate_id=1659151`.
 - itch.io links should include `ac=YUqaLN4pVvG`.
@@ -188,7 +188,7 @@ For reconciliation work:
 After finishing:
 
 - verify the game row has the expected rich fields populated
-- verify `image_url` points to Cloudinary
+- verify `image_url` points to `/_emdash/api/media/file/...`
 - verify the canonical slug is the one the site should actually keep
 - verify related games exist and the related blurbs are comparative
 - verify taxonomy assignments were written

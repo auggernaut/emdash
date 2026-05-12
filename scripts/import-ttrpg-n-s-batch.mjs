@@ -6,7 +6,7 @@ import path from "node:path";
 const rootDir = "/Users/home/Dev/git/emdash";
 const databasePath = path.join(rootDir, "sites/ttrpg-games/data.db");
 const backupsDir = path.join(rootDir, "sites/ttrpg-games/backups");
-const cloudinaryPrefix = "https://res.cloudinary.com/";
+const preservedImagePrefixes = ["https://res.cloudinary.com/", "/_emdash/api/media/file/"];
 const pad2 = (value) => String(value).padStart(2, "0");
 
 function nowStamp() {
@@ -25,6 +25,10 @@ function nowStamp() {
 function sqlString(value) {
 	if (value == null) return "NULL";
 	return `'${String(value).replaceAll("'", "''")}'`;
+}
+
+function isPreservedImageUrl(value) {
+	return preservedImagePrefixes.some((prefix) => value.startsWith(prefix));
 }
 
 function runSql(sql) {
@@ -1022,7 +1026,7 @@ for (const [slug, entry] of batchBySlug) {
 		slug,
 		title: entry.title,
 		image_url:
-			existing?.image_url && existing.image_url.startsWith(cloudinaryPrefix)
+			existing?.image_url && isPreservedImageUrl(existing.image_url)
 				? existing.image_url
 				: entry.image_url,
 	});
@@ -1035,7 +1039,7 @@ for (const [index, entry] of batch.entries()) {
 	const id = existing?.id || makeId();
 	const createdAt = isoDateWithOffset(index);
 	const imageUrl =
-		existing?.image_url && existing.image_url.startsWith(cloudinaryPrefix)
+		existing?.image_url && isPreservedImageUrl(existing.image_url)
 			? existing.image_url
 			: entry.image_url;
 	const related = entry.related
@@ -1105,7 +1109,7 @@ for (const [index, entry] of batch.entries()) {
 	const columns = Object.keys(normalizedFields).join(", ");
 	const values = Object.values(normalizedFields).map(sqlString).join(", ");
 	statements.push(
-		`INSERT INTO ec_games (${columns}) VALUES (${values}) ON CONFLICT(slug, locale) DO UPDATE SET status = excluded.status, title = excluded.title, at_a_glance = excluded.at_a_glance, website_url = excluded.website_url, image_url = CASE WHEN ec_games.image_url LIKE 'https://res.cloudinary.com/%' THEN ec_games.image_url ELSE excluded.image_url END, reviews_url = excluded.reviews_url, review_summary = excluded.review_summary, blurb = excluded.blurb, body_html = excluded.body_html, publisher_or_creator = excluded.publisher_or_creator, min_players = excluded.min_players, max_players = excluded.max_players, gm_required = excluded.gm_required, gm_role_label = excluded.gm_role_label, session_length_minutes_min = excluded.session_length_minutes_min, session_length_minutes_max = excluded.session_length_minutes_max, prep_level = excluded.prep_level, one_shot_friendly = excluded.one_shot_friendly, campaign_friendly = excluded.campaign_friendly, solo_friendly = excluded.solo_friendly, beginner_friendly = excluded.beginner_friendly, complexity_score = excluded.complexity_score, new_gm_friendly = excluded.new_gm_friendly, combat_focus = excluded.combat_focus, roleplay_focus = excluded.roleplay_focus, tactical_depth = excluded.tactical_depth, campaign_depth = excluded.campaign_depth, price_model = excluded.price_model, quickstart_available = excluded.quickstart_available, pdf_available = excluded.pdf_available, physical_book_available = excluded.physical_book_available, vtt_ready = excluded.vtt_ready, content_intensity = excluded.content_intensity, best_for = excluded.best_for, avoid_if = excluded.avoid_if, why_it_fits = excluded.why_it_fits, related = excluded.related, publisher_or_creator = excluded.publisher_or_creator, updated_at = excluded.updated_at, published_at = excluded.published_at, deleted_at = NULL;`,
+		`INSERT INTO ec_games (${columns}) VALUES (${values}) ON CONFLICT(slug, locale) DO UPDATE SET status = excluded.status, title = excluded.title, at_a_glance = excluded.at_a_glance, website_url = excluded.website_url, image_url = CASE WHEN ec_games.image_url LIKE 'https://res.cloudinary.com/%' OR ec_games.image_url LIKE '/_emdash/api/media/file/%' THEN ec_games.image_url ELSE excluded.image_url END, reviews_url = excluded.reviews_url, review_summary = excluded.review_summary, blurb = excluded.blurb, body_html = excluded.body_html, publisher_or_creator = excluded.publisher_or_creator, min_players = excluded.min_players, max_players = excluded.max_players, gm_required = excluded.gm_required, gm_role_label = excluded.gm_role_label, session_length_minutes_min = excluded.session_length_minutes_min, session_length_minutes_max = excluded.session_length_minutes_max, prep_level = excluded.prep_level, one_shot_friendly = excluded.one_shot_friendly, campaign_friendly = excluded.campaign_friendly, solo_friendly = excluded.solo_friendly, beginner_friendly = excluded.beginner_friendly, complexity_score = excluded.complexity_score, new_gm_friendly = excluded.new_gm_friendly, combat_focus = excluded.combat_focus, roleplay_focus = excluded.roleplay_focus, tactical_depth = excluded.tactical_depth, campaign_depth = excluded.campaign_depth, price_model = excluded.price_model, quickstart_available = excluded.quickstart_available, pdf_available = excluded.pdf_available, physical_book_available = excluded.physical_book_available, vtt_ready = excluded.vtt_ready, content_intensity = excluded.content_intensity, best_for = excluded.best_for, avoid_if = excluded.avoid_if, why_it_fits = excluded.why_it_fits, related = excluded.related, publisher_or_creator = excluded.publisher_or_creator, updated_at = excluded.updated_at, published_at = excluded.published_at, deleted_at = NULL;`,
 	);
 	statements.push(
 		`DELETE FROM content_taxonomies WHERE collection = 'games' AND entry_id = ${sqlString(id)};`,
